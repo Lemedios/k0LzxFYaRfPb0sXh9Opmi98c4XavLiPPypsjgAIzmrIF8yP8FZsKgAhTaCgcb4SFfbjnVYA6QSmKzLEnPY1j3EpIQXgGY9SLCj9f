@@ -1,9 +1,5 @@
 local g = typeof(getgenv) == "function" and getgenv() or _G
 
-
-
-
-
 do
     local gg = typeof(getgenv) == "function" and getgenv() or _G
     local fn = gg.LemeGUIV2_AutoAntiFile
@@ -233,9 +229,6 @@ do
     end
 end
 
-
-
-
 do
     local gg = typeof(getgenv) == "function" and getgenv() or _G
     if type(gg.LemeGUIV2_LangFile) ~= "string" then
@@ -266,7 +259,6 @@ do
         end
     end
 end
-
 
 local function Start()
     if g.LemeGUIV2 and type(g.LemeGUIV2) == "table" and type(g.LemeGUIV2.D) == "function" then
@@ -453,7 +445,6 @@ local function Start()
         return cn
     end
 
-
     local function playOverlay(gui)
         local TS = S(game, "TweenService")
         local f = Instance.new("Frame")
@@ -552,7 +543,6 @@ local function Start()
     refs.loadingBlock.Active = false
     refs.loadingBlock.Parent = gui
 
-
     refs.loadingBlock.Visible = false
     refs.loadingLabel = Instance.new("TextLabel")
     refs.loadingLabel.Name = "LoadingLabel"
@@ -567,10 +557,6 @@ local function Start()
     refs.loadingLabel.Active = false
     refs.loadingLabel.ZIndex = 2001
     refs.loadingLabel.Parent = refs.loadingBlock
-
-
-
-
 
     delay(1.2, function()
         if refs.loadingBlock and refs.loadingBlock.Parent then
@@ -951,7 +937,6 @@ createButton(refs.shaderGroup, "Snow", "雪", 2, "snowBtn", true)
     createButton(refs.scriptGroup, "Load ShiftLock", "シフトロックスクリプト", 4, "loadShiftLockBtn", false)
     createButton(refs.scriptGroup, "Unload", "スクリプトを削除", 5, "unloadBtn", false)
     createButton(refs.scriptGroup, "Reload", "リロード", 6, "reloadBtn", false)
-    createButton(refs.scriptGroup, "Copy Config", "設定をコピー", 7, "copyConfigBtn", false)
     createButton(refs.scriptGroup, "Language", "言語", 8, "languageBtn", false)
 
     createButton(refs.teleportGroup, "TP to", "テレポート", 1, "tpToBtn", false)
@@ -1154,7 +1139,6 @@ snowFogSaved = nil,
         language = "en",
     }
 
-
     if type(g.LemeGUIV2_LangLoad) == "function" then
         local lg = g.LemeGUIV2_LangLoad()
         if lg then
@@ -1162,12 +1146,10 @@ snowFogSaved = nil,
         end
     end
 
-
     if type(g.LemeGUIV2_AutoAntiLoad) == "function" then
         st.autoAntiMask = g.LemeGUIV2_AutoAntiLoad()
     end
 
-    
     if type(g.LemeGUIV2_SnowCloudyInit) == "function" then
         g.LemeGUIV2_SnowCloudyInit(st, refs)
     end
@@ -1355,7 +1337,6 @@ local hoverAlign, hoverOri, hoverAtt, hoverOriAtt
     local function updLoopResetCamBtn()
         setToggleText(refs.loopResetCamBtn, st.resetCamLoopOn)
     end
-
 
     local function updFlingTargetDisplay()
         local lbl = refs.flingTargetDisplay
@@ -3874,7 +3855,6 @@ if st.fullBrightLoopOn then
         end
     end))
 
-
     addConn(R.RenderStepped:Connect(function()
         if destroyed then
             return
@@ -3888,7 +3868,6 @@ if st.fullBrightLoopOn then
             hum.WalkSpeed = 0
         end
     end))
-
 
     addConn(R.RenderStepped:Connect(function()
         if destroyed then
@@ -4143,7 +4122,6 @@ if st.fullBrightLoopOn then
         st.sitFlyOn = not st.sitFlyOn
         updSitFlyBtn()
     end)
-
 
     refs.espBtn.Activated:Connect(function()
         if destroyed then
@@ -4825,7 +4803,6 @@ refs.snowBtn.Activated:Connect(function()
         end
     end)
 
-
     local function openLanguageDialog()
         if refs.languageOverlay then
             return
@@ -4890,7 +4867,6 @@ refs.snowBtn.Activated:Connect(function()
                 refs.languageOverlay = nil
             end
         end)
-
 
         local btnFrame = Instance.new("Frame")
         btnFrame.BackgroundTransparency = 1
@@ -5093,7 +5069,6 @@ refs.snowBtn.Activated:Connect(function()
         end)
     end
 
-
     api.buttonActions["languageBtn"] = function()
         if destroyed then
             return
@@ -5109,7 +5084,6 @@ refs.snowBtn.Activated:Connect(function()
         openDesyncDirectionDialog()
     end
     refs.desyncDirDirectionBtn.Activated:Connect(api.buttonActions["desyncDirDirectionBtn"])
-
 
     refs.toggle.InputBegan:Connect(function(input)
         if destroyed then
@@ -5345,7 +5319,6 @@ refs.snowBtn.Activated:Connect(function()
         spawn(Start)
     end
     refs.reloadBtn.Activated:Connect(api.buttonActions["reloadBtn"])
-
 
     do
         local cfgSrc = [==[
@@ -5800,8 +5773,6 @@ return function(getgenv, refs, st, allButtons, gui, ws, lp, api)
         return buildConfigText()
     end
 
-    if refs and refs.copyConfigBtn then
-        api.buttonActions["copyConfigBtn"] = function()
             local txt = buildConfigText()
             local ok, did = pcall(function()
                 if typeof(setclipboard) == "function" then
@@ -5876,7 +5847,6 @@ return function(getgenv, refs, st, allButtons, gui, ws, lp, api)
             tb.ZIndex = 1202
             tb.Parent = inner
         end
-        refs.copyConfigBtn.Activated:Connect(api.buttonActions["copyConfigBtn"])
     end
 
     if getgenv().LemeGUIV2_Config then
