@@ -261,6 +261,120 @@ do
     end
 end
 
+
+do
+    local gg = typeof(getgenv) == "function" and getgenv() or _G
+    gg.LemeGUIV2_UpdQuickExitTrig = function(refs, st)
+        if not refs or not st or not refs.quickExitTrigBtn then
+            return
+        end
+        local noneStr = st.language == "jp" and "なし" or "None"
+        local k = st.quickExitKey and st.quickExitKey.Name or noneStr
+        refs.quickExitTrigBtn.Text = st.language == "jp"
+            and ("トリガーキー [" .. k .. "]")
+            or ("Trigger [" .. k .. "]")
+    end
+end
+
+
+
+do
+    local gg = typeof(getgenv) == "function" and getgenv() or _G
+    gg.LemeGUIV2_OpenExitConfirm = function(refs, st, gui)
+        if not refs or not st or not gui then
+            return
+        end
+        local ex = refs.exitConfirmOverlay
+        if ex and ex.Parent then
+            return
+        end
+        local o = Instance.new("Frame")
+        o.Name = "ExitConfirmOverlay"
+        o.Size = UDim2.new(1, 0, 1, 0)
+        o.Position = UDim2.new(0, 0, 0, 0)
+        o.BackgroundColor3 = Color3.new(0, 0, 0)
+        o.BackgroundTransparency = 0.4
+        o.BorderSizePixel = 0
+        o.ZIndex = 2000
+        o.Parent = gui
+        refs.exitConfirmOverlay = o
+        local i = Instance.new("Frame")
+        i.Size = UDim2.new(0, 340, 0, 150)
+        i.AnchorPoint = Vector2.new(0.5, 0.5)
+        i.Position = UDim2.new(0.5, 0, 0.5, 0)
+        i.BackgroundColor3 = refs.main.BackgroundColor3
+        i.BackgroundTransparency = refs.main.BackgroundTransparency
+        i.BorderSizePixel = 0
+        i.ZIndex = 2001
+        i.Parent = o
+        local ic = Instance.new("UICorner")
+        ic.CornerRadius = UDim.new(0, 10)
+        ic.Parent = i
+        local msg = Instance.new("TextLabel")
+        msg.BackgroundTransparency = 1
+        msg.BorderSizePixel = 0
+        msg.Size = UDim2.new(1, -20, 0, 60)
+        msg.Position = UDim2.new(0, 10, 0, 18)
+        msg.Font = Enum.Font.Code
+        msg.TextColor3 = Color3.new(1, 1, 1)
+        msg.TextSize = 16
+        msg.TextWrapped = true
+        msg.ZIndex = 2002
+        msg.Text = st.language == "jp" and "本当に退出しますか？" or "Are you sure you want to exit?"
+        msg.Parent = i
+        local y = Instance.new("TextButton")
+        y.Size = UDim2.new(0, 150, 0, 36)
+        y.Position = UDim2.new(0.5, -160, 0, 92)
+        y.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        y.BackgroundTransparency = 0.1
+        y.BorderSizePixel = 0
+        y.Font = Enum.Font.Code
+        y.TextColor3 = Color3.new(1, 1, 1)
+        y.TextSize = 16
+        y.AutoButtonColor = false
+        y.ZIndex = 2003
+        y.Text = st.language == "jp" and "はい" or "Yes"
+        y.Parent = i
+        local yc = Instance.new("UICorner")
+        yc.CornerRadius = UDim.new(0, 8)
+        yc.Parent = y
+        local n = Instance.new("TextButton")
+        n.Size = UDim2.new(0, 150, 0, 36)
+        n.Position = UDim2.new(0.5, 10, 0, 92)
+        n.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        n.BackgroundTransparency = 0.1
+        n.BorderSizePixel = 0
+        n.Font = Enum.Font.Code
+        n.TextColor3 = Color3.new(1, 1, 1)
+        n.TextSize = 16
+        n.AutoButtonColor = false
+        n.ZIndex = 2003
+        n.Text = st.language == "jp" and "いいえ" or "No"
+        n.Parent = i
+        local nc = Instance.new("UICorner")
+        nc.CornerRadius = UDim.new(0, 8)
+        nc.Parent = n
+        n.Activated:Connect(function()
+            local r = refs.exitConfirmOverlay
+            if r then
+                r:Destroy()
+                refs.exitConfirmOverlay = nil
+            end
+        end)
+        y.Activated:Connect(function()
+            local r = refs.exitConfirmOverlay
+            if r then
+                r:Destroy()
+                refs.exitConfirmOverlay = nil
+            end
+            pcall(function()
+                game:Shutdown()
+            end)
+        end)
+    end
+end
+
+
 local function Start()
     if g.LemeGUIV2 and type(g.LemeGUIV2) == "table" and type(g.LemeGUIV2.D) == "function" then
         pcall(g.LemeGUIV2.D)
@@ -836,13 +950,14 @@ local function Start()
     refs.teleportGroup = createGroup("Teleport", "テレポート", 17, "Teleport")
     refs.resetCamGroup = createGroup("Reset Camera", "カメラ初期化", 18, "ResetCamera")
     refs.bodyTransGroup = createGroup("Body Transparency", "体の透明度", 19, "BodyTransparency")
+    refs.exitGroup = createGroup("Exit", "退出", 98, "Exit")
     refs.scriptGroup = createGroup("Script", "スクリプト", 99, "Script")
 
     createButton(refs.flyGroup, "Fly", "飛行", 1, "flyBtn", true)
     createButton(refs.flyGroup, "Hover", "ホバリング", 2, "hoverBtn", true)
     createButton(refs.flyGroup, "Velocity", "ベクトル", 3, "velBtn", true)
     createLabeledInput(refs.flyGroup, "Speed", "速度", 4, initFlySpeedStr, "flySpeedInput")
-    createButton(refs.flyGroup, "Smart Fly", "スマート飛行", 5, "smartFlyBtn", true)
+    createButton(refs.flyGroup, "Quick Fly", "クイック飛行", 5, "smartFlyBtn", true)
     createButton(refs.flyGroup, "Trigger", "トリガーキー", 6, "smartFlyTrigBtn", false)
 
     createButton(refs.flyGroup, "Sit Fly", "座る", 7, "sitFlyBtn", true)
@@ -864,8 +979,12 @@ local function Start()
     createButton(refs.humanoidGroup, "No clip", "すり抜け", 3, "noclipBtn", true)
     createButton(refs.humanoidGroup, "Fly Jump", "無限ジャンプ", 4, "flyJumpBtn", true)
     createButton(refs.humanoidGroup, "Anchor", "体を固定", 5, "anchorBtn", true)
-    createButton(refs.humanoidGroup, "Smart Reset", "スマートリセット", 6, "smartResetBtn", true)
+    createButton(refs.humanoidGroup, "Quick Reset", "クイックリセット", 6, "smartResetBtn", true)
     createButton(refs.humanoidGroup, "Trigger", "トリガーキー", 7, "smartResetTrigBtn", false)
+
+    createButton(refs.exitGroup, "Quick Exit", "クイック退出", 1, "quickExitBtn", true)
+    createButton(refs.exitGroup, "Trigger", "トリガーキー", 2, "quickExitTrigBtn", false)
+    createButton(refs.exitGroup, "Exit", "退出", 3, "exitBtn", false)
 
     createButton(refs.otherGroup, "Rejoin", "再参加", 1, "rejoinBtn", false)
     createButton(refs.otherGroup, "ESP", "ESP", 2, "espBtn", true)
@@ -955,8 +1074,7 @@ createButton(refs.shaderGroup, "Snow", "雪", 2, "snowBtn", true)
     refs.toggle.AutoButtonColor = false
     refs.toggle.ZIndex = 20
     refs.toggle.Parent = gui
-
-    refs.main.Visible = false
+refs.main.Visible = false
     refs.toggle.Visible = false
 
     local toggleCorner = Instance.new("UICorner")
@@ -1106,6 +1224,9 @@ snowFogSaved = nil,
         smartResetOn = false,
         smartResetKey = Enum.KeyCode.R,
         smartResetWaitingKey = false,
+        quickExitOn = false,
+        quickExitKey = Enum.KeyCode.P,
+        quickExitWaitingKey = false,
         chatOn = true,
         tpPos = nil,
         noMaxZoomOn = false,
@@ -1368,6 +1489,9 @@ local hoverAlign, hoverOri, hoverAtt, hoverOriAtt
     end
 
     local function applyLanguage()
+            if type(g.LemeGUIV2_UpdQuickExitTrig) == "function" then
+                g.LemeGUIV2_UpdQuickExitTrig(refs, st)
+            end
         for _, lbl in ipairs(allGroupLabels) do
             local en = lbl:GetAttribute("TextEn")
             local jp = lbl:GetAttribute("TextJp") or en
@@ -4544,6 +4668,9 @@ refs.snowBtn.Activated:Connect(function()
         refs.tpWalkSpeedInput.Text = pf .. tostring(st.tpSpeed)
     end)
 
+
+    
+
     refs.smartFlyBtn.Activated:Connect(function()
         if destroyed then
             return
@@ -4595,6 +4722,41 @@ refs.snowBtn.Activated:Connect(function()
             or ("Trigger [" .. kName .. "] ...")
     end
     refs.smartResetTrigBtn.Activated:Connect(api.buttonActions["smartResetTrigBtn"])
+
+    refs.quickExitBtn.Activated:Connect(function()
+        if destroyed then
+            return
+        end
+        if not isPC then
+            return
+        end
+        st.quickExitOn = not st.quickExitOn
+        setToggleText(refs.quickExitBtn, st.quickExitOn)
+    end)
+
+    api.buttonActions["quickExitTrigBtn"] = function()
+        if destroyed then
+            return
+        end
+        if not isPC then
+            return
+        end
+        st.quickExitWaitingKey = true
+        if type(g.LemeGUIV2_UpdQuickExitTrig) == "function" then
+            g.LemeGUIV2_UpdQuickExitTrig(refs, st)
+            refs.quickExitTrigBtn.Text = refs.quickExitTrigBtn.Text .. " ..."
+        end
+    end
+    refs.quickExitTrigBtn.Activated:Connect(api.buttonActions["quickExitTrigBtn"])
+
+    refs.exitBtn.Activated:Connect(function()
+        if destroyed then
+            return
+        end
+        if type(g.LemeGUIV2_OpenExitConfirm) == "function" then
+            g.LemeGUIV2_OpenExitConfirm(refs, st, gui)
+        end
+    end)
 
     api.buttonActions["resetCamBtn"] = function()
         if destroyed then
@@ -5170,15 +5332,18 @@ refs.snowBtn.Activated:Connect(function()
             return
         end
 
+
         if input.UserInputType == Enum.UserInputType.Keyboard and isPC then
             if st.smartFlyWaitingKey then
                 st.smartFlyWaitingKey = false
                 if input.KeyCode and input.KeyCode ~= Enum.KeyCode.Unknown then
                     st.smartFlyKey = input.KeyCode
                 end
+                local noneStr = st.language == "jp" and "なし" or "None"
+                local kName = st.smartFlyKey and st.smartFlyKey.Name or noneStr
                 refs.smartFlyTrigBtn.Text = st.language == "jp"
-                    and ("トリガーキー [" .. (st.smartFlyKey and st.smartFlyKey.Name or (st.language == "jp" and "なし" or "None")) .. "]")
-                    or ("Trigger [" .. (st.smartFlyKey and st.smartFlyKey.Name or (st.language == "jp" and "なし" or "None")) .. "]")
+                    and ("トリガーキー [" .. kName .. "]")
+                    or ("Trigger [" .. kName .. "]")
                 return
             end
             if st.smartResetWaitingKey then
@@ -5186,12 +5351,25 @@ refs.snowBtn.Activated:Connect(function()
                 if input.KeyCode and input.KeyCode ~= Enum.KeyCode.Unknown then
                     st.smartResetKey = input.KeyCode
                 end
+                local noneStr = st.language == "jp" and "なし" or "None"
+                local kName = st.smartResetKey and st.smartResetKey.Name or noneStr
                 refs.smartResetTrigBtn.Text = st.language == "jp"
-                    and ("トリガーキー [" .. (st.smartResetKey and st.smartResetKey.Name or (st.language == "jp" and "なし" or "None")) .. "]")
-                    or ("Trigger [" .. (st.smartResetKey and st.smartResetKey.Name or (st.language == "jp" and "なし" or "None")) .. "]")
+                    and ("トリガーキー [" .. kName .. "]")
+                    or ("Trigger [" .. kName .. "]")
+                return
+            end
+            if st.quickExitWaitingKey then
+                st.quickExitWaitingKey = false
+                if input.KeyCode and input.KeyCode ~= Enum.KeyCode.Unknown then
+                    st.quickExitKey = input.KeyCode
+                end
+                if type(g.LemeGUIV2_UpdQuickExitTrig) == "function" then
+                    g.LemeGUIV2_UpdQuickExitTrig(refs, st)
+                end
                 return
             end
         end
+
 
         local kc = input.KeyCode
         local isMove = (kc == Enum.KeyCode.W or kc == Enum.KeyCode.A or kc == Enum.KeyCode.S or kc == Enum.KeyCode.D or kc == Enum.KeyCode.Q or kc == Enum.KeyCode.E)
@@ -5227,6 +5405,11 @@ refs.snowBtn.Activated:Connect(function()
             end
             if st.smartResetOn and kc == st.smartResetKey then
                 killSelf()
+            end
+            if st.quickExitOn and kc == st.quickExitKey then
+                pcall(function()
+                    game:Shutdown()
+                end)
             end
         end
     end)
@@ -5264,6 +5447,10 @@ refs.snowBtn.Activated:Connect(function()
     updFlingTargetDisplay()
     updLanguageBtn()
     applyLanguage()
+    if type(g.LemeGUIV2_UpdQuickExitTrig) == "function" then
+        g.LemeGUIV2_UpdQuickExitTrig(refs, st)
+    end
+    setToggleText(refs.quickExitBtn, st.quickExitOn)
 
     function C.D()
         if destroyed then
