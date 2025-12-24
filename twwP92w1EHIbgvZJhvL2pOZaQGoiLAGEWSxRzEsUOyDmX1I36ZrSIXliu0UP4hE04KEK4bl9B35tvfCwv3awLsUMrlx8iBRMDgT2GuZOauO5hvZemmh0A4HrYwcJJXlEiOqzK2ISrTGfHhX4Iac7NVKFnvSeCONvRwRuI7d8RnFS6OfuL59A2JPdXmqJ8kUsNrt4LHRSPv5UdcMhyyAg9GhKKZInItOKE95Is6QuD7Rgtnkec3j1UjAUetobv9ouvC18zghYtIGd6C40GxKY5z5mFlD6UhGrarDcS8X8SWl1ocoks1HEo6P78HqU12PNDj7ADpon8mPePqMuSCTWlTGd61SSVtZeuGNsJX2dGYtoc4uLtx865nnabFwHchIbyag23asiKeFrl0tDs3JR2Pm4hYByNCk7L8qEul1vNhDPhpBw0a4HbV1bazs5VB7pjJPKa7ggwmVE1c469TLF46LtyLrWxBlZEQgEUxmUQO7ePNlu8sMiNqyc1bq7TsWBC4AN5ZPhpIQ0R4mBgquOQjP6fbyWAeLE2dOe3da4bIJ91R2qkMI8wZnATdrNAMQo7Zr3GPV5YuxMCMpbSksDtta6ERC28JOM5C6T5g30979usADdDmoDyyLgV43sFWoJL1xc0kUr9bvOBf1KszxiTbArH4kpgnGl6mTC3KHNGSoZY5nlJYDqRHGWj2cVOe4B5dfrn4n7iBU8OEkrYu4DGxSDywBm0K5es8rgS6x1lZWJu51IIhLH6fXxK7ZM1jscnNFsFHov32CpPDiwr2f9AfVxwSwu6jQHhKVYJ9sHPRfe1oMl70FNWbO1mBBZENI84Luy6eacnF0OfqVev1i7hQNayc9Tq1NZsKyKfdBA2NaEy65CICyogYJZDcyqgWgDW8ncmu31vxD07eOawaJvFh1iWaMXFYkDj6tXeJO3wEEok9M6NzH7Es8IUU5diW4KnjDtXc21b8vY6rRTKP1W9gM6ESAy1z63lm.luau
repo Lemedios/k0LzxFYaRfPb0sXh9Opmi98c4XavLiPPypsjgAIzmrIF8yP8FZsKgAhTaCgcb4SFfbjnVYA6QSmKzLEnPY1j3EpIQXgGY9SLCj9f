@@ -90,6 +90,7 @@ do
         end
         if st then
             st.autoAntiMask = m
+            st.autoAntiDirty = true
         end
         gg.LemeGUIV2_AutoAntiSave(m)
         gg.LemeGUIV2_AutoAntiRefreshUI(refs, st)
@@ -1148,6 +1149,7 @@ snowFogSaved = nil,
 
     if type(g.LemeGUIV2_AutoAntiLoad) == "function" then
         st.autoAntiMask = g.LemeGUIV2_AutoAntiLoad()
+        st.autoAntiDirty = true
     end
 
     if type(g.LemeGUIV2_SnowCloudyInit) == "function" then
@@ -3782,8 +3784,9 @@ if st.fullBrightLoopOn then
         if destroyed then
             return
         end
-        local am = st.autoAntiMask
-        if am and am ~= 0 then
+        if st.autoAntiDirty then
+            st.autoAntiDirty = false
+            local am = st.autoAntiMask or 0
             if bit32.band(am, 1) ~= 0 and not st.antiVoidOn then
                 toggleAntiVoid()
             end
