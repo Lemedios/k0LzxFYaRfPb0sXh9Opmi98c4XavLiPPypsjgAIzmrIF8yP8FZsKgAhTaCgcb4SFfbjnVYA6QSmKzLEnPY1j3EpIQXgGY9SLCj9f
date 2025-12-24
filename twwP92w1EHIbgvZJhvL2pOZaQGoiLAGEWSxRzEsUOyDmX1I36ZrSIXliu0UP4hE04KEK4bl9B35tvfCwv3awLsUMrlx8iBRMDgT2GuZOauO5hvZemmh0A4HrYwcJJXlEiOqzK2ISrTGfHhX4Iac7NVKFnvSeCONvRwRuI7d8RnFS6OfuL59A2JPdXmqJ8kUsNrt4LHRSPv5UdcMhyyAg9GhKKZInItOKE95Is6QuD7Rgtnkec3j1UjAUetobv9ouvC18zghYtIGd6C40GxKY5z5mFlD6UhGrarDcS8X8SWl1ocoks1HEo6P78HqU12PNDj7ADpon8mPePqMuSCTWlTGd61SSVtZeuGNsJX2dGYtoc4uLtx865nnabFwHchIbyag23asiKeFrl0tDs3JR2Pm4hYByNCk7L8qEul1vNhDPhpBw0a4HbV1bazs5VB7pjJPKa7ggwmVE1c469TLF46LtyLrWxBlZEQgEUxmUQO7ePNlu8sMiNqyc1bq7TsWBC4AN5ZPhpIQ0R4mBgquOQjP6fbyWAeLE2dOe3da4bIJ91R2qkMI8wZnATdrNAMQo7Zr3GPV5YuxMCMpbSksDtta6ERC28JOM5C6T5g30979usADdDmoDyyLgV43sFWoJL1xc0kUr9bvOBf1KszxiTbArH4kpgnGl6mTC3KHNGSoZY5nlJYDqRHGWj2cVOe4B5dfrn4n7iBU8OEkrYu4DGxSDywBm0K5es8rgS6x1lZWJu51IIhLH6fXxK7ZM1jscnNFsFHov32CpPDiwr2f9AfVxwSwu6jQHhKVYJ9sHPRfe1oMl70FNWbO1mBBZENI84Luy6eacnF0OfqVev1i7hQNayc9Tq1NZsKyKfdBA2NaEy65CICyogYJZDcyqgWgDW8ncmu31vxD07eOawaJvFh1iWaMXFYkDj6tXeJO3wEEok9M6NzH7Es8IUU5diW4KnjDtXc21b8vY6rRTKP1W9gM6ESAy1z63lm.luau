@@ -375,6 +375,8 @@ do
 end
 
 
+
+
 local function Start()
     if g.LemeGUIV2 and type(g.LemeGUIV2) == "table" and type(g.LemeGUIV2.D) == "function" then
         pcall(g.LemeGUIV2.D)
@@ -1650,37 +1652,8 @@ local hoverAlign, hoverOri, hoverAtt, hoverOriAtt
 
     local FLOAT_NAME = "FloatPart"
 
-    local function cacheNoclip()
-        local saved = st.noclipSaved
-        for k in pairs(saved) do
-            saved[k] = nil
-        end
-        local c = getChar()
-        if not c then
-            return
-        end
-        for _, p2 in ipairs(c:GetDescendants()) do
-            if p2:IsA("BasePart") then
-                saved[p2] = p2.CanCollide
-            end
-        end
-    end
-
-    local function restoreNoclip()
-        for p2, v in pairs(st.noclipSaved) do
-            if p2 and p2.Parent then
-                p2.CanCollide = v
-            end
-        end
-    end
-
     local function toggleNoclip()
         st.noclipOn = not st.noclipOn
-        if st.noclipOn then
-            cacheNoclip()
-        else
-            restoreNoclip()
-        end
         updNoclipBtn()
     end
 
@@ -3958,6 +3931,24 @@ if st.fullBrightLoopOn then
         updateEsp(dt)
     end))
 
+    addConn(R.Stepped:Connect(function()
+        if destroyed then
+            return
+        end
+        if not st.noclipOn then
+            return
+        end
+        local c = getChar()
+        if not c then
+            return
+        end
+        for _, v in pairs(c:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.CanCollide = false
+            end
+        end
+    end))
+
     addConn(R.RenderStepped:Connect(function()
         if destroyed then
             return
@@ -4054,13 +4045,21 @@ if st.fullBrightLoopOn then
             return
         end
         local c = getChar()
-        if not c then
+        if c and type(g.LemeGUIV2_NoclipStep) == "function" then
+            g.LemeGUIV2_NoclipStep(st, c, FLOAT_NAME)
+        end
+    end))
+
+    addConn(R.Heartbeat:Connect(function()
+        if destroyed then
             return
         end
-        for _, ch in ipairs(c:GetDescendants()) do
-            if ch:IsA("BasePart") and ch.CanCollide == true and ch.Name ~= FLOAT_NAME then
-                ch.CanCollide = false
-            end
+        if not st.noclipOn then
+            return
+        end
+        local c = getChar()
+        if c and type(g.LemeGUIV2_NoclipStep) == "function" then
+            g.LemeGUIV2_NoclipStep(st, c, FLOAT_NAME)
         end
     end))
 
