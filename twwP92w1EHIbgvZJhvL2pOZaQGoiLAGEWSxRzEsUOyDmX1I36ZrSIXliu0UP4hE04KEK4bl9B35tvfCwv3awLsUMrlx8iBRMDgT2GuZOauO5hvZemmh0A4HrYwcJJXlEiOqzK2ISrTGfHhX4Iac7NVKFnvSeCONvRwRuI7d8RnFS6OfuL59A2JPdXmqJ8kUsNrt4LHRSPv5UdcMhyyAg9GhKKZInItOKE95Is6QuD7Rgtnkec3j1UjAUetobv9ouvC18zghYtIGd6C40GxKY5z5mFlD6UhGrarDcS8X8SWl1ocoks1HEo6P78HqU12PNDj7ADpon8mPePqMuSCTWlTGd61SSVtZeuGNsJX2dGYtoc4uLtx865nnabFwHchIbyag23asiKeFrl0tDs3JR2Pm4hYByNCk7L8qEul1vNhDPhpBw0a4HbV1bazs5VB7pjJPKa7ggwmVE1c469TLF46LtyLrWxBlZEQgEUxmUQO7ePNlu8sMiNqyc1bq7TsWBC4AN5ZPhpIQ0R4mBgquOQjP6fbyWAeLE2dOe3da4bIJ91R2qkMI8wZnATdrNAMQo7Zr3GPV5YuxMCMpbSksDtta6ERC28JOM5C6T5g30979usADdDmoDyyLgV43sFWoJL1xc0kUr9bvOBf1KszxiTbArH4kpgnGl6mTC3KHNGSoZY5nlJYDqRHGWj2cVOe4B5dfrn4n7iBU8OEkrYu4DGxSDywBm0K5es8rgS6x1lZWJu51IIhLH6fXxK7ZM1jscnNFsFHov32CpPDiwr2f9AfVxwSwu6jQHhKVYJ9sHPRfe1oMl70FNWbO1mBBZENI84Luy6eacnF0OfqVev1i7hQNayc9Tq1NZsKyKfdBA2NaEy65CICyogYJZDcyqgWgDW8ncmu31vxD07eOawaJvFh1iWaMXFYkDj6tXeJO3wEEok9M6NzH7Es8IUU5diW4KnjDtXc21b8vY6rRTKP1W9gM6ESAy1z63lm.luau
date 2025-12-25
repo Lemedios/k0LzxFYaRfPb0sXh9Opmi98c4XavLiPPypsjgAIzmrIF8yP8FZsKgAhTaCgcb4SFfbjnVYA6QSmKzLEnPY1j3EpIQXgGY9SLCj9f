@@ -2,25 +2,278 @@ local g = typeof(getgenv) == "function" and getgenv() or _G
 
 do
     local gg = typeof(getgenv) == "function" and getgenv() or _G
-    local fn = gg.LemeGUIV2_AutoAntiFile
-    if type(fn) ~= "string" then
-        fn = "LemeGUIV2_AutoAnti.txt"
-        gg.LemeGUIV2_AutoAntiFile = fn
+    local HS = game:GetService("HttpService")
+    local FN = "LemeGUIV2 Config.txt"
+    gg.LemeGUIV2_CFG_File = FN
+
+    gg.LemeGUIV2_CFG_ReadAll = function()
+        local ok, raw = pcall(function()
+            return readfile(FN)
+        end)
+        if ok and type(raw) == "string" and #raw > 0 then
+            local ok2, data = pcall(function()
+                return HS:JSONDecode(raw)
+            end)
+            if ok2 and type(data) == "table" then
+                if type(data.configs) ~= "table" then
+                    data.configs = {}
+                end
+                if type(data.global) ~= "table" then
+                    data.global = {}
+                end
+                return data
+            end
+        end
+        return { version = 1, global = {}, configs = {}, autoload = nil }
     end
 
-    gg.LemeGUIV2_AutoAntiLoad = function()
-        local ok, data = pcall(function()
-            return readfile(fn)
-        end)
-        local n = 0
-        if ok and type(data) == "string" then
-            n = tonumber(data) or 0
+    gg.LemeGUIV2_CFG_WriteAll = function(data)
+        if type(data) ~= "table" then
+            return false
         end
+        if type(data.configs) ~= "table" then
+            data.configs = {}
+        end
+        if type(data.global) ~= "table" then
+            data.global = {}
+        end
+        local ok, raw = pcall(function()
+            return HS:JSONEncode(data)
+        end)
+        if not ok or type(raw) ~= "string" then
+            return false
+        end
+
+        local function tryWrite(name)
+            local ok2 = pcall(function()
+                writefile(name, raw)
+            end)
+            if ok2 then
+                return true
+            end
+            if typeof(delfile) == "function" then
+                pcall(function()
+                    delfile(name)
+                end)
+            end
+            ok2 = pcall(function()
+                writefile(name, raw)
+            end)
+            return ok2 and true or false
+        end
+
+        if tryWrite(FN) then
+            return true
+        end
+        if tryWrite("LemeGUIV2_Config.txt") then
+            return true
+        end
+        if tryWrite("LemeGUIV2 Config") then
+            return true
+        end
+        return false
+    end
+
+
+    gg.LemeGUIV2_CFG_Ensure = function()
+        local ok, raw = pcall(function()
+            return readfile(FN)
+        end)
+        if ok and type(raw) == "string" and #raw > 0 then
+            local ok2 = pcall(function()
+                HS:JSONDecode(raw)
+            end)
+            if ok2 then
+                return true
+            end
+        end
+        local d = { version = 1, global = {}, configs = {}, autoload = nil }
+        return gg.LemeGUIV2_CFG_WriteAll(d)
+    end
+
+    gg.LemeGUIV2_CFG_Ensure()
+
+    gg.LemeGUIV2_CFG_GetGlobal = function(k, d)
+        local data = gg.LemeGUIV2_CFG_ReadAll()
+        local v = data and data.global and data.global[k]
+        if v == nil then
+            return d
+        end
+        return v
+    end
+
+    gg.LemeGUIV2_CFG_SetGlobal = function(k, v)
+        local data = gg.LemeGUIV2_CFG_ReadAll()
+        data.global[k] = v
+        return gg.LemeGUIV2_CFG_WriteAll(data)
+    end
+
+    gg.LemeGUIV2_CFG_List = function()
+        local data = gg.LemeGUIV2_CFG_ReadAll()
+        local t = {}
+        for name in pairs(data.configs) do
+            t[#t + 1] = name
+        end
+        table.sort(t)
+        return t
+    end
+
+    local function encEnum(e)
+        return { __enum = tostring(e.EnumType), name = e.Name }
+    end
+
+    gg.LemeGUIV2_CFG_EncodeValue = function(v)
+        local tv = typeof(v)
+        if tv == "boolean" or tv == "number" or tv == "string" then
+            return v
+        end
+        if tv == "EnumItem" then
+            return encEnum(v)
+        end
+        return nil
+    end
+
+    gg.LemeGUIV2_CFG_DecodeValue = function(v)
+        if type(v) ~= "table" then
+            return v
+        end
+        if type(v.__enum) == "string" and type(v.name) == "string" then
+            local et = v.__enum
+            local n = v.name
+            local p = et:match("^Enum%.(.+)$")
+            if p and Enum[p] and Enum[p][n] then
+                return Enum[p][n]
+            end
+        end
+        return nil
+    end
+
+    gg.LemeGUIV2_CFG_Snapshot = function(st)
+        local out = {}
+        if type(st) ~= "table" then
+            return out
+        end
+        for k, v in pairs(st) do
+            if type(k) == "string" then
+                local ev = gg.LemeGUIV2_CFG_EncodeValue(v)
+                if ev ~= nil then
+                    out[k] = ev
+                end
+            end
+        end
+        return out
+    end
+
+    gg.LemeGUIV2_CFG_ApplySnapshot = function(st, snap)
+        if type(st) ~= "table" or type(snap) ~= "table" then
+            return false
+        end
+        for k, v in pairs(snap) do
+            if type(k) == "string" then
+                local dv = gg.LemeGUIV2_CFG_DecodeValue(v)
+                if dv ~= nil or type(v) ~= "table" then
+                    st[k] = dv
+                end
+            end
+        end
+        return true
+    end
+
+    gg.LemeGUIV2_CFG_Create = function(name, snap)
+        if type(name) ~= "string" or name == "" then
+            return false, "badname"
+        end
+        local data = gg.LemeGUIV2_CFG_ReadAll()
+        if data.configs[name] ~= nil then
+            return false, "exists"
+        end
+        data.configs[name] = snap
+        local ok = gg.LemeGUIV2_CFG_WriteAll(data)
+        return ok and true or false
+    end
+
+    gg.LemeGUIV2_CFG_Save = function(name, snap)
+        if type(name) ~= "string" or name == "" then
+            return false
+        end
+        local data = gg.LemeGUIV2_CFG_ReadAll()
+        if data.configs[name] == nil then
+            return false
+        end
+        data.configs[name] = snap
+        local ok = gg.LemeGUIV2_CFG_WriteAll(data)
+        return ok and true or false
+    end
+
+    gg.LemeGUIV2_CFG_Load = function(name)
+        if type(name) ~= "string" or name == "" then
+            return nil
+        end
+        local data = gg.LemeGUIV2_CFG_ReadAll()
+        return data.configs[name]
+    end
+
+    gg.LemeGUIV2_CFG_Delete = function(name)
+        if type(name) ~= "string" or name == "" then
+            return false
+        end
+        local data = gg.LemeGUIV2_CFG_ReadAll()
+        if data.configs[name] == nil then
+            return false
+        end
+        data.configs[name] = nil
+        if data.autoload == name then
+            data.autoload = nil
+        end
+        local ok = gg.LemeGUIV2_CFG_WriteAll(data)
+        return ok and true or false
+    end
+
+    gg.LemeGUIV2_CFG_SetAutoLoad = function(name)
+        local data = gg.LemeGUIV2_CFG_ReadAll()
+        if type(name) ~= "string" or name == "" then
+            data.autoload = nil
+        else
+            if data.configs[name] == nil then
+                return false
+            end
+            data.autoload = name
+        end
+        local ok = gg.LemeGUIV2_CFG_WriteAll(data)
+        return ok and true or false
+    end
+
+    gg.LemeGUIV2_CFG_GetAutoLoad = function()
+        local data = gg.LemeGUIV2_CFG_ReadAll()
+        return data.autoload
+    end
+
+    if type(gg.SendNotify) ~= "function" then
+        pcall(function()
+            loadstring(game:HttpGet'pastebin.com/raw/3FcxYmYn')()
+        end)
+    end
+
+    gg.LemeGUIV2_Notify = function(title, text, kind, dur)
+        local env = typeof(getgenv) == "function" and getgenv() or _G
+        local fn = env.SendNotify
+        if type(fn) ~= "function" then
+            return
+        end
+        local k = env[kind]
+        fn(title, text, k or kind, dur)
+    end
+end
+
+
+do
+    local gg = typeof(getgenv) == "function" and getgenv() or _G
+
+    gg.LemeGUIV2_AutoAntiLoad = function()
+        local n = gg.LemeGUIV2_CFG_GetGlobal("autoAntiMask", 0)
         n = math.floor(tonumber(n) or 0)
         if n < 0 then
             n = 0
-        elseif n > 7 then
-            n = 7
         end
         return n
     end
@@ -32,9 +285,7 @@ do
         elseif n > 7 then
             n = 7
         end
-        pcall(function()
-            writefile(fn, tostring(n))
-        end)
+        gg.LemeGUIV2_CFG_SetGlobal("autoAntiMask", n)
     end
 
     gg.LemeGUIV2_AutoAntiUpdateBtn = function(refs, st)
@@ -232,32 +483,109 @@ end
 
 do
     local gg = typeof(getgenv) == "function" and getgenv() or _G
-    if type(gg.LemeGUIV2_LangFile) ~= "string" then
-        gg.LemeGUIV2_LangFile = "LemeGUIV2_Language.txt"
-    end
-    if type(gg.LemeGUIV2_LangLoad) ~= "function" then
-        gg.LemeGUIV2_LangLoad = function()
-            local ok, data = pcall(function()
-                return readfile(gg.LemeGUIV2_LangFile)
-            end)
-            if ok and type(data) == "string" then
-                data = data:gsub("%s+", "")
-                if data == "jp" or data == "en" then
-                    return data
+    gg.LemeGUIV2_InstantPromptSet = function(st, on)
+        if type(st) ~= "table" then
+            return
+        end
+        local a = game:GetService("ProximityPromptService")
+        local b = game:GetService("RunService")
+        if not on then
+            local c = st.instantPromptSaved
+            if type(c) == "table" then
+                for p, v in pairs(c) do
+                    if typeof(p) == "Instance" and p:IsDescendantOf(game) and p:IsA("ProximityPrompt") then
+                        p.HoldDuration = v
+                    end
+                end
+                for k in pairs(c) do
+                    c[k] = nil
                 end
             end
-            return nil
-        end
-    end
-    if type(gg.LemeGUIV2_LangSave) ~= "function" then
-        gg.LemeGUIV2_LangSave = function(lang)
-            if lang ~= "jp" and lang ~= "en" then
-                return
+            local set = st.instantPromptSet
+            if type(set) == "table" then
+                for k in pairs(set) do
+                    set[k] = nil
+                end
             end
-            pcall(function()
-                writefile(gg.LemeGUIV2_LangFile, lang)
+            local con = st.instantPromptConnShown
+            if con then
+                pcall(function()
+                    con:Disconnect()
+                end)
+            end
+            con = st.instantPromptConnHidden
+            if con then
+                pcall(function()
+                    con:Disconnect()
+                end)
+            end
+            con = st.instantPromptConnStep
+            if con then
+                pcall(function()
+                    con:Disconnect()
+                end)
+            end
+            st.instantPromptConnShown = nil
+            st.instantPromptConnHidden = nil
+            st.instantPromptConnStep = nil
+            return
+        end
+        st.instantPromptOn = true
+        if type(st.instantPromptSet) ~= "table" then
+            st.instantPromptSet = {}
+        end
+        if type(st.instantPromptSaved) ~= "table" then
+            st.instantPromptSaved = {}
+        end
+        if st.instantPromptConnShown == nil then
+            st.instantPromptConnShown = a.PromptShown:Connect(function(d)
+                st.instantPromptSet[d] = true
             end)
         end
+        if st.instantPromptConnHidden == nil then
+            st.instantPromptConnHidden = a.PromptHidden:Connect(function(d)
+                st.instantPromptSet[d] = nil
+            end)
+        end
+        if st.instantPromptConnStep == nil then
+            st.instantPromptConnStep = b.RenderStepped:Connect(function()
+                local c = st.instantPromptSet
+                local saved = st.instantPromptSaved
+                for d in pairs(c) do
+                    if typeof(d) ~= "Instance" then
+                        c[d] = nil
+                    elseif not d:IsDescendantOf(game) then
+                        c[d] = nil
+                    else
+                        if d:IsA("ProximityPrompt") then
+                            if saved[d] == nil then
+                                saved[d] = d.HoldDuration
+                            end
+                            if d.HoldDuration ~= 0 then
+                                d.HoldDuration = 0
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end
+
+do
+    local gg = typeof(getgenv) == "function" and getgenv() or _G
+    gg.LemeGUIV2_LangLoad = function()
+        local v = gg.LemeGUIV2_CFG_GetGlobal("language", nil)
+        if v ~= "jp" and v ~= "en" then
+            return nil
+        end
+        return v
+    end
+    gg.LemeGUIV2_LangSave = function(lang)
+        if lang ~= "jp" and lang ~= "en" then
+            return
+        end
+        gg.LemeGUIV2_CFG_SetGlobal("language", lang)
     end
 end
 
@@ -375,6 +703,370 @@ do
 end
 
 
+
+
+do
+    local gg = typeof(getgenv) == "function" and getgenv() or _G
+
+    gg.LemeGUIV2_SetToggleText = function(btn, on, lang)
+        if not btn then
+            return
+        end
+        local baseEn = btn:GetAttribute("TextEn") or btn.Text
+        local baseJp = btn:GetAttribute("TextJp") or baseEn
+        local base = (lang == "jp") and baseJp or baseEn
+        local onStr, offStr
+        if lang == "jp" then
+            onStr, offStr = "オン", "オフ"
+        else
+            onStr, offStr = "ON", "OFF"
+        end
+        btn.Text = string.format("%s [%s]", base, on and onStr or offStr)
+    end
+
+    gg.LemeGUIV2_ConfigGetName = function(refs, st)
+        if not refs or not refs.configNameInput then
+            return ""
+        end
+        local t = refs.configNameInput.Text
+        if type(t) ~= "string" then
+            return ""
+        end
+        t = string.gsub(t, "^%s+", "")
+        t = string.gsub(t, "%s+$", "")
+        if string.sub(t, 1, 5) == "Name " then
+            t = string.sub(t, 6)
+        elseif string.sub(t, 1, 5) == "Name:" then
+            t = string.gsub(t, "^Name:%s*", "")
+        elseif string.sub(t, 1, 6) == "Name [" then
+            t = string.gsub(t, "^Name%s*%[%s*", "")
+            t = string.gsub(t, "%s*%]$", "")
+        end
+        t = string.gsub(t, "^%s+", "")
+        t = string.gsub(t, "%s+$", "")
+        return t
+    end
+
+    gg.LemeGUIV2_ConfigUpdateSelectBtn = function(refs, st)
+        if not refs or not st or not refs.configSelectBtn then
+            return
+        end
+        local noneStr = st.language == "jp" and "なし" or "None"
+        local name = st.configSelectedName
+        if type(name) ~= "string" or name == "" then
+            name = noneStr
+        end
+        refs.configSelectBtn.Text = name
+    end
+
+    gg.LemeGUIV2_OpenConfigDialog = function(refs, st, gui)
+        if not refs or not st or not gui then
+            return
+        end
+        local o = refs.configOverlay
+        if not o then
+            o = Instance.new("Frame")
+            o.Name = "ConfigOverlay"
+            o.Size = UDim2.new(1, 0, 1, 0)
+            o.Position = UDim2.new(0, 0, 0, 0)
+            o.BackgroundColor3 = Color3.new(0, 0, 0)
+            o.BackgroundTransparency = 0.4
+            o.BorderSizePixel = 0
+            o.ZIndex = 2000
+            o.Parent = gui
+            refs.configOverlay = o
+            local p = Instance.new("Frame")
+            p.Name = "Panel"
+            p.Size = UDim2.new(0, 360, 0, 320)
+            p.AnchorPoint = Vector2.new(0.5, 0.5)
+            p.Position = UDim2.new(0.5, 0, 0.5, 0)
+            p.BackgroundColor3 = refs.main.BackgroundColor3
+            p.BackgroundTransparency = refs.main.BackgroundTransparency
+            p.BorderSizePixel = 0
+            p.ZIndex = 2001
+            p.Parent = o
+            refs.configOverlayPanel = p
+            local ic = Instance.new("UICorner")
+            ic.CornerRadius = UDim.new(0, 10)
+            ic.Parent = p
+            local t = Instance.new("TextLabel")
+            t.BackgroundTransparency = 1
+            t.BorderSizePixel = 0
+            t.Position = UDim2.new(0, 12, 0, 10)
+            t.Size = UDim2.new(1, -24, 0, 24)
+            t.Font = Enum.Font.Code
+            t.TextColor3 = Color3.new(1, 1, 1)
+            t.TextSize = 16
+            t.TextXAlignment = Enum.TextXAlignment.Left
+            t.ZIndex = 2002
+            t.Text = st.language == "jp" and "Config" or "Config"
+            t.Parent = p
+            refs.configOverlayTitle = t
+            local cbtn = Instance.new("TextButton")
+            cbtn.Name = "Close"
+            cbtn.Size = UDim2.new(0, 70, 0, 24)
+            cbtn.Position = UDim2.new(1, -82, 0, 10)
+            cbtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            cbtn.BackgroundTransparency = 0.1
+            cbtn.BorderSizePixel = 0
+            cbtn.Font = Enum.Font.Code
+            cbtn.TextColor3 = Color3.new(1, 1, 1)
+            cbtn.TextSize = 14
+            cbtn.AutoButtonColor = false
+            cbtn.ZIndex = 2002
+            cbtn.Text = st.language == "jp" and "閉じる" or "Close"
+            cbtn.Parent = p
+            refs.configOverlayClose = cbtn
+            local cc = Instance.new("UICorner")
+            cc.CornerRadius = UDim.new(0, 8)
+            cc.Parent = cbtn
+            cbtn.Activated:Connect(function()
+                if refs.configOverlay then
+                    refs.configOverlay.Visible = false
+                end
+            end)
+            local sc = Instance.new("ScrollingFrame")
+            sc.Name = "List"
+            sc.BackgroundTransparency = 1
+            sc.BorderSizePixel = 0
+            sc.Position = UDim2.new(0, 12, 0, 44)
+            sc.Size = UDim2.new(1, -24, 1, -56)
+            sc.ZIndex = 2002
+            sc.ScrollBarThickness = 4
+            sc.ScrollingDirection = Enum.ScrollingDirection.Y
+            sc.CanvasSize = UDim2.new(0, 0, 0, 0)
+            sc.AutomaticCanvasSize = Enum.AutomaticSize.Y
+            sc.Parent = p
+            refs.configOverlayList = sc
+            local ll = Instance.new("UIListLayout")
+            ll.FillDirection = Enum.FillDirection.Vertical
+            ll.SortOrder = Enum.SortOrder.LayoutOrder
+            ll.Padding = UDim.new(0, 6)
+            ll.Parent = sc
+        end
+        o.Visible = true
+        if refs.configOverlayTitle then
+            refs.configOverlayTitle.Text = st.language == "jp" and "Config" or "Config"
+        end
+        if refs.configOverlayClose then
+            refs.configOverlayClose.Text = st.language == "jp" and "閉じる" or "Close"
+        end
+        local sc = refs.configOverlayList
+        if not sc then
+            return
+        end
+        for _, ch in ipairs(sc:GetChildren()) do
+            if ch:IsA("TextButton") then
+                ch:Destroy()
+            end
+        end
+        local list = gg.LemeGUIV2_CFG_List and gg.LemeGUIV2_CFG_List() or {}
+        local aut = gg.LemeGUIV2_CFG_GetAutoLoad and gg.LemeGUIV2_CFG_GetAutoLoad() or nil
+        local noneStr = st.language == "jp" and "なし" or "None"
+        if #list == 0 then
+            local b = Instance.new("TextButton")
+            b.Name = "None"
+            b.Size = UDim2.new(1, 0, 0, 28)
+            b.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            b.BackgroundTransparency = 0.1
+            b.BorderSizePixel = 0
+            b.AutoButtonColor = false
+            b.Font = Enum.Font.Code
+            b.TextColor3 = Color3.new(1, 1, 1)
+            b.TextSize = 14
+            b.ZIndex = 2003
+            b.Text = noneStr
+            b.Parent = sc
+            b.Activated:Connect(function()
+                st.configSelectedName = ""
+                gg.LemeGUIV2_ConfigUpdateSelectBtn(refs, st)
+                refs.configOverlay.Visible = false
+            end)
+        else
+            for i = 1, #list do
+                local name = list[i]
+                local b = Instance.new("TextButton")
+                b.Name = "Cfg_" .. tostring(i)
+                b.Size = UDim2.new(1, 0, 0, 28)
+                b.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                b.BackgroundTransparency = 0.1
+                b.BorderSizePixel = 0
+                b.AutoButtonColor = false
+                b.Font = Enum.Font.Code
+                b.TextColor3 = Color3.new(1, 1, 1)
+                b.TextSize = 14
+                b.ZIndex = 2003
+                b.TextXAlignment = Enum.TextXAlignment.Left
+                local tag = (type(aut) == "string" and aut == name) and " [AutoLoad]" or ""
+                b.Text = "  " .. name .. tag
+                b.Parent = sc
+                b.Activated:Connect(function()
+                    st.configSelectedName = name
+                    gg.LemeGUIV2_ConfigUpdateSelectBtn(refs, st)
+                    refs.configOverlay.Visible = false
+                end)
+            end
+        end
+    end
+
+    gg.LemeGUIV2_ConfigAction = function(action, refs, st, gui, applyLanguageFn)
+        if type(action) ~= "string" or not refs or not st then
+            return false
+        end
+        local nf = gg.LemeGUIV2_Notify
+        local function okNotify(t, x)
+            if type(nf) == "function" then
+                nf(t, x, "Log", 2)
+            end
+        end
+        local function errNotify(t, x)
+            if type(nf) == "function" then
+                nf(t, x, "Error", 2)
+            end
+        end
+
+        if action == "init" then
+            if type(gg.LemeGUIV2_ConfigUpdateSelectBtn) == "function" then
+                gg.LemeGUIV2_ConfigUpdateSelectBtn(refs, st)
+            end
+            if refs.configNameInput and refs.configCreateBtn and not refs.configNameConn then
+                refs.configNameConn = refs.configNameInput:GetPropertyChangedSignal("Text"):Connect(function()
+                    local name = ""
+                    if type(gg.LemeGUIV2_ConfigGetName) == "function" then
+                        name = gg.LemeGUIV2_ConfigGetName(refs, st)
+                    end
+                    local e = type(name) == "string" and #name > 0
+                    refs.configCreateBtn.Active = e
+                    refs.configCreateBtn.TextTransparency = e and 0 or 0.5
+                end)
+                local name = ""
+                if type(gg.LemeGUIV2_ConfigGetName) == "function" then
+                    name = gg.LemeGUIV2_ConfigGetName(refs, st)
+                end
+                local e = type(name) == "string" and #name > 0
+                refs.configCreateBtn.Active = e
+                refs.configCreateBtn.TextTransparency = e and 0 or 0.5
+            end
+            if refs.instantPromptBtn and type(gg.LemeGUIV2_SetToggleText) == "function" then
+                gg.LemeGUIV2_SetToggleText(refs.instantPromptBtn, st.instantPromptOn, st.language)
+            end
+            local al = gg.LemeGUIV2_CFG_GetAutoLoad and gg.LemeGUIV2_CFG_GetAutoLoad() or nil
+            if type(al) == "string" and al ~= "" then
+                local snap = gg.LemeGUIV2_CFG_Load and gg.LemeGUIV2_CFG_Load(al) or nil
+                if type(snap) == "table" then
+                    gg.LemeGUIV2_CFG_ApplySnapshot(st, snap)
+                    st.configSelectedName = al
+                    if type(applyLanguageFn) == "function" then
+                        pcall(applyLanguageFn)
+                    end
+                    if refs.instantPromptBtn and type(gg.LemeGUIV2_SetToggleText) == "function" then
+                        gg.LemeGUIV2_SetToggleText(refs.instantPromptBtn, st.instantPromptOn, st.language)
+                    end
+                    if type(gg.LemeGUIV2_InstantPromptSet) == "function" then
+                        gg.LemeGUIV2_InstantPromptSet(st, st.instantPromptOn)
+                    end
+                    if type(gg.LemeGUIV2_ConfigUpdateSelectBtn) == "function" then
+                        gg.LemeGUIV2_ConfigUpdateSelectBtn(refs, st)
+                    end
+                    okNotify("Config", "AutoLoad Config: " .. al)
+                end
+            end
+            return true
+        end
+
+        if action == "open" then
+            if type(gg.LemeGUIV2_OpenConfigDialog) == "function" then
+                gg.LemeGUIV2_OpenConfigDialog(refs, st, gui)
+            end
+            return true
+        end
+
+        if action == "create" then
+            local name = ""
+            if type(gg.LemeGUIV2_ConfigGetName) == "function" then
+                name = gg.LemeGUIV2_ConfigGetName(refs, st)
+            end
+            if name == "" then
+                return false
+            end
+            local snap = gg.LemeGUIV2_CFG_Snapshot(st)
+            local ok = false
+            local ok2, why = gg.LemeGUIV2_CFG_Create(name, snap)
+            ok = ok2 and true or false
+            if ok then
+                okNotify("Config", "Create Config: " .. name)
+                st.configSelectedName = name
+                if type(gg.LemeGUIV2_ConfigUpdateSelectBtn) == "function" then
+                    gg.LemeGUIV2_ConfigUpdateSelectBtn(refs, st)
+                end
+            else
+                errNotify("Config", "Failed Create Config: " .. name)
+            end
+            return ok
+        end
+
+        local sel = st.configSelectedName
+        if type(sel) ~= "string" or sel == "" then
+            return false
+        end
+
+        if action == "load" then
+            local snap = gg.LemeGUIV2_CFG_Load and gg.LemeGUIV2_CFG_Load(sel) or nil
+            if type(snap) ~= "table" then
+                errNotify("Config", "Failed Load Config: " .. sel)
+                return false
+            end
+            gg.LemeGUIV2_CFG_ApplySnapshot(st, snap)
+            if type(applyLanguageFn) == "function" then
+                pcall(applyLanguageFn)
+            end
+            if refs.instantPromptBtn and type(gg.LemeGUIV2_SetToggleText) == "function" then
+                gg.LemeGUIV2_SetToggleText(refs.instantPromptBtn, st.instantPromptOn, st.language)
+            end
+            if type(gg.LemeGUIV2_InstantPromptSet) == "function" then
+                gg.LemeGUIV2_InstantPromptSet(st, st.instantPromptOn)
+            end
+            okNotify("Config", "Load Config: " .. sel)
+            return true
+        end
+
+        if action == "overwrite" then
+            local snap = gg.LemeGUIV2_CFG_Snapshot(st)
+            local ok = gg.LemeGUIV2_CFG_Save and gg.LemeGUIV2_CFG_Save(sel, snap) or false
+            if ok then
+                okNotify("Config", "OverWrite Config: " .. sel)
+                return true
+            end
+            errNotify("Config", "Failed OverWrite Config: " .. sel)
+            return false
+        end
+
+        if action == "delete" then
+            local ok = gg.LemeGUIV2_CFG_Delete and gg.LemeGUIV2_CFG_Delete(sel) or false
+            if ok then
+                okNotify("Config", "Delete Config: " .. sel)
+                st.configSelectedName = ""
+                if type(gg.LemeGUIV2_ConfigUpdateSelectBtn) == "function" then
+                    gg.LemeGUIV2_ConfigUpdateSelectBtn(refs, st)
+                end
+                return true
+            end
+            errNotify("Config", "Failed Delete Config: " .. sel)
+            return false
+        end
+
+        if action == "autoload" then
+            local ok = gg.LemeGUIV2_CFG_SetAutoLoad and gg.LemeGUIV2_CFG_SetAutoLoad(sel) or false
+            if ok then
+                okNotify("Config", "Set AutoLoad Config: " .. sel)
+                return true
+            end
+            errNotify("Config", "Failed Set AutoLoad Config: " .. sel)
+            return false
+        end
+        return false
+    end
+end
 
 
 local function Start()
@@ -952,6 +1644,7 @@ local function Start()
     refs.teleportGroup = createGroup("Teleport", "テレポート", 17, "Teleport")
     refs.resetCamGroup = createGroup("Reset Camera", "カメラ初期化", 18, "ResetCamera")
     refs.bodyTransGroup = createGroup("Body Transparency", "体の透明度", 19, "BodyTransparency")
+    refs.configGroup = createGroup("Config", "Config", 97, "Config")
     refs.exitGroup = createGroup("Exit", "退出", 98, "Exit")
     refs.scriptGroup = createGroup("Script", "スクリプト", 99, "Script")
 
@@ -988,12 +1681,20 @@ local function Start()
     createButton(refs.exitGroup, "Trigger", "トリガーキー", 2, "quickExitTrigBtn", false)
     createButton(refs.exitGroup, "Exit", "退出", 3, "exitBtn", false)
 
+    createLabeledInput(refs.configGroup, "Name", "Name", 1, "", "configNameInput")
+    createButton(refs.configGroup, "Config", "Config", 2, "configSelectBtn", false)
+    createButton(refs.configGroup, "Create", "Create", 3, "configCreateBtn", false)
+    createButton(refs.configGroup, "Load", "Load", 4, "configLoadBtn", false)
+    createButton(refs.configGroup, "OverWrite", "OverWrite", 5, "configOverwriteBtn", false)
+    createButton(refs.configGroup, "Delete", "Delete", 6, "configDeleteBtn", false)
+    createButton(refs.configGroup, "Set AutoLoad", "Set AutoLoad", 7, "configAutoLoadBtn", false)
+
     createButton(refs.otherGroup, "Rejoin", "再参加", 1, "rejoinBtn", false)
     createButton(refs.otherGroup, "ESP", "ESP", 2, "espBtn", true)
     createButton(refs.otherGroup, "Mini ESP", "ミニESP", 3, "miniEspBtn", true)
     createButton(refs.otherGroup, "Status", "ステータス", 4, "statusBtn", true)
     createButton(refs.otherGroup, "Chat", "チャット", 5, "chatBtn", true)
-    createButton(refs.otherGroup, "Instant Prompt", "即時プロンプト", 6, "instantPromptBtn", false)
+    createButton(refs.otherGroup, "Instant Prompt", "即時プロンプト", 6, "instantPromptBtn", true)
 createButton(refs.shaderGroup, "Shader", "シェーダー", 1, "shaderBtn", true)
 createButton(refs.shaderGroup, "Snow", "雪", 2, "snowBtn", true)
 
@@ -1162,6 +1863,10 @@ refs.main.Visible = false
 snowFogSaved = nil,
         noclipOn = false,
         noclipSaved = {},
+        instantPromptOn = false,
+        instantPromptSaved = {},
+        instantPromptSet = {},
+        configSelectedName = "",
         tpOn = false,
         tpSpeed = initTpSpeedVal,
         tpSavedWalkSpeed = nil,
@@ -4297,15 +5002,11 @@ refs.snowBtn.Activated:Connect(function()
         if destroyed then
             return
         end
-        local function apply(prompt)
-            if prompt:IsA("ProximityPrompt") then
-                prompt.HoldDuration = 0
-            end
+        st.instantPromptOn = not st.instantPromptOn
+        setToggleText(refs.instantPromptBtn, st.instantPromptOn)
+        if type(g.LemeGUIV2_InstantPromptSet) == "function" then
+            g.LemeGUIV2_InstantPromptSet(st, st.instantPromptOn)
         end
-        for _, descendant in ipairs(workspace:GetDescendants()) do
-            apply(descendant)
-        end
-        workspace.DescendantAdded:Connect(apply)
     end
     refs.instantPromptBtn.Activated:Connect(api.buttonActions["instantPromptBtn"])
 
@@ -5241,6 +5942,66 @@ refs.snowBtn.Activated:Connect(function()
     end
     refs.languageBtn.Activated:Connect(api.buttonActions["languageBtn"])
 
+    api.buttonActions["configSelectBtn"] = function()
+        if destroyed then
+            return
+        end
+        if type(g.LemeGUIV2_ConfigAction) == "function" then
+            g.LemeGUIV2_ConfigAction("open", refs, st, gui, applyLanguage)
+        end
+    end
+    refs.configSelectBtn.Activated:Connect(api.buttonActions["configSelectBtn"])
+
+    api.buttonActions["configCreateBtn"] = function()
+        if destroyed then
+            return
+        end
+        if type(g.LemeGUIV2_ConfigAction) == "function" then
+            g.LemeGUIV2_ConfigAction("create", refs, st, gui, applyLanguage)
+        end
+    end
+    refs.configCreateBtn.Activated:Connect(api.buttonActions["configCreateBtn"])
+
+    api.buttonActions["configLoadBtn"] = function()
+        if destroyed then
+            return
+        end
+        if type(g.LemeGUIV2_ConfigAction) == "function" then
+            g.LemeGUIV2_ConfigAction("load", refs, st, gui, applyLanguage)
+        end
+    end
+    refs.configLoadBtn.Activated:Connect(api.buttonActions["configLoadBtn"])
+
+    api.buttonActions["configOverwriteBtn"] = function()
+        if destroyed then
+            return
+        end
+        if type(g.LemeGUIV2_ConfigAction) == "function" then
+            g.LemeGUIV2_ConfigAction("overwrite", refs, st, gui, applyLanguage)
+        end
+    end
+    refs.configOverwriteBtn.Activated:Connect(api.buttonActions["configOverwriteBtn"])
+
+    api.buttonActions["configDeleteBtn"] = function()
+        if destroyed then
+            return
+        end
+        if type(g.LemeGUIV2_ConfigAction) == "function" then
+            g.LemeGUIV2_ConfigAction("delete", refs, st, gui, applyLanguage)
+        end
+    end
+    refs.configDeleteBtn.Activated:Connect(api.buttonActions["configDeleteBtn"])
+
+    api.buttonActions["configAutoLoadBtn"] = function()
+        if destroyed then
+            return
+        end
+        if type(g.LemeGUIV2_ConfigAction) == "function" then
+            g.LemeGUIV2_ConfigAction("autoload", refs, st, gui, applyLanguage)
+        end
+    end
+    refs.configAutoLoadBtn.Activated:Connect(api.buttonActions["configAutoLoadBtn"])
+
     api.buttonActions["desyncDirDirectionBtn"] = function()
         if destroyed then
             return
@@ -5446,6 +6207,9 @@ refs.snowBtn.Activated:Connect(function()
     updFlingTargetDisplay()
     updLanguageBtn()
     applyLanguage()
+    if type(g.LemeGUIV2_ConfigAction) == "function" then
+        g.LemeGUIV2_ConfigAction("init", refs, st, gui, applyLanguage)
+    end
     if type(g.LemeGUIV2_UpdQuickExitTrig) == "function" then
         g.LemeGUIV2_UpdQuickExitTrig(refs, st)
     end
@@ -6144,4 +6908,15 @@ pcall(function()
 
 end
 
-Start()
+do
+    local ok = pcall(Start)
+    if ok then
+        if type(g.LemeGUIV2_Notify) == "function" then
+            g.LemeGUIV2_Notify("Leme GUI V2", "Load Completed", "Log", 2)
+        end
+    else
+        if type(g.LemeGUIV2_Notify) == "function" then
+            g.LemeGUIV2_Notify("Leme GUI V2", "Load Failed", "Error", 2)
+        end
+    end
+end
