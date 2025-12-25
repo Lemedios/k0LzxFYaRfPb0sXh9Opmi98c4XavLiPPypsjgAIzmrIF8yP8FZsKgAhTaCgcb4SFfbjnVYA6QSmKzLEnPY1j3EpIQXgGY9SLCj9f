@@ -164,7 +164,52 @@ do
         return out
     end
 
-    gg.LemeGUIV2_CFG_ApplySnapshot = function(st, snap)
+    
+
+    gg.LemeGUIV2_CFG_SnapshotFull = function(st, refs)
+        local snap = gg.LemeGUIV2_CFG_Snapshot(st)
+        local inputs = {}
+        if type(refs) == "table" then
+            for k, v in pairs(refs) do
+                if type(k) == "string" and typeof(v) == "Instance" and v:IsA("TextBox") then
+                    local pf = v:GetAttribute("Prefix") or ""
+                    local tx = v.Text or ""
+                    if type(pf) == "string" and type(tx) == "string" and #pf > 0 then
+                        if tx:sub(1, #pf) == pf then
+                            inputs[k] = tx:sub(#pf + 1)
+                        else
+                            inputs[k] = tx
+                        end
+                    else
+                        inputs[k] = tx
+                    end
+                end
+            end
+        end
+        snap.inputs = inputs
+        return snap
+    end
+
+    gg.LemeGUIV2_CFG_ApplyFull = function(st, refs, snap)
+        if type(snap) ~= "table" then
+            return false
+        end
+        gg.LemeGUIV2_CFG_ApplySnapshot(st, snap)
+        if type(refs) == "table" and type(snap.inputs) == "table" then
+            for k, v in pairs(snap.inputs) do
+                local tb = refs[k]
+                if typeof(tb) == "Instance" and tb:IsA("TextBox") and type(v) == "string" then
+                    local pf = tb:GetAttribute("Prefix") or ""
+                    if type(pf) ~= "string" then
+                        pf = ""
+                    end
+                    tb.Text = pf .. v
+                end
+            end
+        end
+        return true
+    end
+gg.LemeGUIV2_CFG_ApplySnapshot = function(st, snap)
         if type(st) ~= "table" or type(snap) ~= "table" then
             return false
         end
@@ -954,11 +999,14 @@ do
             if type(al) == "string" and al ~= "" then
                 local snap = gg.LemeGUIV2_CFG_Load and gg.LemeGUIV2_CFG_Load(al) or nil
                 if type(snap) == "table" then
-                    gg.LemeGUIV2_CFG_ApplySnapshot(st, snap)
+                    gg.LemeGUIV2_CFG_ApplyFull(st, refs, snap)
                     st.configSelectedName = al
                     if type(applyLanguageFn) == "function" then
                         pcall(applyLanguageFn)
                     end
+            if type(g.LemeGUIV2_UpdQuickExitTrig) == "function" then
+                g.LemeGUIV2_UpdQuickExitTrig(refs, st)
+            end
                     if refs.instantPromptBtn and type(gg.LemeGUIV2_SetToggleText) == "function" then
                         gg.LemeGUIV2_SetToggleText(refs.instantPromptBtn, st.instantPromptOn, st.language)
                     end
@@ -989,7 +1037,7 @@ do
             if name == "" then
                 return false
             end
-            local snap = gg.LemeGUIV2_CFG_Snapshot(st)
+            local snap = gg.LemeGUIV2_CFG_SnapshotFull(st, refs)
             local ok = false
             local ok2, why = gg.LemeGUIV2_CFG_Create(name, snap)
             ok = ok2 and true or false
@@ -1016,9 +1064,12 @@ do
                 errNotify("Config", "Failed Load Config: " .. sel)
                 return false
             end
-            gg.LemeGUIV2_CFG_ApplySnapshot(st, snap)
+            gg.LemeGUIV2_CFG_ApplyFull(st, refs, snap)
             if type(applyLanguageFn) == "function" then
                 pcall(applyLanguageFn)
+            end
+            if type(g.LemeGUIV2_UpdQuickExitTrig) == "function" then
+                g.LemeGUIV2_UpdQuickExitTrig(refs, st)
             end
             if refs.instantPromptBtn and type(gg.LemeGUIV2_SetToggleText) == "function" then
                 gg.LemeGUIV2_SetToggleText(refs.instantPromptBtn, st.instantPromptOn, st.language)
@@ -1031,7 +1082,7 @@ do
         end
 
         if action == "overwrite" then
-            local snap = gg.LemeGUIV2_CFG_Snapshot(st)
+            local snap = gg.LemeGUIV2_CFG_SnapshotFull(st, refs)
             local ok = gg.LemeGUIV2_CFG_Save and gg.LemeGUIV2_CFG_Save(sel, snap) or false
             if ok then
                 okNotify("Config", "OverWrite Config: " .. sel)
@@ -1059,6 +1110,11 @@ do
             local ok = gg.LemeGUIV2_CFG_SetAutoLoad and gg.LemeGUIV2_CFG_SetAutoLoad(sel) or false
             if ok then
                 okNotify("Config", "Set AutoLoad Config: " .. sel)
+                if refs.configOverlay and refs.configOverlay.Visible then
+                    if type(gg.LemeGUIV2_OpenConfigDialog) == "function" then
+                        gg.LemeGUIV2_OpenConfigDialog(refs, st, gui)
+                    end
+                end
                 return true
             end
             errNotify("Config", "Failed Set AutoLoad Config: " .. sel)
