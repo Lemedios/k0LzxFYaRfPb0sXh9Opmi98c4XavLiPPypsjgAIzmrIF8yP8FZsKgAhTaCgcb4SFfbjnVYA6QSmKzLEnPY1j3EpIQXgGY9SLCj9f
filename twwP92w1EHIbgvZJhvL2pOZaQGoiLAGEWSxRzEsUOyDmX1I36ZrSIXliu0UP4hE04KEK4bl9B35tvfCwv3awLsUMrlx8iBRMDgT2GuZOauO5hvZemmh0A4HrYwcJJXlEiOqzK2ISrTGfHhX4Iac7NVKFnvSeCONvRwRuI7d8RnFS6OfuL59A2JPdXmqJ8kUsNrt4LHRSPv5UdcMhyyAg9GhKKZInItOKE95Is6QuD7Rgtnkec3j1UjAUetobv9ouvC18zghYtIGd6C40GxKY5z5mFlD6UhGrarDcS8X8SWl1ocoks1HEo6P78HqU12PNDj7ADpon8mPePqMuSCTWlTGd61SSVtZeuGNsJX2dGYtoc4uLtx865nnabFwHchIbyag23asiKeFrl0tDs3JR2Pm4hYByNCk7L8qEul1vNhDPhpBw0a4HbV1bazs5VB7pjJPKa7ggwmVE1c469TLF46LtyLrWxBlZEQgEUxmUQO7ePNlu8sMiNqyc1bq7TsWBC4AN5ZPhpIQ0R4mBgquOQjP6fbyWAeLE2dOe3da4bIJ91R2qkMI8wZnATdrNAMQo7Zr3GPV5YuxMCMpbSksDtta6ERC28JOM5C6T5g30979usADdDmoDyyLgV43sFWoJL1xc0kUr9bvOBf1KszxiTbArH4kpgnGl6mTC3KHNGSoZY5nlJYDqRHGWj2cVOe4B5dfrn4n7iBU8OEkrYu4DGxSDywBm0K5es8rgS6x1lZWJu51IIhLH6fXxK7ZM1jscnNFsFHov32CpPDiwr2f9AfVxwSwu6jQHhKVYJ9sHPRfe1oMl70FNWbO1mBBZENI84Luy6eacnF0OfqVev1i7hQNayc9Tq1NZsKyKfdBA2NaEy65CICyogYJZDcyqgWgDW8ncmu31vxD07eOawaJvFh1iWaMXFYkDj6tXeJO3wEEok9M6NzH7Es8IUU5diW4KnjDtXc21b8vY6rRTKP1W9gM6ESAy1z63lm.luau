@@ -1068,6 +1068,10 @@ do
             if type(applyLanguageFn) == "function" then
                 pcall(applyLanguageFn)
             end
+            st.configSelectedName = sel
+            if type(gg.LemeGUIV2_ConfigUpdateSelectBtn) == "function" then
+                gg.LemeGUIV2_ConfigUpdateSelectBtn(refs, st)
+            end
             if type(g.LemeGUIV2_UpdQuickExitTrig) == "function" then
                 g.LemeGUIV2_UpdQuickExitTrig(refs, st)
             end
