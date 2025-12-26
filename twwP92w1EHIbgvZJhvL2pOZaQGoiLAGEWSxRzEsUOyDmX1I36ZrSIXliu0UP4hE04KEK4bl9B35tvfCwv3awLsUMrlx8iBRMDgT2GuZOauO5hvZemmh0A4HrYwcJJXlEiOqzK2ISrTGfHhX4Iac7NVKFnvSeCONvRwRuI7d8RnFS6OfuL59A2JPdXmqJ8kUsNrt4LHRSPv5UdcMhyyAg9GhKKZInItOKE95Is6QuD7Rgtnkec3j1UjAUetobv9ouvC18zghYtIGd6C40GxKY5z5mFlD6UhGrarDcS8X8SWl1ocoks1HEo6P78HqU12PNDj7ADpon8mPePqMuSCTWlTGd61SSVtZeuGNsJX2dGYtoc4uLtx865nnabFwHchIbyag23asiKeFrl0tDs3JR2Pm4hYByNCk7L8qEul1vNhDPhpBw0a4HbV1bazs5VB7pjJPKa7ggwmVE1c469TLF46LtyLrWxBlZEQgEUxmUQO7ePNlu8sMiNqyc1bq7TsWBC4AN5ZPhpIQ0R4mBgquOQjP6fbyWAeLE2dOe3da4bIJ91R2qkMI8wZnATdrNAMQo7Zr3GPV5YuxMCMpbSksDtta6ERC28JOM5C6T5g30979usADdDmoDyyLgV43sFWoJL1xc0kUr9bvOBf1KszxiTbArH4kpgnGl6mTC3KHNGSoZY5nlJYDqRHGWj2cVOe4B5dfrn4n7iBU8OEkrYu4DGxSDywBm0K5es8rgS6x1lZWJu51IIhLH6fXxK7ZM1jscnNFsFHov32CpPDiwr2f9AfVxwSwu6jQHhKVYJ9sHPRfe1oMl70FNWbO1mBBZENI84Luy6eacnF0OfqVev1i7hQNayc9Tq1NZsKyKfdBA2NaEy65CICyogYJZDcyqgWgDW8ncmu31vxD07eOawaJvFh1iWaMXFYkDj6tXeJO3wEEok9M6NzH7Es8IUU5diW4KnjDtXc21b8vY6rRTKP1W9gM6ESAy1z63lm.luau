@@ -844,7 +844,7 @@ do
             t.TextSize = 16
             t.TextXAlignment = Enum.TextXAlignment.Left
             t.ZIndex = 2002
-            t.Text = st.language == "jp" and "Config" or "Config"
+            t.Text = st.language == "jp" and "設定" or "Config"
             t.Parent = p
             refs.configOverlayTitle = t
             local cbtn = Instance.new("TextButton")
@@ -891,7 +891,7 @@ do
         end
         o.Visible = true
         if refs.configOverlayTitle then
-            refs.configOverlayTitle.Text = st.language == "jp" and "Config" or "Config"
+            refs.configOverlayTitle.Text = st.language == "jp" and "設定" or "Config"
         end
         if refs.configOverlayClose then
             refs.configOverlayClose.Text = st.language == "jp" and "閉じる" or "Close"
@@ -1704,7 +1704,7 @@ local function Start()
     refs.teleportGroup = createGroup("Teleport", "テレポート", 17, "Teleport")
     refs.resetCamGroup = createGroup("Reset Camera", "カメラ初期化", 18, "ResetCamera")
     refs.bodyTransGroup = createGroup("Body Transparency", "体の透明度", 19, "BodyTransparency")
-    refs.configGroup = createGroup("Config", "Config", 97, "Config")
+    refs.configGroup = createGroup("Config", "設定", 97, "Config")
     refs.exitGroup = createGroup("Exit", "退出", 98, "Exit")
     refs.scriptGroup = createGroup("Script", "スクリプト", 99, "Script")
 
@@ -1740,15 +1740,13 @@ local function Start()
     createButton(refs.exitGroup, "Quick Exit", "クイック退出", 1, "quickExitBtn", true)
     createButton(refs.exitGroup, "Trigger", "トリガーキー", 2, "quickExitTrigBtn", false)
     createButton(refs.exitGroup, "Exit", "退出", 3, "exitBtn", false)
-
-    createLabeledInput(refs.configGroup, "Name", "Name", 1, "", "configNameInput")
-    createButton(refs.configGroup, "Config", "Config", 2, "configSelectBtn", false)
-    createButton(refs.configGroup, "Create", "Create", 3, "configCreateBtn", false)
-    createButton(refs.configGroup, "Load", "Load", 4, "configLoadBtn", false)
-    createButton(refs.configGroup, "OverWrite", "OverWrite", 5, "configOverwriteBtn", false)
-    createButton(refs.configGroup, "Delete", "Delete", 6, "configDeleteBtn", false)
-    createButton(refs.configGroup, "Set AutoLoad", "Set AutoLoad", 7, "configAutoLoadBtn", false)
-
+    createLabeledInput(refs.configGroup, "Name", "名前", 1, "", "configNameInput")
+    createButton(refs.configGroup, "Config", "設定", 2, "configSelectBtn", false)
+    createButton(refs.configGroup, "Create", "作成", 3, "configCreateBtn", false)
+    createButton(refs.configGroup, "Load", "読み込む", 4, "configLoadBtn", false)
+    createButton(refs.configGroup, "OverWrite", "上書き", 5, "configOverwriteBtn", false)
+    createButton(refs.configGroup, "Delete", "削除", 6, "configDeleteBtn", false)
+    createButton(refs.configGroup, "Set AutoLoad", "オートロードに設定", 7, "configAutoLoadBtn", false)
     createButton(refs.otherGroup, "Rejoin", "再参加", 1, "rejoinBtn", false)
     createButton(refs.otherGroup, "ESP", "ESP", 2, "espBtn", true)
     createButton(refs.otherGroup, "Mini ESP", "ミニESP", 3, "miniEspBtn", true)
@@ -2360,6 +2358,7 @@ local hoverAlign, hoverOri, hoverAtt, hoverOriAtt
         if type(g.LemeGUIV2_AutoAntiRefreshUI) == "function" then
             g.LemeGUIV2_AutoAntiRefreshUI(refs, st)
         end
+        setToggleText(refs.quickExitBtn, st.quickExitOn)
         updFlingTargetDisplay()
     end
 
@@ -2385,28 +2384,30 @@ local hoverAlign, hoverOri, hoverAtt, hoverOriAtt
     end
 
     local function setAntiAfkEnabled(on)
-        if on then
-            if antiAfkConn and antiAfkConn.Connected then
-                return
-            end
-            if not vUser then
-                return
-            end
-            antiAfkConn = lp.Idled:Connect(function()
+        if antiAfkConn then
+            pcall(function()
+                antiAfkConn:Disconnect()
+            end)
+        end
+        antiAfkConn = nil
+        st.antiAfkToken = (st.antiAfkToken or 0) + 1
+        if not on then
+            return
+        end
+        if not vUser then
+            return
+        end
+        local tok = st.antiAfkToken
+        task.spawn(function()
+            while not destroyed and st.antiAfkOn and st.antiAfkToken == tok do
                 pcall(function()
                     vUser:CaptureController()
-                    vUser:SetKeyDown(Enum.KeyCode.F15)
-                    vUser:SetKeyUp(Enum.KeyCode.F15)
+                    vUser:SetKeyDown(Enum.KeyCode.F24)
+                    vUser:SetKeyUp(Enum.KeyCode.F24)
                 end)
-            end)
-        else
-            if antiAfkConn then
-                pcall(function()
-                    antiAfkConn:Disconnect()
-                end)
+                task.wait(1)
             end
-            antiAfkConn = nil
-        end
+        end)
     end
 
     local function toggleAntiAfk()
@@ -4630,12 +4631,6 @@ if st.fullBrightLoopOn then
     if not isPC then
         if refs.smartFlyBtn then
             refs.smartFlyBtn.Visible = false
-        if refs.quickExitBtn then
-            refs.quickExitBtn.Visible = false
-        end
-        if refs.quickExitTrigBtn then
-            refs.quickExitTrigBtn.Visible = false
-        end
         end
         if refs.smartFlyTrigBtn then
             refs.smartFlyTrigBtn.Visible = false
@@ -4645,6 +4640,12 @@ if st.fullBrightLoopOn then
         end
         if refs.smartResetTrigBtn then
             refs.smartResetTrigBtn.Visible = false
+        end
+        if refs.quickExitBtn then
+            refs.quickExitBtn.Visible = false
+        end
+        if refs.quickExitTrigBtn then
+            refs.quickExitTrigBtn.Visible = false
         end
     end
 
