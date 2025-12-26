@@ -4630,6 +4630,12 @@ if st.fullBrightLoopOn then
     if not isPC then
         if refs.smartFlyBtn then
             refs.smartFlyBtn.Visible = false
+        if refs.quickExitBtn then
+            refs.quickExitBtn.Visible = false
+        end
+        if refs.quickExitTrigBtn then
+            refs.quickExitTrigBtn.Visible = false
+        end
         end
         if refs.smartFlyTrigBtn then
             refs.smartFlyTrigBtn.Visible = false
