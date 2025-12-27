@@ -1564,29 +1564,6 @@ local function v227()
     v298.title.TextXAlignment = Enum.TextXAlignment.Left
     v298.title.ZIndex = 11
     v298.title.Parent = v298.main
-    do
-        local v1100 = nil
-        if v1 and type(v1.v1102) == "function" then
-            v1100 = v1.v1102()
-        end
-        if v1100 then
-            local v1101 = Instance.new("ImageLabel")
-            v1101.BackgroundTransparency = 1
-            v1101.BorderSizePixel = 0
-            v1101.AnchorPoint = Vector2.new(1, 0)
-            v1101.Position = UDim2.new(1, -18, 0, 6)
-            v1101.Size = UDim2.new(0, 40, 0, 40)
-            v1101.Image = v1100
-            v1101.ImageTransparency = 0
-            v1101.ScaleType = Enum.ScaleType.Fit
-            pcall(function()
-                v1101.ResampleMode = Enum.ResamplerMode.Default
-            end)
-            v1101.ZIndex = 12
-            v1101.Parent = v298.main
-        end
-    end
-
 
     v298.scroll = Instance.new("ScrollingFrame")
     v298.scroll.BackgroundTransparency = 1
