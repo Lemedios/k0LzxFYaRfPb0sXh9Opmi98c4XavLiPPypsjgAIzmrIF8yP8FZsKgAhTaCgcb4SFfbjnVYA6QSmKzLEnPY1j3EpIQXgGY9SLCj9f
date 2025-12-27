@@ -58,16 +58,16 @@ local function v1094()
     v1093 = v1097
     return v1097
 end
-v1.LemeGUIV2_GetIconAsset = v1094
+v1.v1102 = v1094
 
 
 do
     local v2 = typeof(getgenv) == "function" and getgenv() or _G
     local v3 = game:GetService("HttpService")
     local v4 = "LemeGUIV2 Config.txt"
-    v2.LemeGUIV2_CFG_File = v4
+    v2.v1103 = v4
 
-    v2.LemeGUIV2_CFG_ReadAll = function()
+    v2.v1104 = function()
         local v5, v6 = pcall(function()
             return readfile(v4)
         end)
@@ -88,7 +88,7 @@ do
         return { version = 1, global = {}, configs = {}, autoload = nil }
     end
 
-    v2.LemeGUIV2_CFG_WriteAll = function(v9)
+    v2.v1105 = function(v9)
         if type(v9) ~= "table" then
             return false
         end
@@ -136,7 +136,7 @@ do
     end
 
 
-    v2.LemeGUIV2_CFG_Ensure = function()
+    v2.v1106 = function()
         local v15, v16 = pcall(function()
             return readfile(v4)
         end)
@@ -149,13 +149,13 @@ do
             end
         end
         local v18 = { version = 1, global = {}, configs = {}, autoload = nil }
-        return v2.LemeGUIV2_CFG_WriteAll(v18)
+        return v2.v1105(v18)
     end
 
-    v2.LemeGUIV2_CFG_Ensure()
+    v2.v1106()
 
-    v2.LemeGUIV2_CFG_GetGlobal = function(v19, v20)
-        local v21 = v2.LemeGUIV2_CFG_ReadAll()
+    v2.v1107 = function(v19, v20)
+        local v21 = v2.v1104()
         local v22 = v21 and v21.global and v21.global[v19]
         if v22 == nil then
             return v20
@@ -163,14 +163,14 @@ do
         return v22
     end
 
-    v2.LemeGUIV2_CFG_SetGlobal = function(v23, v24)
-        local v25 = v2.LemeGUIV2_CFG_ReadAll()
+    v2.v1108 = function(v23, v24)
+        local v25 = v2.v1104()
         v25.global[v23] = v24
-        return v2.LemeGUIV2_CFG_WriteAll(v25)
+        return v2.v1105(v25)
     end
 
-    v2.LemeGUIV2_CFG_List = function()
-        local v26 = v2.LemeGUIV2_CFG_ReadAll()
+    v2.v1109 = function()
+        local v26 = v2.v1104()
         local v27 = {}
         for v28 in pairs(v26.configs) do
             v27[#v27 + 1] = v28
@@ -183,7 +183,7 @@ do
         return { __enum = tostring(v30.EnumType), name = v30.Name }
     end
 
-    v2.LemeGUIV2_CFG_EncodeValue = function(v31)
+    v2.v1110 = function(v31)
         local v32 = typeof(v31)
         if v32 == "boolean" or v32 == "number" or v32 == "string" then
             return v31
@@ -194,7 +194,7 @@ do
         return nil
     end
 
-    v2.LemeGUIV2_CFG_DecodeValue = function(v33)
+    v2.v1111 = function(v33)
         if type(v33) ~= "table" then
             return v33
         end
@@ -209,14 +209,14 @@ do
         return nil
     end
 
-    v2.LemeGUIV2_CFG_Snapshot = function(v37)
+    v2.v1112 = function(v37)
         local v38 = {}
         if type(v37) ~= "table" then
             return v38
         end
         for v39, v40 in pairs(v37) do
             if type(v39) == "string" then
-                local v41 = v2.LemeGUIV2_CFG_EncodeValue(v40)
+                local v41 = v2.v1110(v40)
                 if v41 ~= nil then
                     v38[v39] = v41
                 end
@@ -227,8 +227,8 @@ do
 
     
 
-    v2.LemeGUIV2_CFG_SnapshotFull = function(v42, v43)
-        local v44 = v2.LemeGUIV2_CFG_Snapshot(v42)
+    v2.v1113 = function(v42, v43)
+        local v44 = v2.v1112(v42)
         local v45 = {}
         if type(v43) == "table" then
             for v46, v47 in pairs(v43) do
@@ -251,11 +251,11 @@ do
         return v44
     end
 
-    v2.LemeGUIV2_CFG_ApplyFull = function(v50, v51, v52)
+    v2.v1114 = function(v50, v51, v52)
         if type(v52) ~= "table" then
             return false
         end
-        v2.LemeGUIV2_CFG_ApplySnapshot(v50, v52)
+        v2.v1115(v50, v52)
         if type(v51) == "table" and type(v52.inputs) == "table" then
             for v53, v54 in pairs(v52.inputs) do
                 local v55 = v51[v53]
@@ -270,13 +270,13 @@ do
         end
         return true
     end
-v2.LemeGUIV2_CFG_ApplySnapshot = function(v57, v58)
+v2.v1115 = function(v57, v58)
         if type(v57) ~= "table" or type(v58) ~= "table" then
             return false
         end
         for v59, v60 in pairs(v58) do
             if type(v59) == "string" then
-                local v61 = v2.LemeGUIV2_CFG_DecodeValue(v60)
+                local v61 = v2.v1111(v60)
                 if v61 ~= nil or type(v60) ~= "table" then
                     v57[v59] = v61
                 end
@@ -285,45 +285,45 @@ v2.LemeGUIV2_CFG_ApplySnapshot = function(v57, v58)
         return true
     end
 
-    v2.LemeGUIV2_CFG_Create = function(v62, v63)
+    v2.v1116 = function(v62, v63)
         if type(v62) ~= "string" or v62 == "" then
             return false, "badname"
         end
-        local v64 = v2.LemeGUIV2_CFG_ReadAll()
+        local v64 = v2.v1104()
         if v64.configs[v62] ~= nil then
             return false, "exists"
         end
         v64.configs[v62] = v63
-        local v65 = v2.LemeGUIV2_CFG_WriteAll(v64)
+        local v65 = v2.v1105(v64)
         return v65 and true or false
     end
 
-    v2.LemeGUIV2_CFG_Save = function(v66, v67)
+    v2.v1117 = function(v66, v67)
         if type(v66) ~= "string" or v66 == "" then
             return false
         end
-        local v68 = v2.LemeGUIV2_CFG_ReadAll()
+        local v68 = v2.v1104()
         if v68.configs[v66] == nil then
             return false
         end
         v68.configs[v66] = v67
-        local v69 = v2.LemeGUIV2_CFG_WriteAll(v68)
+        local v69 = v2.v1105(v68)
         return v69 and true or false
     end
 
-    v2.LemeGUIV2_CFG_Load = function(v70)
+    v2.v1118 = function(v70)
         if type(v70) ~= "string" or v70 == "" then
             return nil
         end
-        local v71 = v2.LemeGUIV2_CFG_ReadAll()
+        local v71 = v2.v1104()
         return v71.configs[v70]
     end
 
-    v2.LemeGUIV2_CFG_Delete = function(v72)
+    v2.v1119 = function(v72)
         if type(v72) ~= "string" or v72 == "" then
             return false
         end
-        local v73 = v2.LemeGUIV2_CFG_ReadAll()
+        local v73 = v2.v1104()
         if v73.configs[v72] == nil then
             return false
         end
@@ -331,12 +331,12 @@ v2.LemeGUIV2_CFG_ApplySnapshot = function(v57, v58)
         if v73.autoload == v72 then
             v73.autoload = nil
         end
-        local v74 = v2.LemeGUIV2_CFG_WriteAll(v73)
+        local v74 = v2.v1105(v73)
         return v74 and true or false
     end
 
-    v2.LemeGUIV2_CFG_SetAutoLoad = function(v75)
-        local v76 = v2.LemeGUIV2_CFG_ReadAll()
+    v2.v1120 = function(v75)
+        local v76 = v2.v1104()
         if type(v75) ~= "string" or v75 == "" then
             v76.autoload = nil
         else
@@ -345,12 +345,12 @@ v2.LemeGUIV2_CFG_ApplySnapshot = function(v57, v58)
             end
             v76.autoload = v75
         end
-        local v77 = v2.LemeGUIV2_CFG_WriteAll(v76)
+        local v77 = v2.v1105(v76)
         return v77 and true or false
     end
 
-    v2.LemeGUIV2_CFG_GetAutoLoad = function()
-        local v78 = v2.LemeGUIV2_CFG_ReadAll()
+    v2.v1121 = function()
+        local v78 = v2.v1104()
         return v78.autoload
     end
 
@@ -360,7 +360,7 @@ v2.LemeGUIV2_CFG_ApplySnapshot = function(v57, v58)
         end)
     end
 
-    v2.LemeGUIV2_Notify = function(v79, v80, v81, v82)
+    v2.v1122 = function(v79, v80, v81, v82)
         local v83 = typeof(getgenv) == "function" and getgenv() or _G
         local v84 = v83.SendNotify
         if type(v84) ~= "function" then
@@ -375,8 +375,8 @@ end
 do
     local v86 = typeof(getgenv) == "function" and getgenv() or _G
 
-    v86.LemeGUIV2_AutoAntiLoad = function()
-        local v87 = v86.LemeGUIV2_CFG_GetGlobal("autoAntiMask", 0)
+    v86.v1123 = function()
+        local v87 = v86.v1107("autoAntiMask", 0)
         v87 = math.floor(tonumber(v87) or 0)
         if v87 < 0 then
             v87 = 0
@@ -384,17 +384,17 @@ do
         return v87
     end
 
-    v86.LemeGUIV2_AutoAntiSave = function(v88)
+    v86.v1124 = function(v88)
         local v89 = math.floor(tonumber(v88) or 0)
         if v89 < 0 then
             v89 = 0
         elseif v89 > 7 then
             v89 = 7
         end
-        v86.LemeGUIV2_CFG_SetGlobal("autoAntiMask", v89)
+        v86.v1108("autoAntiMask", v89)
     end
 
-    v86.LemeGUIV2_AutoAntiUpdateBtn = function(v90, v91)
+    v86.v1125 = function(v90, v91)
         local v92 = v90 and v90.autoAntiBtn
         if not v92 or not v91 then
             return
@@ -402,7 +402,7 @@ do
         v92.Text = v91.language == "jp" and "自動耐性" or "Auto Anti"
     end
 
-    v86.LemeGUIV2_AutoAntiRefreshUI = function(v93, v94)
+    v86.v1126 = function(v93, v94)
         if not v93 or not v94 then
             return
         end
@@ -433,7 +433,7 @@ do
         end
     end
 
-    v86.LemeGUIV2_AutoAntiToggleBit = function(v97, v98, v99)
+    v86.v1127 = function(v97, v98, v99)
         local v100 = math.floor(tonumber(v97 and v97.autoAntiMask) or 0)
         if v100 < 0 then
             v100 = 0
@@ -449,12 +449,12 @@ do
             v97.autoAntiMask = v100
             v97.autoAntiDirty = true
         end
-        v86.LemeGUIV2_AutoAntiSave(v100)
-        v86.LemeGUIV2_AutoAntiRefreshUI(v98, v97)
-        v86.LemeGUIV2_AutoAntiUpdateBtn(v98, v97)
+        v86.v1124(v100)
+        v86.v1126(v98, v97)
+        v86.v1125(v98, v97)
     end
 
-    v86.LemeGUIV2_AutoAntiEnsureUI = function(v101, v102, v103)
+    v86.v1128 = function(v101, v102, v103)
         if not v101 or not v102 or not v103 then
             return
         end
@@ -564,32 +564,32 @@ do
         v101.autoAntiFling = v117
 
         v115.Activated:Connect(function()
-            v86.LemeGUIV2_AutoAntiToggleBit(v102, v101, 1)
+            v86.v1127(v102, v101, 1)
         end)
         v116.Activated:Connect(function()
-            v86.LemeGUIV2_AutoAntiToggleBit(v102, v101, 2)
+            v86.v1127(v102, v101, 2)
         end)
         v117.Activated:Connect(function()
-            v86.LemeGUIV2_AutoAntiToggleBit(v102, v101, 4)
+            v86.v1127(v102, v101, 4)
         end)
 
-        v86.LemeGUIV2_AutoAntiRefreshUI(v101, v102)
-        v86.LemeGUIV2_AutoAntiUpdateBtn(v101, v102)
+        v86.v1126(v101, v102)
+        v86.v1125(v101, v102)
     end
 
-    v86.LemeGUIV2_OpenAutoAntiDialog = function(v118, v119, v120)
-        v86.LemeGUIV2_AutoAntiEnsureUI(v118, v119, v120)
+    v86.v1129 = function(v118, v119, v120)
+        v86.v1128(v118, v119, v120)
         if v118 and v118.autoAntiOverlay then
             v118.autoAntiOverlay.Visible = true
         end
-        v86.LemeGUIV2_AutoAntiRefreshUI(v118, v119)
-        v86.LemeGUIV2_AutoAntiUpdateBtn(v118, v119)
+        v86.v1126(v118, v119)
+        v86.v1125(v118, v119)
     end
 end
 
 do
     local v121 = typeof(getgenv) == "function" and getgenv() or _G
-    v121.LemeGUIV2_InstantPromptSet = function(v122, v123)
+    v121.v1130 = function(v122, v123)
         if type(v122) ~= "table" then
             return
         end
@@ -680,25 +680,25 @@ end
 
 do
     local v138 = typeof(getgenv) == "function" and getgenv() or _G
-    v138.LemeGUIV2_LangLoad = function()
-        local v139 = v138.LemeGUIV2_CFG_GetGlobal("language", nil)
+    v138.v1131 = function()
+        local v139 = v138.v1107("language", nil)
         if v139 ~= "jp" and v139 ~= "en" then
             return nil
         end
         return v139
     end
-    v138.LemeGUIV2_LangSave = function(v140)
+    v138.v1132 = function(v140)
         if v140 ~= "jp" and v140 ~= "en" then
             return
         end
-        v138.LemeGUIV2_CFG_SetGlobal("language", v140)
+        v138.v1108("language", v140)
     end
 end
 
 
 do
     local v141 = typeof(getgenv) == "function" and getgenv() or _G
-    v141.LemeGUIV2_UpdQuickExitTrig = function(v142, v143)
+    v141.v1133 = function(v142, v143)
         if not v142 or not v143 or not v142.quickExitTrigBtn then
             return
         end
@@ -714,7 +714,7 @@ end
 
 do
     local v146 = typeof(getgenv) == "function" and getgenv() or _G
-    v146.LemeGUIV2_OpenExitConfirm = function(v147, v148, v149)
+    v146.v1134 = function(v147, v148, v149)
         if not v147 or not v148 or not v149 then
             return
         end
@@ -814,7 +814,7 @@ end
 do
     local v161 = typeof(getgenv) == "function" and getgenv() or _G
 
-    v161.LemeGUIV2_SetToggleText = function(v162, v163, v164)
+    v161.v1135 = function(v162, v163, v164)
         if not v162 then
             return
         end
@@ -830,7 +830,7 @@ do
         v162.Text = string.format("%s [%s]", v167, v163 and v168 or v169)
     end
 
-    v161.LemeGUIV2_ConfigGetName = function(v170, v171)
+    v161.v1136 = function(v170, v171)
         if not v170 or not v170.configNameInput then
             return ""
         end
@@ -853,7 +853,7 @@ do
         return v172
     end
 
-    v161.LemeGUIV2_ConfigUpdateSelectBtn = function(v173, v174)
+    v161.v1137 = function(v173, v174)
         if not v173 or not v174 or not v173.configSelectBtn then
             return
         end
@@ -865,7 +865,7 @@ do
         v173.configSelectBtn.Text = v176
     end
 
-    v161.LemeGUIV2_OpenConfigDialog = function(v177, v178, v179)
+    v161.v1138 = function(v177, v178, v179)
         if not v177 or not v178 or not v179 then
             return
         end
@@ -966,8 +966,8 @@ do
                 v189:Destroy()
             end
         end
-        local v190 = v161.LemeGUIV2_CFG_List and v161.LemeGUIV2_CFG_List() or {}
-        local v191 = v161.LemeGUIV2_CFG_GetAutoLoad and v161.LemeGUIV2_CFG_GetAutoLoad() or nil
+        local v190 = v161.v1109 and v161.v1109() or {}
+        local v191 = v161.v1121 and v161.v1121() or nil
         local v192 = v178.language == "jp" and "なし" or "None"
         if #v190 == 0 then
             local v193 = Instance.new("TextButton")
@@ -985,7 +985,7 @@ do
             v193.Parent = v188
             v193.Activated:Connect(function()
                 v178.configSelectedName = ""
-                v161.LemeGUIV2_ConfigUpdateSelectBtn(v177, v178)
+                v161.v1137(v177, v178)
                 v177.configOverlay.Visible = false
             end)
         else
@@ -1008,18 +1008,18 @@ do
                 v196.Parent = v188
                 v196.Activated:Connect(function()
                     v178.configSelectedName = v195
-                    v161.LemeGUIV2_ConfigUpdateSelectBtn(v177, v178)
+                    v161.v1137(v177, v178)
                     v177.configOverlay.Visible = false
                 end)
             end
         end
     end
 
-    v161.LemeGUIV2_ConfigAction = function(v198, v199, v200, v201, v202)
+    v161.v1139 = function(v198, v199, v200, v201, v202)
         if type(v198) ~= "string" or not v199 or not v200 then
             return false
         end
-        local v203 = v161.LemeGUIV2_Notify
+        local v203 = v161.v1122
         local function v204(v205, v206)
             if type(v203) == "function" then
                 v203(v205, v206, "Log", 2)
@@ -1032,50 +1032,50 @@ do
         end
 
         if v198 == "init" then
-            if type(v161.LemeGUIV2_ConfigUpdateSelectBtn) == "function" then
-                v161.LemeGUIV2_ConfigUpdateSelectBtn(v199, v200)
+            if type(v161.v1137) == "function" then
+                v161.v1137(v199, v200)
             end
             if v199.configNameInput and v199.configCreateBtn and not v199.configNameConn then
                 v199.configNameConn = v199.configNameInput:GetPropertyChangedSignal("Text"):Connect(function()
                     local v210 = ""
-                    if type(v161.LemeGUIV2_ConfigGetName) == "function" then
-                        v210 = v161.LemeGUIV2_ConfigGetName(v199, v200)
+                    if type(v161.v1136) == "function" then
+                        v210 = v161.v1136(v199, v200)
                     end
                     local v211 = type(v210) == "string" and #v210 > 0
                     v199.configCreateBtn.Active = v211
                     v199.configCreateBtn.TextTransparency = v211 and 0 or 0.5
                 end)
                 local v212 = ""
-                if type(v161.LemeGUIV2_ConfigGetName) == "function" then
-                    v212 = v161.LemeGUIV2_ConfigGetName(v199, v200)
+                if type(v161.v1136) == "function" then
+                    v212 = v161.v1136(v199, v200)
                 end
                 local v213 = type(v212) == "string" and #v212 > 0
                 v199.configCreateBtn.Active = v213
                 v199.configCreateBtn.TextTransparency = v213 and 0 or 0.5
             end
-            if v199.instantPromptBtn and type(v161.LemeGUIV2_SetToggleText) == "function" then
-                v161.LemeGUIV2_SetToggleText(v199.instantPromptBtn, v200.instantPromptOn, v200.language)
+            if v199.instantPromptBtn and type(v161.v1135) == "function" then
+                v161.v1135(v199.instantPromptBtn, v200.instantPromptOn, v200.language)
             end
-            local v214 = v161.LemeGUIV2_CFG_GetAutoLoad and v161.LemeGUIV2_CFG_GetAutoLoad() or nil
+            local v214 = v161.v1121 and v161.v1121() or nil
             if type(v214) == "string" and v214 ~= "" then
-                local v215 = v161.LemeGUIV2_CFG_Load and v161.LemeGUIV2_CFG_Load(v214) or nil
+                local v215 = v161.v1118 and v161.v1118(v214) or nil
                 if type(v215) == "table" then
-                    v161.LemeGUIV2_CFG_ApplyFull(v200, v199, v215)
+                    v161.v1114(v200, v199, v215)
                     v200.configSelectedName = v214
                     if type(v202) == "function" then
                         pcall(v202)
                     end
-            if type(v1.LemeGUIV2_UpdQuickExitTrig) == "function" then
-                v1.LemeGUIV2_UpdQuickExitTrig(v199, v200)
+            if type(v1.v1133) == "function" then
+                v1.v1133(v199, v200)
             end
-                    if v199.instantPromptBtn and type(v161.LemeGUIV2_SetToggleText) == "function" then
-                        v161.LemeGUIV2_SetToggleText(v199.instantPromptBtn, v200.instantPromptOn, v200.language)
+                    if v199.instantPromptBtn and type(v161.v1135) == "function" then
+                        v161.v1135(v199.instantPromptBtn, v200.instantPromptOn, v200.language)
                     end
-                    if type(v161.LemeGUIV2_InstantPromptSet) == "function" then
-                        v161.LemeGUIV2_InstantPromptSet(v200, v200.instantPromptOn)
+                    if type(v161.v1130) == "function" then
+                        v161.v1130(v200, v200.instantPromptOn)
                     end
-                    if type(v161.LemeGUIV2_ConfigUpdateSelectBtn) == "function" then
-                        v161.LemeGUIV2_ConfigUpdateSelectBtn(v199, v200)
+                    if type(v161.v1137) == "function" then
+                        v161.v1137(v199, v200)
                     end
                     v204("Config", "AutoLoad Config: " .. v214)
                 end
@@ -1084,29 +1084,29 @@ do
         end
 
         if v198 == "open" then
-            if type(v161.LemeGUIV2_OpenConfigDialog) == "function" then
-                v161.LemeGUIV2_OpenConfigDialog(v199, v200, v201)
+            if type(v161.v1138) == "function" then
+                v161.v1138(v199, v200, v201)
             end
             return true
         end
 
         if v198 == "create" then
             local v216 = ""
-            if type(v161.LemeGUIV2_ConfigGetName) == "function" then
-                v216 = v161.LemeGUIV2_ConfigGetName(v199, v200)
+            if type(v161.v1136) == "function" then
+                v216 = v161.v1136(v199, v200)
             end
             if v216 == "" then
                 return false
             end
-            local v217 = v161.LemeGUIV2_CFG_SnapshotFull(v200, v199)
+            local v217 = v161.v1113(v200, v199)
             local v218 = false
-            local v219, v220 = v161.LemeGUIV2_CFG_Create(v216, v217)
+            local v219, v220 = v161.v1116(v216, v217)
             v218 = v219 and true or false
             if v218 then
                 v204("Config", "Create Config: " .. v216)
                 v200.configSelectedName = v216
-                if type(v161.LemeGUIV2_ConfigUpdateSelectBtn) == "function" then
-                    v161.LemeGUIV2_ConfigUpdateSelectBtn(v199, v200)
+                if type(v161.v1137) == "function" then
+                    v161.v1137(v199, v200)
                 end
             else
                 v207("Config", "Failed Create Config: " .. v216)
@@ -1120,35 +1120,35 @@ do
         end
 
         if v198 == "load" then
-            local v222 = v161.LemeGUIV2_CFG_Load and v161.LemeGUIV2_CFG_Load(v221) or nil
+            local v222 = v161.v1118 and v161.v1118(v221) or nil
             if type(v222) ~= "table" then
                 v207("Config", "Failed Load Config: " .. v221)
                 return false
             end
-            v161.LemeGUIV2_CFG_ApplyFull(v200, v199, v222)
+            v161.v1114(v200, v199, v222)
             if type(v202) == "function" then
                 pcall(v202)
             end
             v200.configSelectedName = v221
-            if type(v161.LemeGUIV2_ConfigUpdateSelectBtn) == "function" then
-                v161.LemeGUIV2_ConfigUpdateSelectBtn(v199, v200)
+            if type(v161.v1137) == "function" then
+                v161.v1137(v199, v200)
             end
-            if type(v1.LemeGUIV2_UpdQuickExitTrig) == "function" then
-                v1.LemeGUIV2_UpdQuickExitTrig(v199, v200)
+            if type(v1.v1133) == "function" then
+                v1.v1133(v199, v200)
             end
-            if v199.instantPromptBtn and type(v161.LemeGUIV2_SetToggleText) == "function" then
-                v161.LemeGUIV2_SetToggleText(v199.instantPromptBtn, v200.instantPromptOn, v200.language)
+            if v199.instantPromptBtn and type(v161.v1135) == "function" then
+                v161.v1135(v199.instantPromptBtn, v200.instantPromptOn, v200.language)
             end
-            if type(v161.LemeGUIV2_InstantPromptSet) == "function" then
-                v161.LemeGUIV2_InstantPromptSet(v200, v200.instantPromptOn)
+            if type(v161.v1130) == "function" then
+                v161.v1130(v200, v200.instantPromptOn)
             end
             v204("Config", "Load Config: " .. v221)
             return true
         end
 
         if v198 == "overwrite" then
-            local v223 = v161.LemeGUIV2_CFG_SnapshotFull(v200, v199)
-            local v224 = v161.LemeGUIV2_CFG_Save and v161.LemeGUIV2_CFG_Save(v221, v223) or false
+            local v223 = v161.v1113(v200, v199)
+            local v224 = v161.v1117 and v161.v1117(v221, v223) or false
             if v224 then
                 v204("Config", "OverWrite Config: " .. v221)
                 return true
@@ -1158,12 +1158,12 @@ do
         end
 
         if v198 == "delete" then
-            local v225 = v161.LemeGUIV2_CFG_Delete and v161.LemeGUIV2_CFG_Delete(v221) or false
+            local v225 = v161.v1119 and v161.v1119(v221) or false
             if v225 then
                 v204("Config", "Delete Config: " .. v221)
                 v200.configSelectedName = ""
-                if type(v161.LemeGUIV2_ConfigUpdateSelectBtn) == "function" then
-                    v161.LemeGUIV2_ConfigUpdateSelectBtn(v199, v200)
+                if type(v161.v1137) == "function" then
+                    v161.v1137(v199, v200)
                 end
                 return true
             end
@@ -1172,12 +1172,12 @@ do
         end
 
         if v198 == "autoload" then
-            local v226 = v161.LemeGUIV2_CFG_SetAutoLoad and v161.LemeGUIV2_CFG_SetAutoLoad(v221) or false
+            local v226 = v161.v1120 and v161.v1120(v221) or false
             if v226 then
                 v204("Config", "Set AutoLoad Config: " .. v221)
                 if v199.configOverlay and v199.configOverlay.Visible then
-                    if type(v161.LemeGUIV2_OpenConfigDialog) == "function" then
-                        v161.LemeGUIV2_OpenConfigDialog(v199, v200, v201)
+                    if type(v161.v1138) == "function" then
+                        v161.v1138(v199, v200, v201)
                     end
                 end
                 return true
@@ -1191,12 +1191,12 @@ end
 
 
 local function v227()
-    if v1.LemeGUIV2 and type(v1.LemeGUIV2) == "table" and type(v1.LemeGUIV2.D) == "function" then
-        pcall(v1.LemeGUIV2.D)
+    if v1.v1140 and type(v1.v1140) == "table" and type(v1.v1140.D) == "function" then
+        pcall(v1.v1140.D)
     end
 
     local v228 = {}
-    v1.LemeGUIV2 = v228
+    v1.v1140 = v228
 
     local function v229(v230, v231)
         return v230:GetService(v231)
@@ -1359,10 +1359,10 @@ local function v227()
     local v298 = {}
     local v299 = {}
     local v300 = { buttonActions = {} }
-    local v301 = getgenv().LemeGUIV2_Pressed
+    local v301 = getgenv().v1143
     if type(v301) ~= "table" then
         v301 = {}
-        getgenv().LemeGUIV2_Pressed = v301
+        getgenv().v1143 = v301
     end
     local v302 = {}
     local v303 = {}
@@ -1401,8 +1401,8 @@ local function v227()
         v311.ZIndex = v310.ZIndex + 1
         v311.Parent = v310
         local v1098 = nil
-        if v1 and type(v1.LemeGUIV2_GetIconAsset) == "function" then
-            v1098 = v1.LemeGUIV2_GetIconAsset()
+        if v1 and type(v1.v1102) == "function" then
+            v1098 = v1.v1102()
         end
         local v1099
         if v1098 then
@@ -1566,15 +1566,15 @@ local function v227()
     v298.title.Parent = v298.main
     do
         local v1100 = nil
-        if v1 and type(v1.LemeGUIV2_GetIconAsset) == "function" then
-            v1100 = v1.LemeGUIV2_GetIconAsset()
+        if v1 and type(v1.v1102) == "function" then
+            v1100 = v1.v1102()
         end
         if v1100 then
             local v1101 = Instance.new("ImageLabel")
             v1101.BackgroundTransparency = 1
             v1101.BorderSizePixel = 0
             v1101.AnchorPoint = Vector2.new(1, 0)
-            v1101.Position = UDim2.new(1, -10, 0, 6)
+            v1101.Position = UDim2.new(1, -18, 0, 6)
             v1101.Size = UDim2.new(0, 40, 0, 40)
             v1101.Image = v1100
             v1101.ImageTransparency = 0
@@ -2145,20 +2145,20 @@ snowFogSaved = nil,
         language = "en",
     }
 
-    if type(v1.LemeGUIV2_LangLoad) == "function" then
-        local v396 = v1.LemeGUIV2_LangLoad()
+    if type(v1.v1131) == "function" then
+        local v396 = v1.v1131()
         if v396 then
             v395.language = v396
         end
     end
 
-    if type(v1.LemeGUIV2_AutoAntiLoad) == "function" then
-        v395.autoAntiMask = v1.LemeGUIV2_AutoAntiLoad()
+    if type(v1.v1123) == "function" then
+        v395.autoAntiMask = v1.v1123()
         v395.autoAntiDirty = true
     end
 
-    if type(v1.LemeGUIV2_SnowCloudyInit) == "function" then
-        v1.LemeGUIV2_SnowCloudyInit(v395, v298)
+    if type(v1.v1141) == "function" then
+        v1.v1141(v395, v298)
     end
 
 local v397, v398, v399, v400
@@ -2373,8 +2373,8 @@ local v397, v398, v399, v400
     end
 
     local function v459()
-            if type(v1.LemeGUIV2_UpdQuickExitTrig) == "function" then
-                v1.LemeGUIV2_UpdQuickExitTrig(v298, v395)
+            if type(v1.v1133) == "function" then
+                v1.v1133(v298, v395)
             end
         for _, v460 in ipairs(v302) do
             local v461 = v460:GetAttribute("TextEn")
@@ -2471,11 +2471,11 @@ local v397, v398, v399, v400
                 and ("トリガーキー [" .. v476 .. "]")
                 or ("Trigger [" .. v476 .. "]")
         end
-        if type(v1.LemeGUIV2_AutoAntiUpdateBtn) == "function" then
-            v1.LemeGUIV2_AutoAntiUpdateBtn(v298, v395)
+        if type(v1.v1125) == "function" then
+            v1.v1125(v298, v395)
         end
-        if type(v1.LemeGUIV2_AutoAntiRefreshUI) == "function" then
-            v1.LemeGUIV2_AutoAntiRefreshUI(v298, v395)
+        if type(v1.v1126) == "function" then
+            v1.v1126(v298, v395)
         end
         v404(v298.quickExitBtn, v395.quickExitOn)
         v448()
@@ -4401,11 +4401,11 @@ if v395.fullBrightLoopOn then
         v847 = v847:gsub("^%s+", ""):gsub("%s+$", "")
         if v847 == "" then
             v395.flingTarget = nil
-            if type(v1.LemeGUIV2_AutoAntiUpdateBtn) == "function" then
-            v1.LemeGUIV2_AutoAntiUpdateBtn(v298, v395)
+            if type(v1.v1125) == "function" then
+            v1.v1125(v298, v395)
         end
-        if type(v1.LemeGUIV2_AutoAntiRefreshUI) == "function" then
-            v1.LemeGUIV2_AutoAntiRefreshUI(v298, v395)
+        if type(v1.v1126) == "function" then
+            v1.v1126(v298, v395)
         end
         v448()
             return
@@ -4432,11 +4432,11 @@ if v395.fullBrightLoopOn then
             end
         end
         v395.flingTarget = v851
-        if type(v1.LemeGUIV2_AutoAntiUpdateBtn) == "function" then
-            v1.LemeGUIV2_AutoAntiUpdateBtn(v298, v395)
+        if type(v1.v1125) == "function" then
+            v1.v1125(v298, v395)
         end
-        if type(v1.LemeGUIV2_AutoAntiRefreshUI) == "function" then
-            v1.LemeGUIV2_AutoAntiRefreshUI(v298, v395)
+        if type(v1.v1126) == "function" then
+            v1.v1126(v298, v395)
         end
         v448()
     end
@@ -4935,8 +4935,8 @@ if v395.fullBrightLoopOn then
             return
         end
         local v959 = v394()
-        if v959 and type(v1.LemeGUIV2_NoclipStep) == "function" then
-            v1.LemeGUIV2_NoclipStep(v395, v959, v485)
+        if v959 and type(v1.v1142) == "function" then
+            v1.v1142(v395, v959, v485)
         end
     end))
 
@@ -4948,8 +4948,8 @@ if v395.fullBrightLoopOn then
             return
         end
         local v960 = v394()
-        if v960 and type(v1.LemeGUIV2_NoclipStep) == "function" then
-            v1.LemeGUIV2_NoclipStep(v395, v960, v485)
+        if v960 and type(v1.v1142) == "function" then
+            v1.v1142(v395, v960, v485)
         end
     end))
 
@@ -4999,11 +4999,11 @@ if v395.fullBrightLoopOn then
     v305(v232.PlayerRemoving:Connect(function(v967)
         if v395.flingTarget == v967 then
             v395.flingTarget = nil
-            if type(v1.LemeGUIV2_AutoAntiUpdateBtn) == "function" then
-            v1.LemeGUIV2_AutoAntiUpdateBtn(v298, v395)
+            if type(v1.v1125) == "function" then
+            v1.v1125(v298, v395)
         end
-        if type(v1.LemeGUIV2_AutoAntiRefreshUI) == "function" then
-            v1.LemeGUIV2_AutoAntiRefreshUI(v298, v395)
+        if type(v1.v1126) == "function" then
+            v1.v1126(v298, v395)
         end
         v448()
         end
@@ -5091,8 +5091,8 @@ if v395.fullBrightLoopOn then
         if v296 then
             return
         end
-        if type(v1.LemeGUIV2_OpenAutoAntiDialog) == "function" then
-            v1.LemeGUIV2_OpenAutoAntiDialog(v298, v395, v313)
+        if type(v1.v1129) == "function" then
+            v1.v1129(v298, v395, v313)
         end
     end)
 
@@ -5189,8 +5189,8 @@ v298.snowBtn.Activated:Connect(function()
         end
         v395.instantPromptOn = not v395.instantPromptOn
         v404(v298.instantPromptBtn, v395.instantPromptOn)
-        if type(v1.LemeGUIV2_InstantPromptSet) == "function" then
-            v1.LemeGUIV2_InstantPromptSet(v395, v395.instantPromptOn)
+        if type(v1.v1130) == "function" then
+            v1.v1130(v395, v395.instantPromptOn)
         end
     end
     v298.instantPromptBtn.Activated:Connect(v300.buttonActions["instantPromptBtn"])
@@ -5627,8 +5627,8 @@ v298.snowBtn.Activated:Connect(function()
             return
         end
         v395.quickExitWaitingKey = true
-        if type(v1.LemeGUIV2_UpdQuickExitTrig) == "function" then
-            v1.LemeGUIV2_UpdQuickExitTrig(v298, v395)
+        if type(v1.v1133) == "function" then
+            v1.v1133(v298, v395)
             v298.quickExitTrigBtn.Text = v298.quickExitTrigBtn.Text .. " ..."
         end
     end
@@ -5638,8 +5638,8 @@ v298.snowBtn.Activated:Connect(function()
         if v296 then
             return
         end
-        if type(v1.LemeGUIV2_OpenExitConfirm) == "function" then
-            v1.LemeGUIV2_OpenExitConfirm(v298, v395, v313)
+        if type(v1.v1134) == "function" then
+            v1.v1134(v298, v395, v313)
         end
     end)
 
@@ -5970,8 +5970,8 @@ v298.snowBtn.Activated:Connect(function()
 
         local function v1045(v1046)
             v395.language = v1046
-            if type(v1.LemeGUIV2_LangSave) == "function" then
-                v1.LemeGUIV2_LangSave(v1046)
+            if type(v1.v1132) == "function" then
+                v1.v1132(v1046)
             end
             v459()
             v1043()
@@ -6131,8 +6131,8 @@ v298.snowBtn.Activated:Connect(function()
         if v296 then
             return
         end
-        if type(v1.LemeGUIV2_ConfigAction) == "function" then
-            v1.LemeGUIV2_ConfigAction("open", v298, v395, v313, v459)
+        if type(v1.v1139) == "function" then
+            v1.v1139("open", v298, v395, v313, v459)
         end
     end
     v298.configSelectBtn.Activated:Connect(v300.buttonActions["configSelectBtn"])
@@ -6141,8 +6141,8 @@ v298.snowBtn.Activated:Connect(function()
         if v296 then
             return
         end
-        if type(v1.LemeGUIV2_ConfigAction) == "function" then
-            v1.LemeGUIV2_ConfigAction("create", v298, v395, v313, v459)
+        if type(v1.v1139) == "function" then
+            v1.v1139("create", v298, v395, v313, v459)
         end
     end
     v298.configCreateBtn.Activated:Connect(v300.buttonActions["configCreateBtn"])
@@ -6151,8 +6151,8 @@ v298.snowBtn.Activated:Connect(function()
         if v296 then
             return
         end
-        if type(v1.LemeGUIV2_ConfigAction) == "function" then
-            v1.LemeGUIV2_ConfigAction("load", v298, v395, v313, v459)
+        if type(v1.v1139) == "function" then
+            v1.v1139("load", v298, v395, v313, v459)
         end
     end
     v298.configLoadBtn.Activated:Connect(v300.buttonActions["configLoadBtn"])
@@ -6161,8 +6161,8 @@ v298.snowBtn.Activated:Connect(function()
         if v296 then
             return
         end
-        if type(v1.LemeGUIV2_ConfigAction) == "function" then
-            v1.LemeGUIV2_ConfigAction("overwrite", v298, v395, v313, v459)
+        if type(v1.v1139) == "function" then
+            v1.v1139("overwrite", v298, v395, v313, v459)
         end
     end
     v298.configOverwriteBtn.Activated:Connect(v300.buttonActions["configOverwriteBtn"])
@@ -6171,8 +6171,8 @@ v298.snowBtn.Activated:Connect(function()
         if v296 then
             return
         end
-        if type(v1.LemeGUIV2_ConfigAction) == "function" then
-            v1.LemeGUIV2_ConfigAction("delete", v298, v395, v313, v459)
+        if type(v1.v1139) == "function" then
+            v1.v1139("delete", v298, v395, v313, v459)
         end
     end
     v298.configDeleteBtn.Activated:Connect(v300.buttonActions["configDeleteBtn"])
@@ -6181,8 +6181,8 @@ v298.snowBtn.Activated:Connect(function()
         if v296 then
             return
         end
-        if type(v1.LemeGUIV2_ConfigAction) == "function" then
-            v1.LemeGUIV2_ConfigAction("autoload", v298, v395, v313, v459)
+        if type(v1.v1139) == "function" then
+            v1.v1139("autoload", v298, v395, v313, v459)
         end
     end
     v298.configAutoLoadBtn.Activated:Connect(v300.buttonActions["configAutoLoadBtn"])
@@ -6307,8 +6307,8 @@ v298.snowBtn.Activated:Connect(function()
                 if v1071.KeyCode and v1071.KeyCode ~= Enum.KeyCode.Unknown then
                     v395.quickExitKey = v1071.KeyCode
                 end
-                if type(v1.LemeGUIV2_UpdQuickExitTrig) == "function" then
-                    v1.LemeGUIV2_UpdQuickExitTrig(v298, v395)
+                if type(v1.v1133) == "function" then
+                    v1.v1133(v298, v395)
                 end
                 return
             end
@@ -6391,11 +6391,11 @@ v298.snowBtn.Activated:Connect(function()
     v448()
     v455()
     v459()
-    if type(v1.LemeGUIV2_ConfigAction) == "function" then
-        v1.LemeGUIV2_ConfigAction("init", v298, v395, v313, v459)
+    if type(v1.v1139) == "function" then
+        v1.v1139("init", v298, v395, v313, v459)
     end
-    if type(v1.LemeGUIV2_UpdQuickExitTrig) == "function" then
-        v1.LemeGUIV2_UpdQuickExitTrig(v298, v395)
+    if type(v1.v1133) == "function" then
+        v1.v1133(v298, v395)
     end
     v404(v298.quickExitBtn, v395.quickExitOn)
 
@@ -6435,8 +6435,8 @@ v298.snowBtn.Activated:Connect(function()
         pcall(function()
             v313:Destroy()
         end)
-        if v1.LemeGUIV2 == v228 then
-            v1.LemeGUIV2 = nil
+        if v1.v1140 == v228 then
+            v1.v1140 = nil
         end
     end
 
@@ -7097,12 +7097,12 @@ do
         return debug.traceback(v1089, 2)
     end)
     if v1087 then
-        if type(v1.LemeGUIV2_Notify) == "function" then
-            v1.LemeGUIV2_Notify("Leme GUI V2", "Load Completed", "Log", 2)
+        if type(v1.v1122) == "function" then
+            v1.v1122("Leme GUI V2", "Load Completed", "Log", 2)
         end
     else
-        if type(v1.LemeGUIV2_Notify) == "function" then
-            v1.LemeGUIV2_Notify("Leme GUI V2", "Load Failed", "Error", 2)
+        if type(v1.v1122) == "function" then
+            v1.v1122("Leme GUI V2", "Load Failed", "Error", 2)
         end
         error(v1088)
     end
