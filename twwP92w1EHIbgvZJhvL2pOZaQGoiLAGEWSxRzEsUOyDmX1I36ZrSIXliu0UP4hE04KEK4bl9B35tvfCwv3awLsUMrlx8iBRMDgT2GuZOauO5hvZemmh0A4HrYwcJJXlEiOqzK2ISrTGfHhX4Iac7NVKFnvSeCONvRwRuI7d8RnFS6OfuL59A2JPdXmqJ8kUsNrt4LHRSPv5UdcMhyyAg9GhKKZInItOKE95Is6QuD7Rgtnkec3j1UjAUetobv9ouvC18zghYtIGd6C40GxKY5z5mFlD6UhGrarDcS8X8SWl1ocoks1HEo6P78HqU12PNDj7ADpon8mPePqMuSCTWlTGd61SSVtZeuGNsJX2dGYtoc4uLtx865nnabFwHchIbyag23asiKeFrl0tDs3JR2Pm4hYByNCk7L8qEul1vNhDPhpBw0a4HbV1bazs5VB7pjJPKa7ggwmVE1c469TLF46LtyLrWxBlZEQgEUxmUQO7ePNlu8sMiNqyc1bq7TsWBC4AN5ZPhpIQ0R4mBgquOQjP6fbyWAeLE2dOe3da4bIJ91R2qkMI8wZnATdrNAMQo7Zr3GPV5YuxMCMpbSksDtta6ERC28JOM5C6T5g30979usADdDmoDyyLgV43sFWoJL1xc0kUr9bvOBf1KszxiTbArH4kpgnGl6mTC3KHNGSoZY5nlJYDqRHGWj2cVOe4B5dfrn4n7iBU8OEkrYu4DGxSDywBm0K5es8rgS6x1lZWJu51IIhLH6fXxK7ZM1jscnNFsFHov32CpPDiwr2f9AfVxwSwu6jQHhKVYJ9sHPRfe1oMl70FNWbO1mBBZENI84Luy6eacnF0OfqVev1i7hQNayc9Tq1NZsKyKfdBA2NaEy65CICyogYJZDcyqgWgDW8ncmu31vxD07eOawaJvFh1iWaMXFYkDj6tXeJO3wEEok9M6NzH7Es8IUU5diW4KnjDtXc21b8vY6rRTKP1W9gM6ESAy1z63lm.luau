@@ -2539,8 +2539,8 @@ local v397, v398, v399, v400
             while not v296 and v395.antiAfkOn and v395.antiAfkToken == v483 do
                 pcall(function()
                     v401:CaptureController()
-                    v401:SetKeyDown("F24")
-                    v401:SetKeyUp("F24")
+                    v401:SetKeyDown("F15")
+                    v401:SetKeyUp("F15")
                 end)
                 task.wait(1)
             end
