@@ -2847,6 +2847,22 @@ local v397, v398, v399, v400
             else
                 v528[v532] = nil
             end
+
+            if v395.noHitboxOn and v532 ~= v240 then
+                local v1165 = v395.noHitboxSaved
+                if type(v1165) ~= "table" then
+                    v1165 = {}
+                    v395.noHitboxSaved = v1165
+                end
+                for _, v1166 in pairs(v534:GetDescendants()) do
+                    if v1166:IsA("BasePart") then
+                        if v1165[v1166] == nil then
+                            v1165[v1166] = v1166.CanCollide
+                        end
+                        v1166.CanCollide = false
+                    end
+                end
+            end
         end
 
         if v532.Character then
@@ -4957,43 +4973,47 @@ if v395.fullBrightLoopOn then
             return
         end
         local v1156 = v395.noHitboxI or 1
-        local v1157 = 0
-        local v1158
-        while v1157 < v1155 do
-            local v1159 = ((v1156 - 1 + v1157) % v1155) + 1
-            local v1160 = v1154[v1159]
-            if v1160 ~= v240 then
-                v1158 = v1160
-                v1156 = v1159 + 1
-                break
-            end
-            v1157 = v1157 + 1
-        end
-        if v1156 > v1155 then
-            v1156 = 1
-        end
-        v395.noHitboxI = v1156
-        if not v1158 then
-            return
-        end
-        local v1161 = v1158.Character
-        if not v1161 then
-            return
-        end
         local v1162 = v395.noHitboxSaved
         if type(v1162) ~= "table" then
             v1162 = {}
             v395.noHitboxSaved = v1162
         end
-        for _, v1163 in pairs(v1161:GetDescendants()) do
-            if v1163:IsA("BasePart") then
-                if v1162[v1163] == nil then
-                    v1162[v1163] = v1163.CanCollide
+        local v1164 = 0
+        while v1164 < 3 do
+            local v1157 = 0
+            local v1158
+            while v1157 < v1155 do
+                local v1159 = ((v1156 - 1 + v1157) % v1155) + 1
+                local v1160 = v1154[v1159]
+                if v1160 ~= v240 then
+                    v1158 = v1160
+                    v1156 = v1159 + 1
+                    break
                 end
-                v1163.CanCollide = false
+                v1157 = v1157 + 1
             end
+            if v1156 > v1155 then
+                v1156 = 1
+            end
+            if not v1158 then
+                break
+            end
+            local v1161 = v1158.Character
+            if v1161 then
+                for _, v1163 in pairs(v1161:GetDescendants()) do
+                    if v1163:IsA("BasePart") then
+                        if v1162[v1163] == nil then
+                            v1162[v1163] = v1163.CanCollide
+                        end
+                        v1163.CanCollide = false
+                    end
+                end
+            end
+            v1164 = v1164 + 1
         end
+        v395.noHitboxI = v1156
     end))
+
 
 
     v305(v234.RenderStepped:Connect(function()
