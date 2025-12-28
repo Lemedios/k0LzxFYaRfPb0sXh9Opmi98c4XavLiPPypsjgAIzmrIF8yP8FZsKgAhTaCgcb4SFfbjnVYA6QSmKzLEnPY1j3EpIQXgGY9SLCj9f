@@ -228,26 +228,55 @@ do
     
 
     v2.v1113 = function(v42, v43)
-        local v44 = v2.v1112(v42)
-        local v45 = {}
-        if type(v43) == "table" then
-            for v46, v47 in pairs(v43) do
-                if type(v46) == "string" and typeof(v47) == "Instance" and v47:IsA("TextBox") then
-                    local v48 = v47:GetAttribute("Prefix") or ""
-                    local v49 = v47.Text or ""
-                    if type(v48) == "string" and type(v49) == "string" and #v48 > 0 then
-                        if v49:sub(1, #v48) == v48 then
-                            v45[v46] = v49:sub(#v48 + 1)
-                        else
-                            v45[v46] = v49
+        local v44 = {}
+        if type(v42) == "table" then
+            for v45, v46 in pairs(v42) do
+                if type(v45) == "string" then
+                    local v47 = typeof(v46)
+                    if type(v46) == "boolean" then
+                        if (v45:sub(-2) == "On" or v45:sub(-6) == "LoopOn") and not v45:find("Active", 1, true) and not v45:find("Waiting", 1, true) and not v45:find("Saved", 1, true) and not v45:find("Stored", 1, true) then
+                            v44[v45] = v46
                         end
-                    else
-                        v45[v46] = v49
+                    elseif v47 == "EnumItem" then
+                        if v45:sub(-3) == "Key" and not v45:find("WaitingKey", 1, true) then
+                            local v48 = v2.v1110(v46)
+                            if v48 ~= nil then
+                                v44[v45] = v48
+                            end
+                        end
+                    elseif type(v46) == "string" then
+                        if v45 ~= "language" and v45 ~= "configSelectedName" then
+                            if v45:find("Mode", 1, true) or v45:find("Selected", 1, true) or v45:find("Direction", 1, true) or v45:find("Type", 1, true) then
+                                v44[v45] = v46
+                            end
+                        end
+                    elseif type(v46) == "number" then
+                        if v45:sub(-4) == "Mask" then
+                            v44[v45] = v46
+                        end
                     end
                 end
             end
         end
-        v44.inputs = v45
+        local v49 = {}
+        if type(v43) == "table" then
+            for v50, v51 in pairs(v43) do
+                if type(v50) == "string" and typeof(v51) == "Instance" and v51:IsA("TextBox") then
+                    local v52 = v51:GetAttribute("Prefix") or ""
+                    local v53 = v51.Text or ""
+                    if type(v52) == "string" and type(v53) == "string" and #v52 > 0 then
+                        if v53:sub(1, #v52) == v52 then
+                            v49[v50] = v53:sub(#v52 + 1)
+                        else
+                            v49[v50] = v53
+                        end
+                    else
+                        v49[v50] = v53
+                    end
+                end
+            end
+        end
+        v44.inputs = v49
         return v44
     end
 
@@ -837,6 +866,12 @@ do
     v161.v1135 = function(v162, v163, v164)
         if not v162 then
             return
+        end
+        if type(v161.v1131) == "function" then
+            local v1640 = v161.v1131()
+            if v1640 == "jp" or v1640 == "en" then
+                v164 = v1640
+            end
         end
         local v165 = v162:GetAttribute("TextEn") or v162.Text
         local v166 = v162:GetAttribute("TextJp") or v165
