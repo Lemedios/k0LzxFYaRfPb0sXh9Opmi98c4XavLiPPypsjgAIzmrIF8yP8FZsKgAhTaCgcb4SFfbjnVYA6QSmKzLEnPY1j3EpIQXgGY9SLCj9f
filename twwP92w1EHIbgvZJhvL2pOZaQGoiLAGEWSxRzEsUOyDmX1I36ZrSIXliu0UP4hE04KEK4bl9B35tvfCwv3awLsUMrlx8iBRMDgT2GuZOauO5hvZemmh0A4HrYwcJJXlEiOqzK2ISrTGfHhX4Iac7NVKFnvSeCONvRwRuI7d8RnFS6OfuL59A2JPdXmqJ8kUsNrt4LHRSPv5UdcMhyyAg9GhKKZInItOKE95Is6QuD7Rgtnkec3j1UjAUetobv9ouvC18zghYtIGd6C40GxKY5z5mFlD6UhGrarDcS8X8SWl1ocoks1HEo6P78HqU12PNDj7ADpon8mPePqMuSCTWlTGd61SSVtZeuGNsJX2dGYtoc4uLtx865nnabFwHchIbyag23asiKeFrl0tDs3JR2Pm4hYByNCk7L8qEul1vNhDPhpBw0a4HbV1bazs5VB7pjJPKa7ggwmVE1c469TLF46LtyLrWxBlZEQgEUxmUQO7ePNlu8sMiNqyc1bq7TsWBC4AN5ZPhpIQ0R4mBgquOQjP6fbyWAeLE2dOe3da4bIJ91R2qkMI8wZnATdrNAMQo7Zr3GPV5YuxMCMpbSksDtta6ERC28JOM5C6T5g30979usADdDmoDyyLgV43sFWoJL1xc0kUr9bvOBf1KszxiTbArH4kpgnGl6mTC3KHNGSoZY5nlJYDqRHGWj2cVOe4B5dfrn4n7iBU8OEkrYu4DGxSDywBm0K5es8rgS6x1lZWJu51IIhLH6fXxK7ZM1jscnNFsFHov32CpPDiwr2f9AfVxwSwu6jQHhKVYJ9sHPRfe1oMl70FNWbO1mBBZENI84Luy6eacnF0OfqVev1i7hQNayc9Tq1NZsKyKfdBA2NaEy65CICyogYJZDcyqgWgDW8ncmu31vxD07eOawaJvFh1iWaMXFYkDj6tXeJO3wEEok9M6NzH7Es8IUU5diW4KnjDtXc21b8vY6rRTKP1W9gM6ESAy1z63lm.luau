@@ -694,12 +694,20 @@ do
     local v138 = typeof(getgenv) == "function" and getgenv() or _G
     v138.v1131 = function()
         local v139 = v138.v1107("language", nil)
+        if type(v139) ~= "string" then
+            return nil
+        end
+        v139 = string.lower(string.gsub(v139, "%s+", ""))
         if v139 ~= "jp" and v139 ~= "en" then
             return nil
         end
         return v139
     end
     v138.v1132 = function(v140)
+        if type(v140) ~= "string" then
+            return
+        end
+        v140 = string.lower(string.gsub(v140, "%s+", ""))
         if v140 ~= "jp" and v140 ~= "en" then
             return
         end
