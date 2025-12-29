@@ -3195,8 +3195,7 @@ local v397, v398, v399, v400
                 end)
             end
             if v558 and v557 and v556 then
-                v556.AutoRotate = false
-                local v559 = v557.Position
+local v559 = v557.Position
                 v557.CFrame = CFrame.new(v559, v559 + v558)
                 delay(0.1, function()
                     if v296 then
@@ -3204,10 +3203,7 @@ local v397, v398, v399, v400
                     end
                     local v560 = v394()
                     local v561 = v560 and v560:FindFirstChildOfClass("Humanoid")
-                    if v561 then
-                        v561.AutoRotate = true
-                    end
-                end)
+end)
             elseif v556 then
                 if v395.sitFlyOn then
                     v556.Sit = false
@@ -3217,8 +3213,7 @@ local v397, v398, v399, v400
                         end
                     end)
                 end
-                v556.AutoRotate = true
-            end
+end
             v395.flyPos = nil
             v395.hoverTarget = nil
             v395.hoverY = nil
@@ -3227,8 +3222,7 @@ local v397, v398, v399, v400
         elseif v553 == "fly" then
             if v556 then
                 if v395.sitFlyOn then v556.Sit = true end
-                v556.AutoRotate = false
-            end
+end
             v395.hoverTarget = nil
             v395.hoverY = nil
             v395.velAnchorPos = nil
@@ -3237,8 +3231,7 @@ local v397, v398, v399, v400
         elseif v553 == "hover" then
             if v556 then
                 if v395.sitFlyOn then v556.Sit = true end
-                v556.AutoRotate = true
-            end
+end
             v395.flyPos = nil
             v395.velAnchorPos = nil
             if v557 then
@@ -3249,8 +3242,7 @@ local v397, v398, v399, v400
         elseif v553 == "vel" then
             if v556 then
                 if v395.sitFlyOn then v556.Sit = true end
-                v556.AutoRotate = true
-            end
+end
             v395.flyPos = nil
             v395.hoverTarget = nil
             v395.hoverY = nil
@@ -4192,7 +4184,7 @@ if v395.fullBrightLoopOn then
                 v395.flyPos = v395.flyPos + v765 * v395.flySpeed * v755
             end
 
-            v757.CFrame = CFrame.new(v395.flyPos)
+            do local vD=v761 if vD.Magnitude>0 then v757.CFrame=CFrame.new(v395.flyPos,v395.flyPos+vD) else v757.CFrame=CFrame.new(v395.flyPos) end end
         elseif v395.flyMode == "hover" then
             if not v395.hoverTarget then
                 v395.hoverTarget = v757.Position
@@ -5111,7 +5103,7 @@ if v395.fullBrightLoopOn then
         v539()
         v689(v932)
         v746(v932)
-        v789()
+v789()
         if v395.loopKillOn then
             local v934 = v394()
             local v935 = v934 and v934:FindFirstChildWhichIsA("Humanoid")
@@ -5140,11 +5132,16 @@ if v395.fullBrightLoopOn then
         v539()
         v490(v941)
         v884()
-        v754(v941)
-        v622(v941)
+v622(v941)
     end))
 
-    v305(v234.Stepped:Connect(function()
+    v305(v234.Heartbeat:Connect(function(vDt)
+        if v296 then
+            return
+        end
+        v754(vDt or 0)
+    end))
+v305(v234.Stepped:Connect(function()
         if v296 then
             return
         end
