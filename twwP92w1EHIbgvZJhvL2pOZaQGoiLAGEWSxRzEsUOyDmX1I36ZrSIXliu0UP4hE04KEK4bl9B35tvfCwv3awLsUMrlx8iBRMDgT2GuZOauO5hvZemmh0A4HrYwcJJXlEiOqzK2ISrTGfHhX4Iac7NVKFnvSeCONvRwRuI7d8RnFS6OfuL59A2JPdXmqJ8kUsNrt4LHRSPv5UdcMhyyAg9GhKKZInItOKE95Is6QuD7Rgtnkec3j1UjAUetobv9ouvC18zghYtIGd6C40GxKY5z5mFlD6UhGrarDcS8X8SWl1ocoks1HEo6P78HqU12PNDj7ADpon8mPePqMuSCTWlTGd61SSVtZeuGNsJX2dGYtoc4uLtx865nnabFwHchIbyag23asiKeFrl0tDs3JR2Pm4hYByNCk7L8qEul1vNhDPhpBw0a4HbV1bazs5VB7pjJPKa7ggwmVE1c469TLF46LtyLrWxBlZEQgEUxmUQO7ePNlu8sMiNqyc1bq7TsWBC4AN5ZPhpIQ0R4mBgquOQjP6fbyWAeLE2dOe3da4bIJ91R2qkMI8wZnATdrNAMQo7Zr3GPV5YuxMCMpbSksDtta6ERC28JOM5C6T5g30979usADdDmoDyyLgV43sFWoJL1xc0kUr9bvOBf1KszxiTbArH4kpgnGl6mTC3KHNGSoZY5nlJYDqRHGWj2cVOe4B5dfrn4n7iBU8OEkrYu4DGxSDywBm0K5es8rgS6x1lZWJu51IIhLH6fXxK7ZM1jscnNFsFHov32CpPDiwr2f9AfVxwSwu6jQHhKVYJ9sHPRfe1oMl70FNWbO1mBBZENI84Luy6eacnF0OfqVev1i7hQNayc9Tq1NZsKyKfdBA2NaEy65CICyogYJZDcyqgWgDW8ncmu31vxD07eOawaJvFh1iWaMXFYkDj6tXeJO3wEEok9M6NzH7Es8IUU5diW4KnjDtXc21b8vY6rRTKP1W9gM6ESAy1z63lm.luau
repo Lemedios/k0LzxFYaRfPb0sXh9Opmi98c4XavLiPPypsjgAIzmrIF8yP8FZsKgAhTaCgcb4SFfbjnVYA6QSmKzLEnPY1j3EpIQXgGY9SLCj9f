@@ -2301,6 +2301,7 @@ snowFogSaved = nil,
         antiVoidSaved = v239.FallenPartsDestroyHeight,
         antiFlingOn = false,
         noHitboxOn = false,
+        virtualInputActive = false,
         noHitboxI = 1,
         noHitboxSaved = {},
         antiFlingSaved = {},
@@ -2774,12 +2775,20 @@ local v397, v398, v399, v400
         local v483 = v395.antiAfkToken
         task.spawn(function()
             while not v296 and v395.antiAfkOn and v395.antiAfkToken == v483 do
-                pcall(function()
-                    v401:CaptureController()
-                    game:GetService("VirtualInputManager"):SendKeyEvent(true, Enum.KeyCode.Pause, false, game)
-            game:GetService("VirtualInputManager"):SendKeyEvent(false, Enum.KeyCode.Pause, false, game)
-                end)
-                task.wait(1)
+                if v395.smartFlyWaitingKey or v395.smartResetWaitingKey or v395.quickExitWaitingKey then
+                    task.wait(.2)
+                else
+                    pcall(function()
+                        v401:CaptureController()
+                        v395.virtualInputActive = true
+                        game:GetService("VirtualInputManager"):SendKeyEvent(true, Enum.KeyCode.Pause, false, game)
+                        game:GetService("VirtualInputManager"):SendKeyEvent(false, Enum.KeyCode.Pause, false, game)
+                        task.defer(function()
+                            v395.virtualInputActive = false
+                        end)
+                    end)
+                    task.wait(1)
+                end
             end
         end)
     end
@@ -6638,6 +6647,9 @@ v298.snowBtn.Activated:Connect(function()
 
 
         if v1071.UserInputType == Enum.UserInputType.Keyboard and v930 then
+        if v395.virtualInputActive then
+            return
+        end
             if v395.smartFlyWaitingKey then
                 v395.smartFlyWaitingKey = false
                 if v1071.KeyCode and v1071.KeyCode ~= Enum.KeyCode.Unknown then
