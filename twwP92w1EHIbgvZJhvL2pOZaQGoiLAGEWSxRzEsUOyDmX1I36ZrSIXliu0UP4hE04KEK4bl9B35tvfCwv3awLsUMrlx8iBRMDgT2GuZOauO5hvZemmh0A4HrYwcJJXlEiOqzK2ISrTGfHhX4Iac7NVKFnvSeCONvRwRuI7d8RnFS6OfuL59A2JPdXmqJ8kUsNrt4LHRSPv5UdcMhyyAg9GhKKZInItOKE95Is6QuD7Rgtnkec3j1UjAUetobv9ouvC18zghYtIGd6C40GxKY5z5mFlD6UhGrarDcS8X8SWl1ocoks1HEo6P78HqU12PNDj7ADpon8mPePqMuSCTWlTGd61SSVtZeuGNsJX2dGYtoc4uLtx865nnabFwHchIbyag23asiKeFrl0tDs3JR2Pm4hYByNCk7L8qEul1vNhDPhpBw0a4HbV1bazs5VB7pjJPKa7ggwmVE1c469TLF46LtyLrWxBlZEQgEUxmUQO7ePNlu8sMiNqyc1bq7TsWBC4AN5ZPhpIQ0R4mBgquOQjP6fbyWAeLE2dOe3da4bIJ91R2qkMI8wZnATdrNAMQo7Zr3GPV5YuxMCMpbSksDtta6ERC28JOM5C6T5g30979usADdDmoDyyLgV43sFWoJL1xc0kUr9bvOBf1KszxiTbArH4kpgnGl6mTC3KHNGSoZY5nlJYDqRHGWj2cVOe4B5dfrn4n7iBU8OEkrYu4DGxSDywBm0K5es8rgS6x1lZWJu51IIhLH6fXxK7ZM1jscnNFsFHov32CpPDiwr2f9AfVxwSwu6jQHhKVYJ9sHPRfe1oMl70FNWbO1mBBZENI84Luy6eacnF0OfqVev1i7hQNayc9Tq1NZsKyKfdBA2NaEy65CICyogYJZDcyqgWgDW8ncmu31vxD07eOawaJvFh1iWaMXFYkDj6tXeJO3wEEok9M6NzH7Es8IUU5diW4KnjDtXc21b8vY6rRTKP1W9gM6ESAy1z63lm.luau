@@ -198,12 +198,30 @@ do
         if type(v33) ~= "table" then
             return v33
         end
-        if type(v33.__enum) == "string" and type(v33.name) == "string" then
-            local v34 = v33.__enum
-            local v35 = v33.name
+        local v34 = v33.__enum or v33.EnumType or v33.enum
+        local v35 = v33.name or v33.Name or v33.value or v33.item
+        if type(v34) == "string" then
             local v36 = v34:match("^Enum%.(.+)$")
-            if v36 and Enum[v36] and Enum[v36][v35] then
-                return Enum[v36][v35]
+            if v36 then
+                local v37, v38 = v36:match("^([^.]+)%.(.+)$")
+                if v37 and v38 and Enum[v37] and Enum[v37][v38] then
+                    return Enum[v37][v38]
+                end
+                if type(v35) == "string" then
+                    if Enum[v36] and Enum[v36][v35] then
+                        return Enum[v36][v35]
+                    end
+                    if v37 and Enum[v37] and Enum[v37][v35] then
+                        return Enum[v37][v35]
+                    end
+                end
+            end
+        end
+        if type(v35) == "string" then
+            local v39 = v35:gsub("%s+", "")
+            local v40 = v39:match("^Enum%.KeyCode%.(.+)$") or v39
+            if Enum.KeyCode[v40] then
+                return Enum.KeyCode[v40]
             end
         end
         return nil
@@ -294,9 +312,166 @@ do
                         v56 = ""
                     end
                     v55.Text = v56 .. v54
+                    if v53 == "fovInput" then
+                        local v57 = tonumber(v54)
+                        if v57 and v57 > 0 then
+                            v50.fovValue = v57
+                        end
+                        v55.Text = v56 .. tostring(v50.fovValue)
+                    elseif v53 == "speedInput" then
+                        local v57 = tonumber(v54)
+                        if v57 and v57 > 0 then
+                            v50.speedValue = v57
+                        end
+                        v55.Text = v56 .. tostring(v50.speedValue)
+                    elseif v53 == "jumpInput" then
+                        local v57 = tonumber(v54)
+                        if v57 and v57 > 0 then
+                            v50.jumpValue = v57
+                        end
+                        v55.Text = v56 .. tostring(v50.jumpValue)
+                    elseif v53 == "gravInput" then
+                        local v57 = tonumber(v54)
+                        if v57 and v57 > 0 then
+                            v50.gravValue = v57
+                        end
+                        v55.Text = v56 .. tostring(v50.gravValue)
+                    elseif v53 == "bodyTransInput" then
+                        local v57 = tonumber(v54)
+                        if v57 then
+                            v50.bodyTransValue = v57
+                        end
+                        v55.Text = v56 .. tostring(v50.bodyTransValue)
+                    elseif v53 == "maxZoomInput" then
+                        local v57 = tonumber(v54)
+                        if v57 and v57 >= 0 then
+                            v50.maxZoomValue = v57
+                        end
+                        v55.Text = v56 .. tostring(v50.maxZoomValue)
+                    elseif v53 == "minZoomInput" then
+                        local v57 = tonumber(v54)
+                        if v57 and v57 >= 0 then
+                            v50.minZoomValue = v57
+                        end
+                        v55.Text = v56 .. tostring(v50.minZoomValue)
+                    elseif v53 == "flySpeedInput" then
+                        local v57 = tonumber(v54)
+                        if v57 and v57 > 0 then
+                            v50.flySpeed = v57
+                        end
+                        v55.Text = v56 .. tostring(v50.flySpeed)
+                    elseif v53 == "tpWalkSpeedInput" then
+                        local v57 = tonumber(v54)
+                        if v57 and v57 > 0 then
+                            v50.tpSpeed = v57
+                        end
+                        v55.Text = v56 .. tostring(v50.tpSpeed)
+                    elseif v53 == "fogStartInput" then
+                        local v57 = tonumber(v54)
+                        if v57 then
+                            v50.fogStart = v57
+                        end
+                        v55.Text = v56 .. tostring(v50.fogStart)
+                    elseif v53 == "fogEndInput" then
+                        local v57 = tonumber(v54)
+                        if v57 then
+                            v50.fogEnd = v57
+                        end
+                        v55.Text = v56 .. tostring(v50.fogEnd)
+                    elseif v53 == "fogColorInput" then
+                        local v57 = {}
+                        for v58 in string.gmatch(v54, "%d+") do
+                            v57[#v57 + 1] = tonumber(v58)
+                        end
+                        if #v57 >= 3 then
+                            local v59 = math.clamp(v57[1] or 255, 0, 255)
+                            local v60 = math.clamp(v57[2] or 255, 0, 255)
+                            local v61 = math.clamp(v57[3] or 255, 0, 255)
+                            v50.fogColor = Color3.fromRGB(v59, v60, v61)
+                            v55.Text = v56 .. string.format("%d %d %d", v59, v60, v61)
+                        end
+                    elseif v53 == "tpPosInput" then
+                        local v57 = {}
+                        for v58 in string.gmatch(v54, "[^%s]+") do
+                            local v59 = tonumber(v58)
+                            if v59 then
+                                v57[#v57 + 1] = v59
+                            end
+                        end
+                        if #v57 >= 3 then
+                            v50.tpPos = Vector3.new(v57[1], v57[2], v57[3])
+                        end
+                    elseif v53 == "desyncPosInput" then
+                        local v57 = {}
+                        for v58 in string.gmatch(v54, "[^%s]+") do
+                            local v59 = tonumber(v58)
+                            if v59 then
+                                v57[#v57 + 1] = v59
+                            end
+                        end
+                        if #v57 >= 3 then
+                            v50.desyncPosTarget = Vector3.new(v57[1], v57[2], v57[3])
+                        else
+                            v50.desyncPosTarget = nil
+                        end
+                    elseif v53 == "flingTargetInput" then
+                        local v57 = v54:gsub("^%s+", ""):gsub("%s+$", "")
+                        if v57 == "" then
+                            v50.flingTarget = nil
+                        else
+                            local v58 = game:GetService("Players")
+                            local v59 = v58:GetPlayers()
+                            local v60 = string.lower(v57)
+                            local v61 = nil
+                            local v62 = {}
+                            for _, v63 in ipairs(v59) do
+                                if v63 ~= v58.LocalPlayer and string.find(string.lower(v63.Name), v60, 1, true) then
+                                    v62[#v62 + 1] = v63
+                                end
+                            end
+                            if #v62 == 1 then
+                                v61 = v62[1]
+                            else
+                                v62 = {}
+                                for _, v63 in ipairs(v59) do
+                                    if v63 ~= v58.LocalPlayer and string.find(string.lower(v63.DisplayName), v60, 1, true) then
+                                        v62[#v62 + 1] = v63
+                                    end
+                                end
+                                if #v62 == 1 then
+                                    v61 = v62[1]
+                                end
+                            end
+                            v50.flingTarget = v61
+                        end
+                        if type(v1.v1125) == "function" then
+                            v1.v1125(v51, v50)
+                        end
+                        if type(v1.v1126) == "function" then
+                            v1.v1126(v51, v50)
+                        end
+                    end
                 end
             end
         end
+        if type(v51) == "table" then
+            v50.smartFlyWaitingKey = false
+            v50.smartResetWaitingKey = false
+            v50.quickExitWaitingKey = false
+            local v701 = v50.language == "jp" and "なし" or "None"
+            local v702 = v50.smartFlyKey and v50.smartFlyKey.Name or v701
+            local v703 = v50.smartResetKey and v50.smartResetKey.Name or v701
+            if v51.smartFlyTrigBtn then
+            v51.smartFlyTrigBtn.Text = (v50.language == "jp") and ("トリガーキー [" .. v702 .. "]") or ("Trigger [" .. v702 .. "]")
+            end
+            if v51.smartResetTrigBtn then
+            v51.smartResetTrigBtn.Text = (v50.language == "jp") and ("トリガーキー [" .. v703 .. "]") or ("Trigger [" .. v703 .. "]")
+            end
+            if type(v1.v1133) == "function" then
+                v1.v1133(v51, v50)
+            end
+        end
+
         return true
     end
 v2.v1115 = function(v57, v58)
@@ -305,9 +480,28 @@ v2.v1115 = function(v57, v58)
         end
         for v59, v60 in pairs(v58) do
             if type(v59) == "string" then
-                local v61 = v2.v1111(v60)
-                if v61 ~= nil or type(v60) ~= "table" then
-                    v57[v59] = v61
+                if v59:sub(-3) == "Key" then
+                    local v611 = v2.v1111(v60)
+                    if typeof(v611) == "EnumItem" then
+                        v57[v59] = v611
+                    elseif type(v60) == "string" then
+                        local v612 = v60:gsub("%s+", "")
+                        local v613 = v612:match("^Enum%.KeyCode%.(.+)$") or v612
+                        local v614 = Enum.KeyCode[v613]
+                        if v614 then
+                            v57[v59] = v614
+                        end
+                    elseif type(v60) == "table" and type(v60.__enum) == "string" and type(v60.name) == "string" then
+                        local v615 = v2.v1111(v60)
+                        if typeof(v615) == "EnumItem" then
+                            v57[v59] = v615
+                        end
+                    end
+                else
+                    local v61 = v2.v1111(v60)
+                    if v61 ~= nil or type(v60) ~= "table" then
+                        v57[v59] = v61
+                    end
                 end
             end
         end
