@@ -4919,7 +4919,7 @@ if v395.fullBrightLoopOn then
             v3.CanCollide = false
             v3.CanTouch = false
             v3.CanQuery = false
-            v3.Material = Enum.Material.SmoothPlastic
+            v3.Material = Enum.Material.Neon
             v3.Color = Color3.new(1, 0, 0)
             v3.Transparency = 0.5
             v3.CastShadow = false
@@ -4928,20 +4928,20 @@ if v395.fullBrightLoopOn then
         end
 
         local v4 = nil
-
+        local v5, v6, v7 = v2.CFrame:ToOrientation()
+        
         if v395.desyncOn then
             if not v395.desyncSavedCF then
                 v395.desyncSavedCF = v2.CFrame
             end
-            v4 = v395.desyncSavedCF
+            local v8 = v395.desyncSavedCF.Position
+            v4 = CFrame.new(v8) * CFrame.fromOrientation(v5, v6, v7)
         elseif v395.desyncPosOn then
-            local v5 = v395.desyncPosTarget or Vector3.new(0, 0, 0)
-            v4 = CFrame.new(v5)
+            local v8 = v395.desyncPosTarget or Vector3.new(0, 0, 0)
+            v4 = CFrame.new(v8) * CFrame.fromOrientation(v5, v6, v7)
         elseif v395.desyncDirOn then
-            local v5 = v395.desyncDirPitchOn and (v395.desyncDirPitchDeg or 0) or 0
-            local v6 = v395.desyncDirYawOn and (v395.desyncDirYawDeg or 0) or 0
-            local v7 = v395.desyncDirRollOn and (v395.desyncDirRollDeg or 0) or 0
-            v4 = v2.CFrame * CFrame.Angles(math.rad(v5), math.rad(v6), math.rad(v7))
+            local v8 = v2.Position
+            v4 = CFrame.new(v8) * CFrame.fromOrientation(v5, v6, v7)
         end
 
         if not v4 then
@@ -6383,7 +6383,7 @@ v298.snowBtn.Activated:Connect(function()
                 v8.CanCollide=false
                 v8.CanTouch=false
                 v8.CanQuery=false
-                v8.Material=Enum.Material.SmoothPlastic
+                v8.Material=Enum.Material.Neon
                 v8.Color=Color3.new(1,0,0)
                 v8.Transparency=0.5
                 v8.CastShadow=false
@@ -6578,7 +6578,7 @@ v298.snowBtn.Activated:Connect(function()
                 v10.CanCollide=false
                 v10.CanTouch=false
                 v10.CanQuery=false
-                v10.Material=Enum.Material.SmoothPlastic
+                v10.Material=Enum.Material.Neon
                 v10.Color=Color3.new(1,0,0)
                 v10.Transparency=0.5
                 v10.CastShadow=false
@@ -6769,7 +6769,7 @@ v298.snowBtn.Activated:Connect(function()
                 v8.CanCollide=false
                 v8.CanTouch=false
                 v8.CanQuery=false
-                v8.Material=Enum.Material.SmoothPlastic
+                v8.Material=Enum.Material.Neon
                 v8.Color=Color3.new(1,0,0)
                 v8.Transparency=0.5
                 v8.CastShadow=false
