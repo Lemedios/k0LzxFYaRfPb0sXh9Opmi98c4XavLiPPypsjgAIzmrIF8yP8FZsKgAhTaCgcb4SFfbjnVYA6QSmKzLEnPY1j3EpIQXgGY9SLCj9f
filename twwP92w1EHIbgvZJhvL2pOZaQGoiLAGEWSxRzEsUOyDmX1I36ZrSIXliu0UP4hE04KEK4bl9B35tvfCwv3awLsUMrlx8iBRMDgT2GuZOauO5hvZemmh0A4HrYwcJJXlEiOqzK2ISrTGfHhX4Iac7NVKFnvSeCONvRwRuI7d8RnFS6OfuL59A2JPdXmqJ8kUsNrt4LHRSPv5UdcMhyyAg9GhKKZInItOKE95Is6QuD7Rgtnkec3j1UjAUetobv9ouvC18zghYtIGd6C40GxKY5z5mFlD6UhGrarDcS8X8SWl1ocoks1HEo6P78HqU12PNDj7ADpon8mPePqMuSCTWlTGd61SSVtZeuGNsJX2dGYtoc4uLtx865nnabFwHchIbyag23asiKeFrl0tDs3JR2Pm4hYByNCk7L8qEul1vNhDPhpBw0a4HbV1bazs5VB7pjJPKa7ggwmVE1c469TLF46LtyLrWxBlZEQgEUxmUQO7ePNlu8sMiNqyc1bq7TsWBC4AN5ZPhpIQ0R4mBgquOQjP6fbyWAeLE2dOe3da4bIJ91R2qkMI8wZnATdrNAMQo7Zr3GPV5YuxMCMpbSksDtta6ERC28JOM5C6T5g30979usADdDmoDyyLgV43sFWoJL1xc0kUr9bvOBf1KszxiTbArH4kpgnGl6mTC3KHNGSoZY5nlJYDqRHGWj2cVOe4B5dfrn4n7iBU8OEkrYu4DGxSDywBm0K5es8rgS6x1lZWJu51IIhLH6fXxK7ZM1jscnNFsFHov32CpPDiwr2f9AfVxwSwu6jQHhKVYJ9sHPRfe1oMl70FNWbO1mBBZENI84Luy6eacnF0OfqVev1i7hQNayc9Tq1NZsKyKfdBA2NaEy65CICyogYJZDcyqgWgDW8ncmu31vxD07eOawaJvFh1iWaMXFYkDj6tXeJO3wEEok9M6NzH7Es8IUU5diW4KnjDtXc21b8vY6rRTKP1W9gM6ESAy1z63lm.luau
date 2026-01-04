@@ -4192,7 +4192,8 @@ if v395.fullBrightLoopOn then
                 v395.flyPos = v395.flyPos + v765 * v395.flySpeed * v755
             end
 
-            v757.CFrame = CFrame.new(v395.flyPos)
+            local v767, v768 = v760:ToOrientation()
+            v757.CFrame = CFrame.new(v395.flyPos) * CFrame.fromOrientation(v767, v768, 0)
         elseif v395.flyMode == "hover" then
             if not v395.hoverTarget then
                 v395.hoverTarget = v757.Position
