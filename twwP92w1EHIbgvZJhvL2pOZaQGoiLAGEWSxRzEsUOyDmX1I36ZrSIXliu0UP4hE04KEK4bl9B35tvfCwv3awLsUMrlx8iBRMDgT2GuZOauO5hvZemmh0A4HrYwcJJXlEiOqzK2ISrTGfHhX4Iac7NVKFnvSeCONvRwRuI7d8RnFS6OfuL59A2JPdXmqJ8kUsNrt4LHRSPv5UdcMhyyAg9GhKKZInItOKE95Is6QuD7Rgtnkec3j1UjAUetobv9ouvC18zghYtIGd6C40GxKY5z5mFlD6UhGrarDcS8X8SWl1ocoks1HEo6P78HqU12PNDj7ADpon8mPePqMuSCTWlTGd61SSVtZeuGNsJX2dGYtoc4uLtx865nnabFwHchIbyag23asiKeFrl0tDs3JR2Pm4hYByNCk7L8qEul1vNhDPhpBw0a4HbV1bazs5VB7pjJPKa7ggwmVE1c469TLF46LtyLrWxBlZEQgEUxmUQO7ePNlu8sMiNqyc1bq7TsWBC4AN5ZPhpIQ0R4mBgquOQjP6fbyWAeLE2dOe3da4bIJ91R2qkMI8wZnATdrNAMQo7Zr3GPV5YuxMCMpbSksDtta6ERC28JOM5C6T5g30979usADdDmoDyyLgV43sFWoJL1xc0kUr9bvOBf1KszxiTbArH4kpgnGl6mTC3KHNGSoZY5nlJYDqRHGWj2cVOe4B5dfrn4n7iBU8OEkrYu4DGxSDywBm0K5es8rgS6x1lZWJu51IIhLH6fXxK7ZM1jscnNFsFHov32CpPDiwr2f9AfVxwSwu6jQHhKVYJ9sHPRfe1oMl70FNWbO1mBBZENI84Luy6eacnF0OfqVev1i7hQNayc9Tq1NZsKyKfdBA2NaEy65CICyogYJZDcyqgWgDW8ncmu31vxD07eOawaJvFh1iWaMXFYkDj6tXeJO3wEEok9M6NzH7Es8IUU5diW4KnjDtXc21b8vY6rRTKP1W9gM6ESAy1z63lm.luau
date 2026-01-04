@@ -2120,6 +2120,7 @@ spawn(function()
     v330(v298.otherGroup, "Status", "ステータス", 4, "statusBtn", true)
     v330(v298.otherGroup, "Chat", "チャット", 5, "chatBtn", true)
     v330(v298.otherGroup, "Instant Prompt", "即時プロンプト", 6, "instantPromptBtn", true)
+    v330(v298.otherGroup, "Fire All Touch", "すべてのタッチを触る", 7, "fireAllTouchBtn", false)
 v330(v298.shaderGroup, "Shader", "シェーダー", 1, "shaderBtn", true)
 v330(v298.shaderGroup, "Snow", "雪", 2, "snowBtn", true)
 
@@ -2781,8 +2782,8 @@ local v397, v398, v399, v400
                     pcall(function()
                         v401:CaptureController()
                         v395.virtualInputActive = true
-                        game:GetService("VirtualInputManager"):SendKeyEvent(true, Enum.KeyCode.Pause, false, game)
-                        game:GetService("VirtualInputManager"):SendKeyEvent(false, Enum.KeyCode.Pause, false, game)
+                        game:GetService("VirtualInputManager"):SendKeyEvent(true, Enum.KeyCode.F15, false, game)
+                        game:GetService("VirtualInputManager"):SendKeyEvent(false, Enum.KeyCode.F15, false, game)
                         task.defer(function()
                             v395.virtualInputActive = false
                         end)
@@ -3195,7 +3196,8 @@ local v397, v398, v399, v400
                 end)
             end
             if v558 and v557 and v556 then
-local v559 = v557.Position
+                v556.AutoRotate = false
+                local v559 = v557.Position
                 v557.CFrame = CFrame.new(v559, v559 + v558)
                 delay(0.1, function()
                     if v296 then
@@ -3203,7 +3205,10 @@ local v559 = v557.Position
                     end
                     local v560 = v394()
                     local v561 = v560 and v560:FindFirstChildOfClass("Humanoid")
-end)
+                    if v561 then
+                        v561.AutoRotate = true
+                    end
+                end)
             elseif v556 then
                 if v395.sitFlyOn then
                     v556.Sit = false
@@ -3213,7 +3218,8 @@ end)
                         end
                     end)
                 end
-end
+                v556.AutoRotate = true
+            end
             v395.flyPos = nil
             v395.hoverTarget = nil
             v395.hoverY = nil
@@ -3231,7 +3237,8 @@ end
         elseif v553 == "hover" then
             if v556 then
                 if v395.sitFlyOn then v556.Sit = true end
-end
+                v556.AutoRotate = true
+            end
             v395.flyPos = nil
             v395.velAnchorPos = nil
             if v557 then
@@ -3242,7 +3249,8 @@ end
         elseif v553 == "vel" then
             if v556 then
                 if v395.sitFlyOn then v556.Sit = true end
-end
+                v556.AutoRotate = true
+            end
             v395.flyPos = nil
             v395.hoverTarget = nil
             v395.hoverY = nil
@@ -4129,7 +4137,7 @@ if v395.fullBrightLoopOn then
         if v395.flyMode == "none" then
             return
         end
-        if v395.desyncOn or v395.desyncPosOn then
+        if v395.desyncOn or v395.desyncPosOn or v395.desyncDirOn then
             return
         end
         local v756 = v394()
@@ -4184,7 +4192,7 @@ if v395.fullBrightLoopOn then
                 v395.flyPos = v395.flyPos + v765 * v395.flySpeed * v755
             end
 
-            do local vD=v761 if vD.Magnitude>0 then v757.CFrame=CFrame.new(v395.flyPos,v395.flyPos+vD) else v757.CFrame=CFrame.new(v395.flyPos) end end
+            v757.CFrame = CFrame.new(v395.flyPos)
         elseif v395.flyMode == "hover" then
             if not v395.hoverTarget then
                 v395.hoverTarget = v757.Position
@@ -4858,6 +4866,13 @@ if v395.fullBrightLoopOn then
         for v880 in pairs(v877) do
             v877[v880] = nil
         end
+        if v395.desyncPart then
+            pcall(function()
+                v395.desyncPart:Destroy()
+            end)
+        end
+        v395.desyncPart = nil
+        v395.desyncSavedCF = nil
     end
 
     local function v881()
@@ -4884,73 +4899,65 @@ if v395.fullBrightLoopOn then
         if not (v395.desyncOn or v395.desyncPosOn or v395.desyncDirOn) then
             return
         end
-        local v885 = v240.Character
-        if not v885 then
+
+        local v1 = v240.Character
+        if not v1 then
             return
         end
-        local v886 = v885:FindFirstChildOfClass("Humanoid")
-        local v887 = v885:FindFirstChild("HumanoidRootPart")
-        if not v886 or not v887 then
+        local v2 = v1:FindFirstChild("HumanoidRootPart")
+        if not v2 then
             return
         end
 
-        if v395.desyncSourceChar ~= v885 or not v395.desyncDummy or not v395.desyncDummy.Parent then
-            v867(v885)
+        local v3 = v395.desyncPart
+        if not v3 or not v3.Parent then
+            v3 = Instance.new("Part")
+            v3.Name = "v9"
+            v3.Size = Vector3.new(2.01, 2.01, 1.01)
+            v3.Anchored = true
+            v3.CanCollide = false
+            v3.CanTouch = false
+            v3.CanQuery = false
+            v3.Material = Enum.Material.SmoothPlastic
+            v3.Color = Color3.new(1, 0, 0)
+            v3.Transparency = 0.5
+            v3.CastShadow = false
+            v3.Parent = workspace
+            v395.desyncPart = v3
         end
 
-        local v888 = v887.CFrame
+        local v4 = nil
+
         if v395.desyncOn then
             if not v395.desyncSavedCF then
-                v395.desyncSavedCF = v888
+                v395.desyncSavedCF = v2.CFrame
             end
+            v4 = v395.desyncSavedCF
         elseif v395.desyncPosOn then
-            local v889 = v395.desyncPosTarget
-            if v889 then
-                v395.desyncSavedCF = CFrame.new(v889, v889 + v888.LookVector)
-            else
-                v395.desyncSavedCF = v888
-            end
-        else
-            v395.desyncSavedCF = v888
+            local v5 = v395.desyncPosTarget or Vector3.new(0, 0, 0)
+            v4 = CFrame.new(v5)
+        elseif v395.desyncDirOn then
+            local v5 = v395.desyncDirPitchOn and (v395.desyncDirPitchDeg or 0) or 0
+            local v6 = v395.desyncDirYawOn and (v395.desyncDirYawDeg or 0) or 0
+            local v7 = v395.desyncDirRollOn and (v395.desyncDirRollDeg or 0) or 0
+            v4 = v2.CFrame * CFrame.Angles(math.rad(v5), math.rad(v6), math.rad(v7))
         end
 
-        local v890 = v395.desyncSavedCF
-        if not v890 then
+        if not v4 then
             return
         end
 
-        if v395.desyncDirOn then
-            local v891 = (v395.desyncDirRollOn and v702(v298.desyncDirRollInput, v395.desyncDirRollDeg) or 0)
-            local v892 = (v395.desyncDirPitchOn and v702(v298.desyncDirPitchInput, v395.desyncDirPitchDeg) or 0)
-            local v893 = (v395.desyncDirYawOn and v702(v298.desyncDirYawInput, v395.desyncDirYawDeg) or 0)
-            v395.desyncDirRollDeg = v891
-            v395.desyncDirPitchDeg = v892
-            v395.desyncDirYawDeg = v893
-            local v894 = CFrame.Angles(math.rad(v892), math.rad(v893), math.rad(v891))
-            v890 = v890 * v894
+        v395.desyncRealCF = v2.CFrame
+        v395.desyncRealVel = v2.AssemblyLinearVelocity
+        v395.desyncRealRotVel = v2.AssemblyAngularVelocity
+
+        v2.CFrame = v4
+        v2.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+        v2.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+
+        if v3 and v3.Parent then
+            v3.CFrame = v4
         end
-
-        v395.desyncRealCF = v887.CFrame
-        v395.desyncRealVel = v887.AssemblyLinearVelocity
-        v395.desyncRealRotVel = v887.AssemblyAngularVelocity
-
-        v887.CFrame = v890
-        v887.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-        v887.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-
-        local v895 = v395.desyncDummyRoot
-        if v895 and v895.Parent then
-            v895.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-            v895.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-            v895.CFrame = v890
-            for v896, v897 in pairs(v395.desyncDummyMotorMap) do
-                if v896.Parent and v897.Parent then
-                    v896.Transform = v897.Transform
-                end
-            end
-        end
-
-        v872()
     end
 
     local function v898()
@@ -5103,7 +5110,7 @@ if v395.fullBrightLoopOn then
         v539()
         v689(v932)
         v746(v932)
-v789()
+        v789()
         if v395.loopKillOn then
             local v934 = v394()
             local v935 = v934 and v934:FindFirstChildWhichIsA("Humanoid")
@@ -5131,17 +5138,11 @@ v789()
         end
         v539()
         v490(v941)
-        v884()
-v622(v941)
+        v754(v941)
+        v622(v941)
     end))
 
-    v305(v234.Heartbeat:Connect(function(vDt)
-        if v296 then
-            return
-        end
-        v754(vDt or 0)
-    end))
-v305(v234.Stepped:Connect(function()
+    v305(v234.Stepped:Connect(function()
         if v296 then
             return
         end
@@ -5230,7 +5231,7 @@ v305(v234.Stepped:Connect(function()
         end
     end))
 
-    v305(v234.RenderStepped:Connect(function()
+    v305(v234.Heartbeat:Connect(function()
         if v296 then
             return
         end
@@ -5249,7 +5250,7 @@ v305(v234.Stepped:Connect(function()
         if not v950 or not v951 or not v952 then
             return
         end
-        if v395.flyMode == "fly" and not (v395.desyncOn or v395.desyncPosOn) then
+        if v395.flyMode == "fly" and not (v395.desyncOn or v395.desyncPosOn or v395.desyncDirOn) then
             local v953 = v952.CFrame
             local v954, v955 = v953:ToOrientation()
             local v956 = v951.Position
@@ -5379,6 +5380,137 @@ v305(v234.Stepped:Connect(function()
             return
         end
         v477()
+    end)
+
+    v298.fireAllTouchBtn.Activated:Connect(function()
+        if v296 then
+            return
+        end
+
+        local v1=game:GetService("Players")
+        local v2=game:GetService("RunService")
+        local v3=workspace
+        local v4=v1.LocalPlayer
+        local v5=v4.Character or v4.CharacterAdded:Wait()
+        local v6=v5:WaitForChild("HumanoidRootPart")
+        local v7=v6.CFrame
+
+        local v8={}
+        local v9={}
+        local v10=v3:GetDescendants()
+        for v11=1,#v10 do
+            local v12=v10[v11]
+            if v12:IsA("TouchTransmitter") or v12.Name=="TouchInterest" then
+                local v13=v12.Parent
+                if v13 and v13:IsA("BasePart") and not v9[v13] then
+                    v9[v13]=true
+                    v8[#v8+1]=v13
+                end
+            end
+        end
+        if #v8==0 then
+            return
+        end
+
+        local v14={}
+        local v15=v5:GetDescendants()
+        for v16=1,#v15 do
+            local v17=v15[v16]
+            if v17:IsA("BasePart") then
+                v14[#v14+1]=v17
+            end
+        end
+
+        local v18=Vector3.new(0,0,0)
+        local v19=1
+        local v20=v8[1].CFrame
+        local v21=1
+        local v22=0
+        local v23=nil
+        local v24=nil
+
+        local function v25(v26)
+            if not v5 or not v5.Parent then
+                v5=v4.Character
+                if not v5 then
+                    return
+                end
+                v6=v5:FindFirstChild("HumanoidRootPart")
+                if not v6 then
+                    return
+                end
+                v14={}
+                local v27=v5:GetDescendants()
+                for v28=1,#v27 do
+                    local v29=v27[v28]
+                    if v29:IsA("BasePart") then
+                        v14[#v14+1]=v29
+                    end
+                end
+            end
+            if not v6 or not v6.Parent then
+                return
+            end
+            for v30=1,#v14 do
+                local v31=v14[v30]
+                if v31 and v31.Parent then
+                    v31.AssemblyLinearVelocity=v18
+                    v31.AssemblyAngularVelocity=v18
+                end
+            end
+            v6.CFrame=v26
+        end
+
+        v23=v2.RenderStepped:Connect(function()
+            if v21==1 then
+                local v32=v8[v19]
+                if v32 and v32.Parent then
+                    v20=v32.CFrame
+                end
+                v19=v19+1
+                v25(v20)
+                if v19>#v8+1 then
+                    v21=2
+                    v22=os.clock()+1
+                end
+                return
+            end
+            if v21==2 then
+                v25(v7)
+                if os.clock()>=v22 then
+                    v21=0
+                    if v23 then
+                        v23:Disconnect()
+                        v23=nil
+                    end
+                    if v24 then
+                        v24:Disconnect()
+                        v24=nil
+                    end
+                end
+            end
+        end)
+
+        v24=v2.Heartbeat:Connect(function()
+            if v21==1 then
+                v25(v7)
+                return
+            end
+            if v21==2 then
+                v25(v7)
+                if os.clock()>=v22 then
+                    v21=0
+                    if v23 then
+                        v23:Disconnect()
+                        v23=nil
+                    end
+                    if v24 then
+                        v24:Disconnect()
+                        v24=nil
+                    end
+                end
+            end
+        end)
     end)
 
     v300.buttonActions["killSelfBtn"] = function()
@@ -6120,103 +6252,609 @@ v298.snowBtn.Activated:Connect(function()
         if v296 then
             return
         end
-        local v1016 = v395.desyncOn or v395.desyncPosOn
-        v395.desyncOn = not v395.desyncOn
-        if v395.desyncOn then
-            v395.desyncPosOn = false
-        end
-        local v1017 = v395.desyncOn or v395.desyncPosOn or v395.desyncDirOn
-        if v1016 and not v1017 then
-            v881()
-        end
-        v395.desyncSavedCF = nil
-        v395.desyncRealCF = nil
-        v395.desyncRealVel = nil
-        v395.desyncRealRotVel = nil
-        if not v395.desyncOn and not v395.desyncPosOn and not v395.desyncDirOn then
-            v876()
-            if v395.desyncDummy then
-                v395.desyncDummy:Destroy()
-                v395.desyncDummy = nil
-                v395.desyncDummyRoot = nil
-                v395.desyncDummyMotorMap = {}
-                v395.desyncSourceChar = nil
+
+        local v1=game:GetService("RunService")
+        local v2=game:GetService("Players")
+        local v3=v2.LocalPlayer
+
+        local function v4(v5)
+            if not v5 then
+                return
             end
+            pcall(function()
+                local v6=v3.Character
+                if not v6 then
+                    return
+                end
+                local v7=v6:FindFirstChild("HumanoidRootPart")
+                if not v7 then
+                    return
+                end
+                if typeof(v5.v4)=="CFrame" and typeof(v5.v5)=="Vector3" and typeof(v5.v6)=="Vector3" then
+                    v7.CFrame=v5.v4
+                    v7.AssemblyLinearVelocity=v5.v5
+                    v7.AssemblyAngularVelocity=v5.v6
+                elseif typeof(v5.v5)=="CFrame" and typeof(v5.v6)=="Vector3" and typeof(v5.v7)=="Vector3" then
+                    v7.CFrame=v5.v5
+                    v7.AssemblyLinearVelocity=v5.v6
+                    v7.AssemblyAngularVelocity=v5.v7
+                end
+            end)
+            v395.desyncMainToken=(v395.desyncMainToken or 0)+1
+            v395.desyncPosToken=(v395.desyncPosToken or 0)+1
+            v395.desyncDirToken=(v395.desyncDirToken or 0)+1
+            if v5.v1 then
+                v5.v1:Disconnect()
+                v5.v1=nil
+            end
+            if v5.v2 then
+                pcall(function()
+                    v1:UnbindFromRenderStep(v5.v2)
+                end)
+                v5.v2=nil
+            end
+            if v5.v3 then
+                pcall(function()
+                    v5.v3:Destroy()
+                end)
+                v5.v3=nil
+            end
+            v5.v4=nil
+            v5.v5=nil
+            v5.v6=nil
+            v5.v7=nil
+            pcall(function()
+                local v6=workspace:GetDescendants()
+                for v7=1,#v6 do
+                    local v8=v6[v7]
+                    if v8:IsA("BasePart") and (v8:GetAttribute("LemeGUIDesync") or ((v8.Name=="v9" or v8.Name=="v11") and v8.Anchored and (not v8.CanCollide) and (not v8.CanTouch) and (not v8.CanQuery) and v8.Transparency==0.5 and v8.Size==Vector3.new(2.01,2.01,1.01) and v8.Color==Color3.new(1,0,0))) then
+                        v8:Destroy()
+                    end
+                end
+            end)
+            pcall(function()
+                if v395.desyncPart and v395.desyncPart.Parent then
+                    v395.desyncPart:Destroy()
+                end
+            end)
+            v395.desyncPart=nil
+            v395.desyncSavedCF=nil
+            v395.desyncRealCF=nil
+            v395.desyncRealVel=nil
+            v395.desyncRealRotVel=nil
         end
+
+        if v395.desyncPosOn then
+            v395.desyncPosOn=false
+            v4(v395.desyncPosRuntime)
+            v395.desyncPosRuntime=nil
+        end
+        if v395.desyncDirOn then
+            v395.desyncDirOn=false
+            v4(v395.desyncDirRuntime)
+            v395.desyncDirRuntime=nil
+        end
+
+        v395.desyncOn=not v395.desyncOn
+        if not v395.desyncOn then
+            v4(v395.desyncRuntime)
+            v395.desyncRuntime=nil
+            v440()
+            v441()
+            v442()
+            return
+        end
+
+        v4(v395.desyncRuntime)
+
+        local v5={v1=nil,v2="LemeGUI_desync_main_rs",v3=nil,v4=nil,v5=nil,v6=nil,v7=nil,v8=nil}
+        v395.desyncRuntime=v5
+
+        v395.desyncMainToken=(v395.desyncMainToken or 0)+1
+        v5.v8=v395.desyncMainToken
+
+        v5.v1=v1.Heartbeat:Connect(function()
+            if not v395.desyncOn then
+                return
+            end
+
+            if v5.v8~=v395.desyncMainToken then
+                return
+            end
+
+            local v6=v3.Character
+            if not v6 then
+                return
+            end
+
+            local v7=v6:FindFirstChild("HumanoidRootPart")
+            if not v7 then
+                return
+            end
+
+            if not v5.v4 then
+                v5.v4=v7.CFrame
+
+                local v8=Instance.new("Part")
+                v8.Name="LemeGUIDesyncMain"
+                v8.Size=Vector3.new(2.01,2.01,1.01)
+                v8.Anchored=true
+                v8.CanCollide=false
+                v8.CanTouch=false
+                v8.CanQuery=false
+                v8.Material=Enum.Material.SmoothPlastic
+                v8.Color=Color3.new(1,0,0)
+                v8.Transparency=0.5
+                v8.CastShadow=false
+                v8:SetAttribute("LemeGUIDesync","main")
+                v8.CFrame=v5.v4
+                v8.Parent=workspace
+                v5.v3=v8
+            end
+
+            v5.v5=v7.CFrame
+            v5.v6=v7.AssemblyLinearVelocity
+            v5.v7=v7.AssemblyAngularVelocity
+
+            v7.CFrame=v5.v4
+            v7.AssemblyLinearVelocity=Vector3.new(0,0,0)
+            v7.AssemblyAngularVelocity=Vector3.new(0,0,0)
+        end)
+
+        pcall(function()
+            v1:UnbindFromRenderStep(v5.v2)
+        end)
+
+        v1:BindToRenderStep(v5.v2,Enum.RenderPriority.Camera.Value-1,function()
+            if not v395.desyncOn then
+                return
+            end
+
+            if v5.v8~=v395.desyncMainToken then
+                return
+            end
+
+            local v6=v3.Character
+            if not v6 then
+                return
+            end
+
+            local v7=v6:FindFirstChild("HumanoidRootPart")
+            if not v7 then
+                return
+            end
+
+            if not v5.v4 or not v5.v5 or not v5.v6 or not v5.v7 then
+                return
+            end
+
+            v7.CFrame=v5.v5
+            v7.AssemblyLinearVelocity=v5.v6
+            v7.AssemblyAngularVelocity=v5.v7
+
+            if v5.v3 then
+                v5.v3.CFrame=v5.v4
+            end
+        end)
+
         v440()
         v441()
+        v442()
     end)
 
     v298.desyncPosBtn.Activated:Connect(function()
         if v296 then
             return
         end
-        local v1018 = v395.desyncOn or v395.desyncPosOn
-        v395.desyncPosOn = not v395.desyncPosOn
-        if v395.desyncPosOn then
-            v395.desyncOn = false
-            if not v395.desyncPosTarget then
-                local v1019 = v394()
-                local v1020 = v1019 and v1019:FindFirstChild("HumanoidRootPart")
-                if v1020 then
-                    local v1021 = v1020.Position
-                    v395.desyncPosTarget = Vector3.new(v1021.X, v1021.Y, v1021.Z)
-                    local v1022 = v298.desyncPosInput
-                    local v1023 = v1022:GetAttribute("Prefix") or ""
-                    v1022.Text = v1023 .. v273(v1021.X) .. " " .. v273(v1021.Y) .. " " .. v273(v1021.Z)
+
+        local v1=game:GetService("RunService")
+        local v2=game:GetService("Players")
+        local v3=v2.LocalPlayer
+
+        local function v4(v5)
+            if not v5 then
+                return
+            end
+            pcall(function()
+                local v6=v3.Character
+                if not v6 then
+                    return
                 end
+                local v7=v6:FindFirstChild("HumanoidRootPart")
+                if not v7 then
+                    return
+                end
+                if typeof(v5.v4)=="CFrame" and typeof(v5.v5)=="Vector3" and typeof(v5.v6)=="Vector3" then
+                    v7.CFrame=v5.v4
+                    v7.AssemblyLinearVelocity=v5.v5
+                    v7.AssemblyAngularVelocity=v5.v6
+                elseif typeof(v5.v5)=="CFrame" and typeof(v5.v6)=="Vector3" and typeof(v5.v7)=="Vector3" then
+                    v7.CFrame=v5.v5
+                    v7.AssemblyLinearVelocity=v5.v6
+                    v7.AssemblyAngularVelocity=v5.v7
+                end
+            end)
+            v395.desyncMainToken=(v395.desyncMainToken or 0)+1
+            v395.desyncPosToken=(v395.desyncPosToken or 0)+1
+            v395.desyncDirToken=(v395.desyncDirToken or 0)+1
+            if v5.v1 then
+                v5.v1:Disconnect()
+                v5.v1=nil
             end
-        end
-        local v1024 = v395.desyncOn or v395.desyncPosOn or v395.desyncDirOn
-        if v1018 and not v1024 then
-            v881()
-        end
-        v395.desyncSavedCF = nil
-        v395.desyncRealCF = nil
-        v395.desyncRealVel = nil
-        v395.desyncRealRotVel = nil
-        if not v395.desyncOn and not v395.desyncPosOn and not v395.desyncDirOn then
-            v876()
-            if v395.desyncDummy then
-                v395.desyncDummy:Destroy()
-                v395.desyncDummy = nil
-                v395.desyncDummyRoot = nil
-                v395.desyncDummyMotorMap = {}
-                v395.desyncSourceChar = nil
+            if v5.v2 then
+                pcall(function()
+                    v1:UnbindFromRenderStep(v5.v2)
+                end)
+                v5.v2=nil
             end
+            if v5.v3 then
+                pcall(function()
+                    v5.v3:Destroy()
+                end)
+                v5.v3=nil
+            end
+            v5.v4=nil
+            v5.v5=nil
+            v5.v6=nil
+            v5.v7=nil
+            pcall(function()
+                local v6=workspace:GetDescendants()
+                for v7=1,#v6 do
+                    local v8=v6[v7]
+                    if v8:IsA("BasePart") and (v8:GetAttribute("LemeGUIDesync") or ((v8.Name=="v9" or v8.Name=="v11") and v8.Anchored and (not v8.CanCollide) and (not v8.CanTouch) and (not v8.CanQuery) and v8.Transparency==0.5 and v8.Size==Vector3.new(2.01,2.01,1.01) and v8.Color==Color3.new(1,0,0))) then
+                        v8:Destroy()
+                    end
+                end
+            end)
+            pcall(function()
+                if v395.desyncPart and v395.desyncPart.Parent then
+                    v395.desyncPart:Destroy()
+                end
+            end)
+            v395.desyncPart=nil
+            v395.desyncSavedCF=nil
+            v395.desyncRealCF=nil
+            v395.desyncRealVel=nil
+            v395.desyncRealRotVel=nil
         end
+
+        if v395.desyncOn then
+            v395.desyncOn=false
+            v4(v395.desyncRuntime)
+            v395.desyncRuntime=nil
+        end
+        if v395.desyncDirOn then
+            v395.desyncDirOn=false
+            v4(v395.desyncDirRuntime)
+            v395.desyncDirRuntime=nil
+        end
+
+        v395.desyncPosOn=not v395.desyncPosOn
+        if not v395.desyncPosOn then
+            v4(v395.desyncPosRuntime)
+            v395.desyncPosRuntime=nil
+            v440()
+            v441()
+            v442()
+            return
+        end
+
+        v4(v395.desyncPosRuntime)
+
+        local v5={v1=nil,v2="LemeGUI_desync_pos_rs",v3=nil,v4=nil,v5=nil,v6=nil,v7=nil,v8=nil}
+        v395.desyncPosRuntime=v5
+
+        v395.desyncPosToken=(v395.desyncPosToken or 0)+1
+        v5.v8=v395.desyncPosToken
+
+        v5.v1=v1.Heartbeat:Connect(function()
+            if not v395.desyncPosOn then
+                return
+            end
+
+            if v5.v8~=v395.desyncPosToken then
+                return
+            end
+
+            local v6=v3.Character
+            if not v6 then
+                return
+            end
+
+            local v7=v6:FindFirstChild("HumanoidRootPart")
+            if not v7 then
+                return
+            end
+
+            local v8=v395.desyncPosTarget or Vector3.new(0,0,0)
+            local v9=CFrame.new(v8)
+
+            if not v5.v3 or not v5.v3.Parent then
+                local v10=Instance.new("Part")
+                v10.Name="LemeGUIDesyncPos"
+                v10.Size=Vector3.new(2.01,2.01,1.01)
+                v10.Anchored=true
+                v10.CanCollide=false
+                v10.CanTouch=false
+                v10.CanQuery=false
+                v10.Material=Enum.Material.SmoothPlastic
+                v10.Color=Color3.new(1,0,0)
+                v10.Transparency=0.5
+                v10.CastShadow=false
+                v10:SetAttribute("LemeGUIDesync","pos")
+                v10.Parent=workspace
+                v5.v3=v10
+            end
+
+            v5.v4=v7.CFrame
+            v5.v5=v7.AssemblyLinearVelocity
+            v5.v6=v7.AssemblyAngularVelocity
+
+            v7.CFrame=v9
+            v7.AssemblyLinearVelocity=Vector3.new(0,0,0)
+            v7.AssemblyAngularVelocity=Vector3.new(0,0,0)
+
+            if v5.v3 then
+                v5.v3.CFrame=v9
+            end
+        end)
+
+        pcall(function()
+            v1:UnbindFromRenderStep(v5.v2)
+        end)
+
+        v1:BindToRenderStep(v5.v2,Enum.RenderPriority.Camera.Value-1,function()
+            if not v395.desyncPosOn then
+                return
+            end
+
+            if v5.v8~=v395.desyncPosToken then
+                return
+            end
+
+            local v6=v3.Character
+            if not v6 then
+                return
+            end
+
+            local v7=v6:FindFirstChild("HumanoidRootPart")
+            if not v7 then
+                return
+            end
+
+            if not v5.v4 or not v5.v5 or not v5.v6 then
+                return
+            end
+
+            v7.CFrame=v5.v4
+            v7.AssemblyLinearVelocity=v5.v5
+            v7.AssemblyAngularVelocity=v5.v6
+        end)
+
         v440()
         v441()
+        v442()
     end)
 
     v298.desyncDirBtn.Activated:Connect(function()
         if v296 then
             return
         end
-        local v1025 = v395.desyncOn or v395.desyncPosOn or v395.desyncDirOn
-        v395.desyncDirOn = not v395.desyncDirOn
-        v442()
-        v443()
-        local v1026 = v395.desyncOn or v395.desyncPosOn or v395.desyncDirOn or v395.desyncDirOn
-        if v1025 and not v1026 then
-            v881()
-        end
-        v395.desyncSavedCF = nil
-        v395.desyncRealCF = nil
-        v395.desyncRealVel = nil
-        v395.desyncRealRotVel = nil
-        if not v1026 then
-            v876()
-            if v395.desyncDummy then
-                pcall(function()
-                    v395.desyncDummy:Destroy()
-                end)
+
+        local v1=game:GetService("RunService")
+        local v2=game:GetService("Players")
+        local v3=v2.LocalPlayer
+
+        local function v4(v5)
+            if not v5 then
+                return
             end
-            v395.desyncDummy = nil
-            v395.desyncDummyRoot = nil
-            v395.desyncDummyMotorMap = nil
-            v395.desyncSourceChar = nil
+            pcall(function()
+                local v6=v3.Character
+                if not v6 then
+                    return
+                end
+                local v7=v6:FindFirstChild("HumanoidRootPart")
+                if not v7 then
+                    return
+                end
+                if typeof(v5.v4)=="CFrame" and typeof(v5.v5)=="Vector3" and typeof(v5.v6)=="Vector3" then
+                    v7.CFrame=v5.v4
+                    v7.AssemblyLinearVelocity=v5.v5
+                    v7.AssemblyAngularVelocity=v5.v6
+                elseif typeof(v5.v5)=="CFrame" and typeof(v5.v6)=="Vector3" and typeof(v5.v7)=="Vector3" then
+                    v7.CFrame=v5.v5
+                    v7.AssemblyLinearVelocity=v5.v6
+                    v7.AssemblyAngularVelocity=v5.v7
+                end
+            end)
+            v395.desyncMainToken=(v395.desyncMainToken or 0)+1
+            v395.desyncPosToken=(v395.desyncPosToken or 0)+1
+            v395.desyncDirToken=(v395.desyncDirToken or 0)+1
+            if v5.v1 then
+                v5.v1:Disconnect()
+                v5.v1=nil
+            end
+            if v5.v2 then
+                pcall(function()
+                    v1:UnbindFromRenderStep(v5.v2)
+                end)
+                v5.v2=nil
+            end
+            if v5.v3 then
+                pcall(function()
+                    v5.v3:Destroy()
+                end)
+                v5.v3=nil
+            end
+            v5.v4=nil
+            v5.v5=nil
+            v5.v6=nil
+            v5.v7=nil
+            pcall(function()
+                local v6=workspace:GetDescendants()
+                for v7=1,#v6 do
+                    local v8=v6[v7]
+                    if v8:IsA("BasePart") and (v8:GetAttribute("LemeGUIDesync") or ((v8.Name=="v9" or v8.Name=="v11") and v8.Anchored and (not v8.CanCollide) and (not v8.CanTouch) and (not v8.CanQuery) and v8.Transparency==0.5 and v8.Size==Vector3.new(2.01,2.01,1.01) and v8.Color==Color3.new(1,0,0))) then
+                        v8:Destroy()
+                    end
+                end
+            end)
+            pcall(function()
+                if v395.desyncPart and v395.desyncPart.Parent then
+                    v395.desyncPart:Destroy()
+                end
+            end)
+            v395.desyncPart=nil
+            v395.desyncSavedCF=nil
+            v395.desyncRealCF=nil
+            v395.desyncRealVel=nil
+            v395.desyncRealRotVel=nil
         end
+
+        if v395.desyncOn then
+            v395.desyncOn=false
+            v4(v395.desyncRuntime)
+            v395.desyncRuntime=nil
+        end
+        if v395.desyncPosOn then
+            v395.desyncPosOn=false
+            v4(v395.desyncPosRuntime)
+            v395.desyncPosRuntime=nil
+        end
+
+        v395.desyncDirOn=not v395.desyncDirOn
+        if not v395.desyncDirOn then
+            v4(v395.desyncDirRuntime)
+            v395.desyncDirRuntime=nil
+            v440()
+            v441()
+            v442()
+            return
+        end
+
+        v4(v395.desyncDirRuntime)
+
+        local v5={v1=nil,v2="LemeGUI_desync_dir_rs",v3=nil,v4=nil,v5=nil,v6=nil,v7=nil,v8=nil}
+        v395.desyncDirRuntime=v5
+
+        v395.desyncDirToken=(v395.desyncDirToken or 0)+1
+        v5.v8=v395.desyncDirToken
+
+        v5.v1=v1.Heartbeat:Connect(function()
+            if not v395.desyncDirOn then
+                return
+            end
+
+            if v5.v8~=v395.desyncDirToken then
+                return
+            end
+
+            local v6=v3.Character
+            if not v6 then
+                return
+            end
+
+            local v7=v6:FindFirstChild("HumanoidRootPart")
+            if not v7 then
+                return
+            end
+
+            if not v5.v3 or not v5.v3.Parent then
+                local v8=Instance.new("Part")
+                v8.Name="LemeGUIDesyncDir"
+                v8.Size=Vector3.new(2.01,2.01,1.01)
+                v8.Anchored=true
+                v8.CanCollide=false
+                v8.CanTouch=false
+                v8.CanQuery=false
+                v8.Material=Enum.Material.SmoothPlastic
+                v8.Color=Color3.new(1,0,0)
+                v8.Transparency=0.5
+                v8.CastShadow=false
+                v8:SetAttribute("LemeGUIDesync","dir")
+                v8.Parent=workspace
+                v5.v3=v8
+            end
+
+            v5.v4=v7.CFrame
+            v5.v5=v7.AssemblyLinearVelocity
+            v5.v6=v7.AssemblyAngularVelocity
+
+            local v9=v298.desyncDirPitchInput
+            local v10=0
+            if v9 then
+                local v11=v9:GetAttribute("Prefix") or ""
+                local v12=v9.Text or ""
+                v10=tonumber(v12:sub(#v11+1)) or 0
+            end
+            local v13=v298.desyncDirYawInput
+            local v14=0
+            if v13 then
+                local v15=v13:GetAttribute("Prefix") or ""
+                local v16=v13.Text or ""
+                v14=tonumber(v16:sub(#v15+1)) or 0
+            end
+            local v17=v298.desyncDirRollInput
+            local v18=0
+            if v17 then
+                local v19=v17:GetAttribute("Prefix") or ""
+                local v20=v17.Text or ""
+                v18=tonumber(v20:sub(#v19+1)) or 0
+            end
+            v395.desyncDirPitchDeg=v10
+            v395.desyncDirYawDeg=v14
+            v395.desyncDirRollDeg=v18
+            local v21=math.rad(v10)
+            local v22=math.rad(v14)
+            local v23=math.rad(v18)
+
+            local v12=v5.v4*CFrame.Angles(v21,v22,v23)
+
+            v7.CFrame=v12
+            v7.AssemblyLinearVelocity=Vector3.new(0,0,0)
+            v7.AssemblyAngularVelocity=Vector3.new(0,0,0)
+
+            if v5.v3 then
+                v5.v3.CFrame=v12
+            end
+        end)
+
+        pcall(function()
+            v1:UnbindFromRenderStep(v5.v2)
+        end)
+
+        v1:BindToRenderStep(v5.v2,Enum.RenderPriority.Camera.Value-1,function()
+            if not v395.desyncDirOn then
+                return
+            end
+
+            if v5.v8~=v395.desyncDirToken then
+                return
+            end
+
+            local v6=v3.Character
+            if not v6 then
+                return
+            end
+
+            local v7=v6:FindFirstChild("HumanoidRootPart")
+            if not v7 then
+                return
+            end
+
+            if not v5.v4 or not v5.v5 or not v5.v6 then
+                return
+            end
+
+            v7.CFrame=v5.v4
+            v7.AssemblyLinearVelocity=v5.v5
+            v7.AssemblyAngularVelocity=v5.v6
+        end)
+
+        v440()
+        v441()
+        v442()
     end)
 
     local function v1027()
@@ -7083,8 +7721,11 @@ return function(getgenv, refs, st, allButtons, gui, ws, lp, api)
         wantPos = (wantPos == true)
         wantDir = (wantDir == true)
 
-        if wantDesync and wantPos then
+        if wantDesync then
             wantPos = false
+            wantDir = false
+        elseif wantPos then
+            wantDir = false
         end
 
         local prevActive = (st.desyncOn or st.desyncPosOn or st.desyncDirOn) and true or false
