@@ -2017,7 +2017,148 @@ spawn(function()
         return v347
     end
 
-    local function v361(v362, v363, v364, v365, v366)
+    
+    local function v360(v340, v341, v342, v343, v344, v345)
+        local v346 = Instance.new("Frame")
+        v346.Name = v345 .. "3Cell"
+        v346.BackgroundTransparency = 1
+        v346.BorderSizePixel = 0
+        v346.ZIndex = 12
+        v346.LayoutOrder = v343
+        v346.ClipsDescendants = false
+        v346.Parent = v340
+
+        local v347 = Instance.new("Frame")
+        v347.Name = "Row"
+        v347.BackgroundTransparency = 1
+        v347.BorderSizePixel = 0
+        v347.ZIndex = 13
+        v347.Size = UDim2.new(1, 0, 1, -4)
+        v347.Position = UDim2.new(0, 0, 0, 2)
+        v347.Parent = v346
+
+        local v348 = Instance.new("UIListLayout")
+        v348.FillDirection = Enum.FillDirection.Horizontal
+        v348.SortOrder = Enum.SortOrder.LayoutOrder
+        v348.VerticalAlignment = Enum.VerticalAlignment.Center
+        v348.Padding = UDim.new(0, 0)
+        v348.Parent = v347
+
+        local v349 = Instance.new("TextLabel")
+        v349.Name = "Label"
+        v349.BackgroundTransparency = 1
+        v349.BorderSizePixel = 0
+        v349.Font = Enum.Font.Code
+        v349.TextColor3 = Color3.new(1, 1, 1)
+        v349.TextSize = 14
+        v349.TextXAlignment = Enum.TextXAlignment.Left
+        v349.ZIndex = 13
+        v349.Size = UDim2.new(0, 0, 1, 0)
+        v349.AutomaticSize = Enum.AutomaticSize.X
+        v349.Parent = v347
+        v349:SetAttribute("TextEn", v341)
+        v349:SetAttribute("TextJp", v342)
+        v349.Text = v341
+        table.insert(v302, v349)
+
+        local v350 = Instance.new("Frame")
+        v350.Name = "Gap"
+        v350.BackgroundTransparency = 1
+        v350.BorderSizePixel = 0
+        v350.ZIndex = 13
+        v350.Size = UDim2.new(0, 3, 1, 0)
+        v350.Parent = v347
+
+        local function v351(v352)
+            local v353 = Instance.new("TextBox")
+            v353.Name = v345 .. "_" .. tostring(v352)
+            v353.BackgroundColor3 = v298.main.BackgroundColor3
+            v353.BackgroundTransparency = v298.main.BackgroundTransparency
+            v353.BorderSizePixel = 0
+            v353.Font = Enum.Font.Code
+            v353.TextColor3 = Color3.new(1, 1, 1)
+            v353.TextSize = 14
+            v353.TextXAlignment = Enum.TextXAlignment.Center
+            v353.ClearTextOnFocus = false
+            v353.ZIndex = 13
+            v353.Size = UDim2.new(0, 18, 1, 0)
+            v353.Parent = v347
+            local v354 = Instance.new("UICorner")
+            v354.CornerRadius = UDim.new(0, 6)
+            v354.Parent = v353
+            return v353
+        end
+
+        local v355 = v351(1)
+        local v356 = v351(2)
+        local v357 = v351(3)
+
+        local v358 = Instance.new("TextBox")
+        v358.Name = v345
+        pcall(function()
+            v358:SetAttribute("CfgGroup", string.lower(group.Name or ""))
+        end)
+        v358.BackgroundTransparency = 1
+        v358.Visible = false
+        v358.ClearTextOnFocus = false
+        v358.Parent = v298.main
+
+        local v359 = v341 .. " "
+        local v360t = v342 .. " "
+        v358:SetAttribute("PrefixEn", v359)
+        v358:SetAttribute("PrefixJp", v360t)
+        v358:SetAttribute("Prefix", v359)
+
+        local v361t = tostring(v344 or "")
+        local v362t = {}
+        for v363t in string.gmatch(v361t, "[-]?%d+%.?%d*") do
+            v362t[#v362t + 1] = v363t
+        end
+        local v364t = tonumber(v362t[1]) or 0
+        local v365t = tonumber(v362t[2]) or 0
+        local v366t = tonumber(v362t[3]) or 0
+
+        v355.Text = tostring(v364t)
+        v356.Text = tostring(v365t)
+        v357.Text = tostring(v366t)
+        v358.Text = v359 .. tostring(v364t) .. " " .. tostring(v365t) .. " " .. tostring(v366t)
+
+        local v367 = game:GetService("TextService")
+        local v368 = 18
+        local v369 = 120
+        local function v370(v371)
+            local v372 = v371.Text
+            if v372 == "" then
+                v372 = "0"
+            end
+            local v373 = v367:GetTextSize(v372, v371.TextSize, v371.Font, Vector2.new(1000, 1000))
+            local v374 = math.clamp(v373.X + 12, v368, v369)
+            v371.Size = UDim2.new(0, v374, 1, 0)
+        end
+
+        v370(v355)
+        v370(v356)
+        v370(v357)
+
+        v355:GetPropertyChangedSignal("Text"):Connect(function()
+            v370(v355)
+        end)
+        v356:GetPropertyChangedSignal("Text"):Connect(function()
+            v370(v356)
+        end)
+        v357:GetPropertyChangedSignal("Text"):Connect(function()
+            v370(v357)
+        end)
+
+        v298[v345] = v358
+        table.insert(v303, v358)
+
+        local v375 = { v1 = v355, v2 = v356, v3 = v357, v4 = v349, v5 = v346, v6 = v358 }
+        v298[v345 .. "3"] = v375
+        return v375
+    end
+
+local function v361(v362, v363, v364, v365, v366)
         local v367 = Instance.new("Frame")
         v367.Name = v366 .. "Cell"
         v367.BackgroundTransparency = 1
@@ -2067,7 +2208,7 @@ spawn(function()
     v298.fogGroup = v321("Fog", "霧", 13, "Fog")
     v298.fbGroup = v321("Full Bright", "フルブライト", 14, "FullBright")
     v298.desyncGroup = v321("Desync", "非同期", 15, "Desync")
-    v298.desyncDirGroup = v321("Desync Direction", "向きの同期ズレ", 16, "DesyncDirection")
+    v298.desyncDirGroup = v321("Desync Dir", "向きの同期ズレ", 16, "DesyncDirection")
     v298.teleportGroup = v321("Teleport", "テレポート", 17, "Teleport")
     v298.resetCamGroup = v321("Reset Camera", "カメラ初期化", 18, "ResetCamera")
     v298.bodyTransGroup = v321("Body Transparency", "体の透明度", 19, "BodyTransparency")
@@ -2158,24 +2299,21 @@ v330(v298.shaderGroup, "Snow", "雪", 2, "snowBtn", true)
     v330(v298.fogGroup, "No Fog", "霧なし", 1, "noFogBtn", true)
     v330(v298.fogGroup, "Set Fog", "霧を設定", 2, "setFogBtn", false)
     v330(v298.fogGroup, "Loop Set", "ループ設定", 3, "loopFogBtn", true)
-    v339(v298.fogGroup, "FogColor", "霧の色", 4, v262, "fogColorInput")
+    v360(v298.fogGroup, "FogColor", "霧の色", 4, v262, "fogColorInput")
     v339(v298.fogGroup, "FogStart", "霧の開始距離", 5, v291, "fogStartInput")
     v339(v298.fogGroup, "FogEnd", "霧の終了距離", 6, v293, "fogEndInput")
 
     v330(v298.fbGroup, "Full Bright", "フルブライト", 1, "fbBtn", false)
     v330(v298.fbGroup, "Loop Set", "ループ設定", 2, "loopFbBtn", true)
 
-    local v370 = v339(v298.desyncGroup, "Desync Pos", "非同期座標", 3, "0 0 0", "desyncPosInput")
-    v298.desyncPosCell = v370.Parent
+    local v370 = v360(v298.desyncGroup, "Desync Pos", "非同期座標", 3, "0 0 0", "desyncPosInput")
+    v298.desyncPosCell = v370.v5
     v298.desyncPosCell.Visible = true
     v330(v298.desyncGroup, "Desync", "非同期", 1, "desyncBtn", true)
     v330(v298.desyncGroup, "Desync Pos", "非同期座標", 2, "desyncPosBtn", true)
 
-    v330(v298.desyncDirGroup, "Desync", "同期ズレ", 1, "desyncDirBtn", true)
-    v330(v298.desyncDirGroup, "Direction", "向き", 2, "desyncDirDirectionBtn", false)
-    v339(v298.desyncDirGroup, "Roll", "ロール", 3, 0, "desyncDirRollInput")
-    v339(v298.desyncDirGroup, "Pitch", "ピッチ", 4, 0, "desyncDirPitchInput")
-    v339(v298.desyncDirGroup, "Yaw", "ヨー", 5, 0, "desyncDirYawInput")
+    v330(v298.desyncDirGroup, "Desync Dir", "向きの同期ズレ", 1, "desyncDirBtn", true)
+    v360(v298.desyncDirGroup, "Dir", "角度", 2, "0 45 0", "desyncDirDirInput")
 
     v330(v298.resetCamGroup, "Reset Camera", "カメラ初期化", 1, "resetCamBtn", false)
     v330(v298.resetCamGroup, "Loop Reset", "ループ初期化", 2, "loopResetCamBtn", true)
@@ -2189,7 +2327,7 @@ v330(v298.shaderGroup, "Snow", "雪", 2, "snowBtn", true)
     v330(v298.scriptGroup, "Language", "言語", 8, "languageBtn", false)
 
     v330(v298.teleportGroup, "TP to", "テレポート", 1, "tpToBtn", false)
-    v339(v298.teleportGroup, "Pos", "座標", 2, "0 0 0", "tpPosInput")
+    v360(v298.teleportGroup, "Pos", "座標", 2, "0 0 0", "tpPosInput")
     v330(v298.teleportGroup, "Set Pos", "現在の座標に設定", 3, "setPosBtn", false)
 
     v298.toggle = Instance.new("TextButton")
@@ -2583,19 +2721,8 @@ local v397, v398, v399, v400
     end
 
     local function v443()
-        local v444 = v298.desyncDirRollInput and v298.desyncDirRollInput.Parent
-        local v445 = v298.desyncDirPitchInput and v298.desyncDirPitchInput.Parent
-        local v446 = v298.desyncDirYawInput and v298.desyncDirYawInput.Parent
-        if v444 then
-            v444.Visible = v395.desyncDirRollOn == true
-        end
-        if v445 then
-            v445.Visible = v395.desyncDirPitchOn == true
-        end
-        if v446 then
-            v446.Visible = v395.desyncDirYawOn == true
-        end
     end
+
 
     local function v447()
         v404(v298.loopResetCamBtn, v395.resetCamLoopOn)
@@ -3920,6 +4047,12 @@ end
             local v721 = math.clamp(v717[3] or 255, 0, 255)
             v395.fogColor = Color3.fromRGB(v719, v720, v721)
             v713.Text = v714 .. string.format("%d %d %d", v719, v720, v721)
+            local v99990 = v298.fogColorInput3
+            if v99990 then
+                v99990.v1.Text = tostring(v719)
+                v99990.v2.Text = tostring(v720)
+                v99990.v3.Text = tostring(v721)
+            end
         else
             v395.fogColor = v259
             v713.Text = v714 .. v262
@@ -4676,6 +4809,12 @@ if v395.fullBrightLoopOn then
             local v838, v839, v840 = v835[1], v835[2], v835[3]
             v395.tpPos = Vector3.new(v838, v839, v840)
             v831.Text = v832 .. v273(v838) .. " " .. v273(v839) .. " " .. v273(v840)
+            local v99996 = v298.tpPosInput3
+            if v99996 then
+                v99996.v1.Text = v273(v838)
+                v99996.v2.Text = v273(v839)
+                v99996.v3.Text = v273(v840)
+            end
         end
     end
 
@@ -4781,6 +4920,12 @@ if v395.fullBrightLoopOn then
             local v862, v863, v864 = v859[1], v859[2], v859[3]
             v395.desyncPosTarget = Vector3.new(v862, v863, v864)
             v855.Text = v856 .. v273(v862) .. " " .. v273(v863) .. " " .. v273(v864)
+            local v99997 = v298.desyncPosInput3
+            if v99997 then
+                v99997.v1.Text = v273(v862)
+                v99997.v2.Text = v273(v863)
+                v99997.v3.Text = v273(v864)
+            end
         else
             v395.desyncPosTarget = nil
         end
@@ -5998,6 +6143,28 @@ v298.snowBtn.Activated:Connect(function()
         v712()
     end)
 
+    local v10000 = v298.fogColorInput3
+    if v10000 and v298.fogColorInput then
+        local function v10001()
+            if v296 then
+                return
+            end
+            local v10002 = tonumber(v10000.v1.Text) or 255
+            local v10003 = tonumber(v10000.v2.Text) or 255
+            local v10004 = tonumber(v10000.v3.Text) or 255
+            v10002 = math.clamp(v10002, 0, 255)
+            v10003 = math.clamp(v10003, 0, 255)
+            v10004 = math.clamp(v10004, 0, 255)
+            local v10005 = v298.fogColorInput
+            local v10006 = v10005:GetAttribute("Prefix") or ""
+            v10005.Text = v10006 .. tostring(v10002) .. " " .. tostring(v10003) .. " " .. tostring(v10004)
+            v712()
+        end
+        v10000.v1.FocusLost:Connect(v10001)
+        v10000.v2.FocusLost:Connect(v10001)
+        v10000.v3.FocusLost:Connect(v10001)
+    end
+
     v298.fogStartInput.FocusLost:Connect(function()
         if v296 then
             return
@@ -6197,6 +6364,27 @@ v298.snowBtn.Activated:Connect(function()
         v830()
     end)
 
+    local v10010 = v298.tpPosInput3
+    if v10010 and v298.tpPosInput then
+        local function v10011()
+            if v296 then
+                return
+            end
+            local v10012 = tonumber(v10010.v1.Text)
+            local v10013 = tonumber(v10010.v2.Text)
+            local v10014 = tonumber(v10010.v3.Text)
+            if v10012 and v10013 and v10014 then
+                local v10015 = v298.tpPosInput
+                local v10016 = v10015:GetAttribute("Prefix") or ""
+                v10015.Text = v10016 .. v273(v10012) .. " " .. v273(v10013) .. " " .. v273(v10014)
+                v830()
+            end
+        end
+        v10010.v1.FocusLost:Connect(v10011)
+        v10010.v2.FocusLost:Connect(v10011)
+        v10010.v3.FocusLost:Connect(v10011)
+    end
+
     v298.tpToBtn.Activated:Connect(function()
         if v296 then
             return
@@ -6226,6 +6414,12 @@ v298.snowBtn.Activated:Connect(function()
         local v1014 = v298.tpPosInput
         local v1015 = v1014:GetAttribute("Prefix") or ""
         v1014.Text = v1015 .. v273(v1009) .. " " .. v273(v1010) .. " " .. v273(v1011)
+        local v99998 = v298.tpPosInput3
+        if v99998 then
+            v99998.v1.Text = v273(v1009)
+            v99998.v2.Text = v273(v1010)
+            v99998.v3.Text = v273(v1011)
+        end
     end)
 
     v298.flingTargetInput.FocusLost:Connect(function()
@@ -6248,6 +6442,27 @@ v298.snowBtn.Activated:Connect(function()
         end
         v854()
     end)
+
+    local v10010 = v298.desyncPosInput3
+    if v10010 and v298.desyncPosInput then
+        local function v10011()
+            if v296 then
+                return
+            end
+            local v10012 = tonumber(v10010.v1.Text)
+            local v10013 = tonumber(v10010.v2.Text)
+            local v10014 = tonumber(v10010.v3.Text)
+            if v10012 and v10013 and v10014 then
+                local v10015 = v298.desyncPosInput
+                local v10016 = v10015:GetAttribute("Prefix") or ""
+                v10015.Text = v10016 .. v273(v10012) .. " " .. v273(v10013) .. " " .. v273(v10014)
+                v854()
+            end
+        end
+        v10010.v1.FocusLost:Connect(v10011)
+        v10010.v2.FocusLost:Connect(v10011)
+        v10010.v3.FocusLost:Connect(v10011)
+    end
 
     v298.desyncBtn.Activated:Connect(function()
         if v296 then
@@ -6669,6 +6884,25 @@ v298.snowBtn.Activated:Connect(function()
                     v7.AssemblyAngularVelocity=v5.v7
                 end
             end)
+
+    local v10030 = v298.desyncDirDirInput3
+    if v10030 and v298.desyncDirDirInput then
+        local function v10031()
+            if v296 then
+                return
+            end
+            local v10032 = tonumber(v10030.v1.Text) or 0
+            local v10033 = tonumber(v10030.v2.Text) or 0
+            local v10034 = tonumber(v10030.v3.Text) or 0
+            local v10035 = v298.desyncDirDirInput
+            local v10036 = v10035:GetAttribute("Prefix") or ""
+            v10035.Text = v10036 .. v273(v10032) .. " " .. v273(v10033) .. " " .. v273(v10034)
+        end
+        v10030.v1.FocusLost:Connect(v10031)
+        v10030.v2.FocusLost:Connect(v10031)
+        v10030.v3.FocusLost:Connect(v10031)
+    end
+
             v395.desyncMainToken=(v395.desyncMainToken or 0)+1
             v395.desyncPosToken=(v395.desyncPosToken or 0)+1
             v395.desyncDirToken=(v395.desyncDirToken or 0)+1
@@ -6782,30 +7016,22 @@ v298.snowBtn.Activated:Connect(function()
             v5.v5=v7.AssemblyLinearVelocity
             v5.v6=v7.AssemblyAngularVelocity
 
-            local v9=v298.desyncDirPitchInput
+            local v9=v298.desyncDirDirInput
             local v10=0
+            local v14=0
+            local v18=0
             if v9 then
                 local v11=v9:GetAttribute("Prefix") or ""
-                local v12=v9.Text or ""
-                v10=tonumber(v12:sub(#v11+1)) or 0
+                local v24=v9.Text or ""
+                local v25=v24:sub(#v11+1)
+                local v15={}
+                for v16 in string.gmatch(v25,"[-]?%d+%.?%d*") do
+                    v15[#v15+1]=tonumber(v16)
+                end
+                v10=v15[1] or 0
+                v14=v15[2] or 0
+                v18=v15[3] or 0
             end
-            local v13=v298.desyncDirYawInput
-            local v14=0
-            if v13 then
-                local v15=v13:GetAttribute("Prefix") or ""
-                local v16=v13.Text or ""
-                v14=tonumber(v16:sub(#v15+1)) or 0
-            end
-            local v17=v298.desyncDirRollInput
-            local v18=0
-            if v17 then
-                local v19=v17:GetAttribute("Prefix") or ""
-                local v20=v17.Text or ""
-                v18=tonumber(v20:sub(#v19+1)) or 0
-            end
-            v395.desyncDirPitchDeg=v10
-            v395.desyncDirYawDeg=v14
-            v395.desyncDirRollDeg=v18
             local v21=math.rad(v10)
             local v22=math.rad(v14)
             local v23=math.rad(v18)
@@ -7191,15 +7417,6 @@ v298.snowBtn.Activated:Connect(function()
         end
     end
     v298.configAutoLoadBtn.Activated:Connect(v300.buttonActions["configAutoLoadBtn"])
-
-    v300.buttonActions["desyncDirDirectionBtn"] = function()
-        if v296 then
-            return
-        end
-        v1047()
-    end
-    v298.desyncDirDirectionBtn.Activated:Connect(v300.buttonActions["desyncDirDirectionBtn"])
-
     v298.toggle.InputBegan:Connect(function(v1063)
         if v296 then
             return
