@@ -2909,8 +2909,8 @@ local v397, v398, v399, v400
                     pcall(function()
                         v401:CaptureController()
                         v395.virtualInputActive = true
-                        game:GetService("VirtualInputManager"):SendKeyEvent(true, Enum.KeyCode.F15, false, game)
-                        game:GetService("VirtualInputManager"):SendKeyEvent(false, Enum.KeyCode.F15, false, game)
+                        game:service"VirtualInputManager":SendKeyEvent(true, Enum.KeyCode.Unknown, false, game)
+                        game:service"VirtualInputManager":SendKeyEvent(false, Enum.KeyCode.Unknown, false, game)
                         task.defer(function()
                             v395.virtualInputActive = false
                         end)
