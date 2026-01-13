@@ -2313,7 +2313,7 @@ v330(v298.shaderGroup, "Snow", "雪", 2, "snowBtn", true)
     v330(v298.desyncGroup, "Desync Pos", "非同期座標", 2, "desyncPosBtn", true)
 
     v330(v298.desyncDirGroup, "Desync Dir", "向きの同期ズレ", 1, "desyncDirBtn", true)
-    v360(v298.desyncDirGroup, "Dir", "角度", 2, "0 45 0", "desyncDirDirInput")
+    v360(v298.desyncDirGroup, "Dir", "角度", 2, "0 0 0", "desyncDirDirInput")
 
     v330(v298.resetCamGroup, "Reset Camera", "カメラ初期化", 1, "resetCamBtn", false)
     v330(v298.resetCamGroup, "Loop Reset", "ループ初期化", 2, "loopResetCamBtn", true)
@@ -2959,7 +2959,7 @@ local v397, v398, v399, v400
         end
         local v492 = v394()
         local v493 = v492 and v492:FindFirstChildWhichIsA("Humanoid")
-        local v494 = v492 and v492:FindFirstChild("HumanoidRootPart")
+        local v494 = v492 and v492.HumanoidRootPart
         if not v493 or not v494 then
             return
         end
@@ -3069,7 +3069,7 @@ local v397, v398, v399, v400
             v395.anchorData = nil
         else
             local v516 = v394()
-            local v517 = v516 and v516:FindFirstChild("HumanoidRootPart")
+            local v517 = v516 and v516.HumanoidRootPart
             local v518 = v516 and v516:FindFirstChildOfClass("Humanoid")
             if not v516 or not v517 or not v518 then
                 v395.anchorOn = false
@@ -3169,7 +3169,7 @@ local v397, v398, v399, v400
                 v528[v532] = nil
                 return
             end
-            local v535 = v534:FindFirstChild("HumanoidRootPart")
+            local v535 = v534.HumanoidRootPart
             if not v535 then
                 v535 = v534:WaitForChild("HumanoidRootPart", 5)
             end
@@ -3262,7 +3262,7 @@ local v397, v398, v399, v400
                 break
             end
             local v546 = v394()
-            local v547 = v546 and v546:FindFirstChild("HumanoidRootPart")
+            local v547 = v546 and v546.HumanoidRootPart
             if v547 and v547.Parent then
                 local v548 = v547.Velocity
                 v547.Velocity = v545
@@ -3304,7 +3304,7 @@ local v397, v398, v399, v400
 
         local v555 = v394()
         local v556 = v555 and v555:FindFirstChildOfClass("Humanoid")
-        local v557 = v555 and v555:FindFirstChild("HumanoidRootPart")
+        local v557 = v555 and v555.HumanoidRootPart
         local v558
 
         if v554 == "fly" and v557 then
@@ -3392,7 +3392,7 @@ end
         if not v563 or not v563.Parent then
             return nil
         end
-        local v564 = v563:FindFirstChild("HumanoidRootPart")
+        local v564 = v563.HumanoidRootPart
         if v564 and v564:IsA("BasePart") then
             return v564
         end
@@ -3630,10 +3630,7 @@ end
         if not v611 or not v611.Parent then
             return
         end
-        local v613 = v611:FindFirstChild("Head") or v611:FindFirstChild("HumanoidRootPart")
-        if not v613 then
-            return
-        end
+        local v613 = v611:FindFirstChild("Head") or v611.HumanoidRootPart
         local v614
         for _, v615 in ipairs(v611:GetChildren()) do
             if v615:IsA("BillboardGui") and v615.Name == "MiniESP" then
@@ -3840,7 +3837,7 @@ end
     local function v665()
         local v666 = v394()
         if v666 and v666.Parent then
-            local v667 = v666:FindFirstChild("HumanoidRootPart")
+            local v667 = v666.HumanoidRootPart
             if v667 and v667.Parent then
                 local v668 = v667.Position
                 return v668.X, v668.Y, v668.Z
@@ -4274,7 +4271,7 @@ if v395.fullBrightLoopOn then
             return
         end
         local v756 = v394()
-        local v757 = v756 and v756:FindFirstChild("HumanoidRootPart")
+        local v757 = v756 and v756.HumanoidRootPart
         local v758 = v756 and v756:FindFirstChildOfClass("Humanoid")
         local v759 = v239.CurrentCamera
         if not v757 or not v758 or not v759 then
@@ -4981,7 +4978,7 @@ if v395.fullBrightLoopOn then
                 end
             end
         end
-        v395.desyncDummyRoot = v869:FindFirstChild("HumanoidRootPart")
+        v395.desyncDummyRoot = v869.HumanoidRootPart
     end
 
     local function v872()
@@ -5026,10 +5023,7 @@ if v395.fullBrightLoopOn then
         if not v882 then
             return
         end
-        local v883 = v882:FindFirstChild("HumanoidRootPart")
-        if not v883 then
-            return
-        end
+        local v883 = v882.HumanoidRootPart
         if v395.desyncRealCF then
             v883.CFrame = v395.desyncRealCF
         end
@@ -5050,10 +5044,7 @@ if v395.fullBrightLoopOn then
         if not v1 then
             return
         end
-        local v2 = v1:FindFirstChild("HumanoidRootPart")
-        if not v2 then
-            return
-        end
+        local v2 = v1.HumanoidRootPart
 
         local v3 = v395.desyncPart
         if not v3 or not v3.Parent then
@@ -5119,15 +5110,9 @@ if v395.fullBrightLoopOn then
             return
         end
         local v901 = v900.Character
-        local v902 = v901 and v901:FindFirstChild("HumanoidRootPart")
-        if not v902 then
-            return
-        end
+        local v902 = v901 and v901.HumanoidRootPart
         local v903 = v394()
-        local v904 = v903 and v903:FindFirstChild("HumanoidRootPart")
-        if not v904 then
-            return
-        end
+        local v904 = v903 and v903.HumanoidRootPart
 
         v395.flingRunning = true
         v395.flingCooldownEnd = v899 + 3
@@ -5147,9 +5132,9 @@ if v395.fullBrightLoopOn then
         while not v296 and time() - v911 < 3 do
             v234.Heartbeat:Wait()
             v901 = v900.Character
-            v902 = v901 and v901:FindFirstChild("HumanoidRootPart")
+            v902 = v901 and v901.HumanoidRootPart
             v903 = v394()
-            v904 = v903 and v903:FindFirstChild("HumanoidRootPart")
+            v904 = v903 and v903.HumanoidRootPart
             if not v902 or not v904 then
                 break
             end
@@ -5179,7 +5164,7 @@ if v395.fullBrightLoopOn then
         end
 
         v903 = v394()
-        local v924 = v903 and v903:FindFirstChild("HumanoidRootPart")
+        local v924 = v903 and v903.HumanoidRootPart
         if v924 then
             v924.CFrame = v906
             v924.AssemblyAngularVelocity = v907
@@ -5391,7 +5376,7 @@ if v395.fullBrightLoopOn then
         end
 
         local v950 = v394()
-        local v951 = v950 and v950:FindFirstChild("HumanoidRootPart")
+        local v951 = v950 and v950.HumanoidRootPart
         local v952 = v239.CurrentCamera
         if not v950 or not v951 or not v952 then
             return
@@ -5415,10 +5400,7 @@ if v395.fullBrightLoopOn then
         if not v957 then
             return
         end
-        local v958 = v957:FindFirstChild("HumanoidRootPart")
-        if not v958 then
-            return
-        end
+        local v958 = v957.HumanoidRootPart
         if not v395.desyncRealCF or not v395.desyncRealVel or not v395.desyncRealRotVel then
             return
         end
@@ -5481,7 +5463,7 @@ if v395.fullBrightLoopOn then
         end
         if v395.anchorOn and v395.anchorData and v395.anchorData.frozen and not v395.anchorData.unfrozenOnce then
             local v964 = v963 or v394()
-            local v965 = v964 and v964:FindFirstChild("HumanoidRootPart")
+            local v965 = v964 and v964.HumanoidRootPart
             local v966 = v964 and v964:FindFirstChildOfClass("Humanoid")
             if v965 and v966 then
                 v395.anchorData.char = v964
@@ -5538,7 +5520,7 @@ if v395.fullBrightLoopOn then
         local v3=workspace
         local v4=v1.LocalPlayer
         local v5=v4.Character or v4.CharacterAdded:Wait()
-        local v6=v5:WaitForChild("HumanoidRootPart")
+        local v6=v5.HumanoidRootPart
         local v7=v6.CFrame
 
         local v8={}
@@ -5581,10 +5563,7 @@ if v395.fullBrightLoopOn then
                 if not v5 then
                     return
                 end
-                v6=v5:FindFirstChild("HumanoidRootPart")
-                if not v6 then
-                    return
-                end
+                v6=v5.HumanoidRootPart
                 v14={}
                 local v27=v5:GetDescendants()
                 for v28=1,#v27 do
@@ -6395,7 +6374,7 @@ v298.snowBtn.Activated:Connect(function()
             return
         end
         local v1007 = v394()
-        local v1008 = v1007 and v1007:FindFirstChild("HumanoidRootPart")
+        local v1008 = v1007 and v1007.HumanoidRootPart
         if v1008 then
             v1008.CFrame = CFrame.new(v1006)
         end
@@ -6482,10 +6461,7 @@ v298.snowBtn.Activated:Connect(function()
                 if not v6 then
                     return
                 end
-                local v7=v6:FindFirstChild("HumanoidRootPart")
-                if not v7 then
-                    return
-                end
+                local v7=v6.HumanoidRootPart
                 if typeof(v5.v4)=="CFrame" and typeof(v5.v5)=="Vector3" and typeof(v5.v6)=="Vector3" then
                     v7.CFrame=v5.v4
                     v7.AssemblyLinearVelocity=v5.v5
@@ -6583,10 +6559,7 @@ v298.snowBtn.Activated:Connect(function()
                 return
             end
 
-            local v7=v6:FindFirstChild("HumanoidRootPart")
-            if not v7 then
-                return
-            end
+            local v7=v6.HumanoidRootPart
 
             if not v5.v4 then
                 v5.v4=v7.CFrame
@@ -6635,10 +6608,7 @@ v298.snowBtn.Activated:Connect(function()
                 return
             end
 
-            local v7=v6:FindFirstChild("HumanoidRootPart")
-            if not v7 then
-                return
-            end
+            local v7=v6.HumanoidRootPart
 
             if not v5.v4 or not v5.v5 or not v5.v6 or not v5.v7 then
                 return
@@ -6676,10 +6646,7 @@ v298.snowBtn.Activated:Connect(function()
                 if not v6 then
                     return
                 end
-                local v7=v6:FindFirstChild("HumanoidRootPart")
-                if not v7 then
-                    return
-                end
+                local v7=v6.HumanoidRootPart
                 if typeof(v5.v4)=="CFrame" and typeof(v5.v5)=="Vector3" and typeof(v5.v6)=="Vector3" then
                     v7.CFrame=v5.v4
                     v7.AssemblyLinearVelocity=v5.v5
@@ -6777,10 +6744,7 @@ v298.snowBtn.Activated:Connect(function()
                 return
             end
 
-            local v7=v6:FindFirstChild("HumanoidRootPart")
-            if not v7 then
-                return
-            end
+            local v7=v6.HumanoidRootPart
 
             local v8=v395.desyncPosTarget or Vector3.new(0,0,0)
             local v9=CFrame.new(v8)
@@ -6833,10 +6797,7 @@ v298.snowBtn.Activated:Connect(function()
                 return
             end
 
-            local v7=v6:FindFirstChild("HumanoidRootPart")
-            if not v7 then
-                return
-            end
+            local v7=v6.HumanoidRootPart
 
             if not v5.v4 or not v5.v5 or not v5.v6 then
                 return
@@ -6870,10 +6831,7 @@ v298.snowBtn.Activated:Connect(function()
                 if not v6 then
                     return
                 end
-                local v7=v6:FindFirstChild("HumanoidRootPart")
-                if not v7 then
-                    return
-                end
+                local v7=v6.HumanoidRootPart
                 if typeof(v5.v4)=="CFrame" and typeof(v5.v5)=="Vector3" and typeof(v5.v6)=="Vector3" then
                     v7.CFrame=v5.v4
                     v7.AssemblyLinearVelocity=v5.v5
@@ -6990,10 +6948,7 @@ v298.snowBtn.Activated:Connect(function()
                 return
             end
 
-            local v7=v6:FindFirstChild("HumanoidRootPart")
-            if not v7 then
-                return
-            end
+            local v7=v6.HumanoidRootPart
 
             if not v5.v3 or not v5.v3.Parent then
                 local v8=Instance.new("Part")
@@ -7016,21 +6971,26 @@ v298.snowBtn.Activated:Connect(function()
             v5.v5=v7.AssemblyLinearVelocity
             v5.v6=v7.AssemblyAngularVelocity
 
-            local v9=v298.desyncDirDirInput
+            local v9=v298.desyncDirDirInput3
             local v10=0
             local v14=0
             local v18=0
-            if v9 then
-                local v11=v9:GetAttribute("Prefix") or ""
-                local v24=v9.Text or ""
-                local v25=v24:sub(#v11+1)
-                local v15={}
-                for v16 in string.gmatch(v25,"[-]?%d+%.?%d*") do
-                    v15[#v15+1]=tonumber(v16)
+            if v9 and v9.v1 and v9.v2 and v9.v3 then
+                v10=tonumber(v9.v1.Text) or 0
+                v14=tonumber(v9.v2.Text) or 0
+                v18=tonumber(v9.v3.Text) or 0
+            else
+                local v24=v298.desyncDirDirInput
+                if v24 then
+                    local v25=v24.Text or ""
+                    local v15={}
+                    for v16 in string.gmatch(v25,"[-]?%d+%.?%d*") do
+                        v15[#v15+1]=tonumber(v16)
+                    end
+                    v10=v15[1] or 0
+                    v14=v15[2] or 0
+                    v18=v15[3] or 0
                 end
-                v10=v15[1] or 0
-                v14=v15[2] or 0
-                v18=v15[3] or 0
             end
             local v21=math.rad(v10)
             local v22=math.rad(v14)
@@ -7065,10 +7025,7 @@ v298.snowBtn.Activated:Connect(function()
                 return
             end
 
-            local v7=v6:FindFirstChild("HumanoidRootPart")
-            if not v7 then
-                return
-            end
+            local v7=v6.HumanoidRootPart
 
             if not v5.v4 or not v5.v5 or not v5.v6 then
                 return
@@ -7713,7 +7670,10 @@ return function(getgenv, refs, st, allButtons, gui, ws, lp, api)
         return false
     end
 
-    local function setToggleText(btn, on)
+        local st = v395
+    local api = v300
+
+local function setToggleText(btn, on)
         if not btn then
             return
         end
@@ -7955,7 +7915,7 @@ return function(getgenv, refs, st, allButtons, gui, ws, lp, api)
         if st.desyncPosOn then
             if not st.desyncPosTarget then
                 local c = lp and lp.Character
-                local hrp = c and c:FindFirstChild("HumanoidRootPart")
+                local hrp = c and c.HumanoidRootPart
                 if hrp then
                     local p2 = hrp.Position
                     st.desyncPosTarget = Vector3.new(p2.X, p2.Y, p2.Z)
@@ -8002,7 +7962,10 @@ return function(getgenv, refs, st, allButtons, gui, ws, lp, api)
         end
     end
 
-    local function applyConfigText(cfg)
+        local st = v395
+    local api = v300
+
+local function applyConfigText(cfg)
         cfg = tostring(cfg or "")
         local pressed = ensurePressed()
 
