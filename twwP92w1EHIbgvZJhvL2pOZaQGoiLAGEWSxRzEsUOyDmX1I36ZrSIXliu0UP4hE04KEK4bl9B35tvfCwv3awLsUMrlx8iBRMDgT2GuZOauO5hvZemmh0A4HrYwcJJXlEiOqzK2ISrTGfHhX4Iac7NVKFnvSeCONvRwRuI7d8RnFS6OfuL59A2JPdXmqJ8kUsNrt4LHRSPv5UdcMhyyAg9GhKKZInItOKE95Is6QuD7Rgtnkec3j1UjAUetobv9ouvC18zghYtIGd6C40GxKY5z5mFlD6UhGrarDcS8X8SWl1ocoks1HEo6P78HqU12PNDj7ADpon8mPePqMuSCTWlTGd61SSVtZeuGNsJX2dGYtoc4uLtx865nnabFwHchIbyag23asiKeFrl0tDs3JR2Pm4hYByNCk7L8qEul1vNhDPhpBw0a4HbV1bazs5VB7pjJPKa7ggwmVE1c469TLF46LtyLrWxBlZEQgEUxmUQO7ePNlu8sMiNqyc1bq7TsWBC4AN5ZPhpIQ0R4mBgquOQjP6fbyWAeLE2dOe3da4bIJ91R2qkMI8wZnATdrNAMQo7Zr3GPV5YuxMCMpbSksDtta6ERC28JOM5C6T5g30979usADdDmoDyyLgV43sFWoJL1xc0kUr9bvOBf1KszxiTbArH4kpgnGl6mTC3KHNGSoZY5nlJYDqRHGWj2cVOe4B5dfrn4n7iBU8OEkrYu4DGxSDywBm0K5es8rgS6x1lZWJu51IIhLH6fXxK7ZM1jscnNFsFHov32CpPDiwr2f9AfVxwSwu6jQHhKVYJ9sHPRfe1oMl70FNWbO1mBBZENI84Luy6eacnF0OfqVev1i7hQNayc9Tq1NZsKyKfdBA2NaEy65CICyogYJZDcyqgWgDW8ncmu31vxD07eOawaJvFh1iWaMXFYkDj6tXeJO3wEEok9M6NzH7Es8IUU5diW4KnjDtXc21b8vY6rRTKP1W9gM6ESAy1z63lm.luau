@@ -600,7 +600,7 @@ end,function(v120)
 	end
 end,v108)
 
-local v128,v129,v130=CreateToggle(v116(),'Hover',function(v131)
+local v128,v129,v132=CreateToggle(v116(),'Hover',function(v131)
 	if v6 then return end
 	if not v74 or not v74.Parent then return end
 	if not v113 or not v113.Parent then return end
@@ -660,7 +660,7 @@ local v141,v142,v143=CreateToggle(v116(),'Sit Fly',nil,function(v144)
 		if v142 then pcall(function()v142:Disconnect()end)v142=nil end
 		v142=v4.RenderStepped:Connect(function()
 			if v6 then return end
-			if v73 and ((v119 and v119()) or (v129 and v129())) then v73.Sit=true else if v73 then v73.Sit=false end end
+			if v73 and ((v119 and v119()) or (v132 and v132())) then v73.Sit=true else if v73 then v73.Sit=false end end
 		end)
 	else
 		if v142 then pcall(function()v142:Disconnect()end)v142=nil end
