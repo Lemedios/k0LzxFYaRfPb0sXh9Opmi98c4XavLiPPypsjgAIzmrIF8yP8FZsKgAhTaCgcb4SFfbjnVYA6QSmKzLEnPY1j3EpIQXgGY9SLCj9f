@@ -67,7 +67,7 @@ v15={
 	['JumpPower']='ジャンプ力',['Gravity']='重力',['FOV']='視野',['MaxZoom']='最大ズーム',['MinZoom']='最小ズーム',['No MaxZoom']='最大ズームを消す',['No MinZoom']='最小ズームを消す',
 	['Desync']='同期ズレ',['Desync Pos']='座標で同期ズレ',['Pos']='座標',['Set Pos']='座標を設定',['Desync Dir']='向きで同期ズレ',['Dir']='向き',['Desync Dif']='差分で同期ズレ',['Dif']='差分',
 	['Teleport']='テレポート',
-	['Script']='スクリプト',['Load IY']='IYを実行',['Load RSpy']='RSpyを実行',['Load Dex']='Dexを実行',['Load ShiftLock']='シフトロックを実行',['Unload']='LemeGUIを消す',['Reload']='リロード',['Language']='言語'
+	['Script']='スクリプト',['Load IY']='IYを実行',['Load RSpy']='RSpyを実行',['Load Dex']='Dexを実行',['Load ShiftLock']='シフトロックを実行',['Unload']='LemeGUIを消す',['Reload']='リロード',['Language']='言語',['ON']='オン',['OFF']='オフ',['NONE']='なし'
 }
 v22()
 
@@ -111,7 +111,7 @@ local function CreateToggle(v25,v26,v27,v28,v29)
 	local v32
 	local function v33(v34,v35)
 		if v35 then
-			v30.Text=v19(v26)..(v31 and ' [ON]' or ' [OFF]')
+			v30.Text=v19(v26)..(v31 and ' ['..v19('ON')..']' or ' ['..v19('OFF')..']')
 			return
 		end
 		local v36=v31
@@ -127,7 +127,7 @@ local function CreateToggle(v25,v26,v27,v28,v29)
 		if v31 and v27 then v32=v4.Heartbeat:Connect(v27) end
 	end
 	v30.MouseButton1Click:Connect(function()v33()end)
-	v30.Text=v19(v26)..' [OFF]'
+	v30.Text=v19(v26)..' ['..v19('OFF')..']'
 	if v29 then v29[#v29+1]={v30,v33} end
 	v20(v30,function()v33(nil,true)end)
 	return v30,v33,function()return v31 end
@@ -247,11 +247,11 @@ local function CreateDisplay(v51,v52)
 end
 
 local function CreateKeybind(v54,v55,v56)
-	local v57=CreateButton(v54,v55..': NONE')
+	local v57=CreateButton(v54,v55..': '..v19('NONE'))
 	local v58=Enum.KeyCode.Unknown
 	local v59=false
 	local function v60()
-		v57.Text=v19(v55)..': '..(v58~=Enum.KeyCode.Unknown and v58.Name or 'NONE')
+		v57.Text=v19(v55)..': '..(v58~=Enum.KeyCode.Unknown and v58.Name or v19('NONE'))
 	end
 	v57.MouseButton1Click:Connect(function()
 		v59=true
