@@ -32,7 +32,7 @@ local function CreateCorner(v14,v15)
 	return v16
 end
 
-local v13,v14,v15,v16='English','Leme GUI v2.1 Config.txt',{},{}
+local v13,v14,v15,v16,v24,v25,v26,v27='English','Leme GUI v2.1 Config.txt',{}, {}, {},nil,{},''
 local function v19(v17)
 	if v13~='日本語' then return v17 end
 	return v15[v17] or v17
@@ -46,16 +46,87 @@ local function v22()
 	local v17
 	pcall(function()v17=readfile(v14)end)
 	if type(v17)~='string' then return end
-	local v18=v17:match('Language=([^\r\n]+)')
-	if v18 then
-		v18=v18:match('^%s*(.-)%s*$')
-		v13=v18
+	for v18 in pairs(v24) do v24[v18]=nil end
+	v25=nil
+	local v18=nil
+	for v19a in v17:gmatch('[^\r\n]+') do
+		local v20a=v19a:match('^%[Config:(.+)%]$')
+		if v20a then
+			v20a=v20a:match('^%s*(.-)%s*$')
+			v18=v20a
+			v24[v18]=v24[v18] or {}
+		else
+			local v21a,v22a=v19a:match('^([^=]+)=(.*)$')
+			if v21a then
+				v21a=v21a:match('^%s*(.-)%s*$')
+				v22a=(v22a or ''):match('^%s*(.-)%s*$')
+				if v18 then
+					v24[v18][v21a]=v22a
+				else
+					if v21a=='Language' then v13=v22a elseif v21a=='AutoLoad' then v25=v22a end
+				end
+			end
+		end
 	end
 	if v13~='English' and v13~='日本語' then v13='English' end
+	if v25 and (not v24[v25]) then v25=nil end
 end
 local function v23()
 	if not writefile then return end
-	pcall(function()writefile(v14,'Language='..v13..'\n')end)
+	pcall(function()
+		local v17='Language='..v13..'\n'
+		if v25 and v25~='' then v17=v17..'AutoLoad='..v25..'\n' end
+		for v18,v19a in pairs(v24) do
+			v17=v17..'\n[Config:'..tostring(v18)..']\n'
+			for v20a,v21a in pairs(v19a) do
+				v17=v17..tostring(v20a)..'='..tostring(v21a)..'\n'
+			end
+		end
+		writefile(v14,v17)
+	end)
+end
+local function v28(v17,v18,v19a,v20a)
+	if v27=='' or v27=='Config' then return end
+	if v27=='Script' and v18=='Language' then return end
+	v26[#v26+1]={v27..'.'..v18,v17,v19a,v20a}
+end
+local v28a=v28
+local function v29(v17)
+	local v18=v24[v17]
+	if not v18 then return end
+	for v19a=1,#v26 do
+		local v20a=v26[v19a]
+		local v21a=v18[v20a[1]]
+		if v21a~=nil then
+			local v22a=v20a[2]
+			if v22a=='Toggle' then
+				pcall(function()v20a[4](v21a=='1')end)
+			elseif v22a=='Input' then
+				pcall(function()v20a[4](tostring(v21a))end)
+			elseif v22a=='3Input' then
+				pcall(function()v20a[4](tostring(v21a))end)
+			elseif v22a=='Select' then
+				pcall(function()v20a[4](tostring(v21a))end)
+			end
+		end
+	end
+end
+local function v30()
+	local v17={}
+	for v18=1,#v26 do
+		local v19a=v26[v18]
+		local v20a=v19a[2]
+		if v20a=='Toggle' then
+			local v21a=false
+			pcall(function()v21a=v19a[3]()end)
+			v17[v19a[1]]=v21a and '1' or '0'
+		elseif v20a=='Input' or v20a=='3Input' or v20a=='Select' then
+			local v21a=''
+			pcall(function()v21a=v19a[3]()end)
+			v17[v19a[1]]=tostring(v21a)
+		end
+	end
+	return v17
 end
 v15={
 	['Fly']='飛行',['Hover']='ホバー',['Sit Fly']='座って飛ぶ',['Speed']='速度',['Quick Fly']='クイック飛行',['Trigger']='トリガー',
@@ -67,7 +138,9 @@ v15={
 	['JumpPower']='ジャンプ力',['Gravity']='重力',['FOV']='視野',['MaxZoom']='最大ズーム',['MinZoom']='最小ズーム',['No MaxZoom']='最大ズームを消す',['No MinZoom']='最小ズームを消す',
 	['Desync']='同期ズレ',['Desync Pos']='座標で同期ズレ',['Pos']='座標',['Set Pos']='座標を設定',['Desync Dir']='向きで同期ズレ',['Dir']='向き',['Desync Dif']='差分で同期ズレ',['Dif']='差分',
 	['Teleport']='テレポート',
-	['Script']='スクリプト',['Load IY']='IYを実行',['Load RSpy']='RSpyを実行',['Load Dex']='Dexを実行',['Load ShiftLock']='シフトロックを実行',['Unload']='LemeGUIを消す',['Reload']='リロード',['Language']='言語',['ON']='オン',['OFF']='オフ',['NONE']='なし'
+	['Script']='スクリプト',['Load IY']='IYを実行',['Load RSpy']='RSpyを実行',['Load Dex']='Dexを実行',['Load ShiftLock']='シフトロックを実行',['Unload']='LemeGUIを消す',['Language']='言語',
+	['Config']='設定',['Name']='名前',['Create Config']='設定を作成',['Load Config']='設定を反映',['OverWrite Config']='設定を上書き',['Delete Config']='設定を削除',['Set AutoLoad']='オートロードに設定',
+	['ON']='オン',['OFF']='オフ',['NONE']='なし'
 }
 v22()
 
@@ -121,7 +194,7 @@ local function CreateToggle(v25,v26,v27,v28,v29)
 				if v29[v37] and v29[v37][2]~=v33 then v29[v37][2](false) end
 			end
 		end
-		v30.Text=v19(v26)..(v31 and ' [ON]' or ' [OFF]')
+		v30.Text=v19(v26)..(v31 and ' ['..v19('ON')..']' or ' ['..v19('OFF')..']')
 		if v28 then v28(v31) end
 		if v32 then v32:Disconnect()v32=nil end
 		if v31 and v27 then v32=v4.Heartbeat:Connect(v27) end
@@ -130,6 +203,7 @@ local function CreateToggle(v25,v26,v27,v28,v29)
 	v30.Text=v19(v26)..' ['..v19('OFF')..']'
 	if v29 then v29[#v29+1]={v30,v33} end
 	v20(v30,function()v33(nil,true)end)
+	v28a('Toggle',v26,function()return v31 end,v33)
 	return v30,v33,function()return v31 end
 end
 
@@ -168,15 +242,26 @@ local function CreateInput(v37,v38,v39,v40,v41)
 	end
 	v43:GetPropertyChangedSignal('AbsoluteSize'):Connect(v46)
 	task.defer(v46)
+	local function v48(v49)
+		v45.Text=tostring(v49 or '')
+		if not v39 then return end
+		if v40 then
+			local v50,v51,v52=v45.Text:match('^%s*([%+%-]?%d*%.?%d+)%s*,%s*([%+%-]?%d*%.?%d+)%s*,%s*([%+%-]?%d*%.?%d+)%s*$')
+			if v50 then v39(tonumber(v50),tonumber(v51),tonumber(v52)) end
+		else
+			v39(v45.Text)
+		end
+	end
 	v45.FocusLost:Connect(function()
 		if not v39 then return end
 		if v40 then
-			local v48,v49,v50=v45.Text:match('^%s*([%+%-]?%d*%.?%d+)%s*,%s*([%+%-]?%d*%.?%d+)%s*,%s*([%+%-]?%d*%.?%d+)%s*$')
-			if v48 then v39(tonumber(v48),tonumber(v49),tonumber(v50)) end
+			local v49,v50,v51=v45.Text:match('^%s*([%+%-]?%d*%.?%d+)%s*,%s*([%+%-]?%d*%.?%d+)%s*,%s*([%+%-]?%d*%.?%d+)%s*$')
+			if v49 then v39(tonumber(v49),tonumber(v50),tonumber(v51)) end
 		else
 			v39(v45.Text)
 		end
 	end)
+	v28('Input',v38,function()return v45.Text end,v48)
 	return v42,v45
 end
 
@@ -230,6 +315,19 @@ local function Create3Input(v37,v38,v39,v41,v42,v43)
 	v47.FocusLost:Connect(v54)
 	v48.FocusLost:Connect(v54)
 	v49.FocusLost:Connect(v54)
+	local function v58(v59)
+		local v60,v61,v62=v59:match('^%s*([^,]+)%s*,%s*([^,]+)%s*,%s*([^,]+)%s*$')
+		if not v60 then
+			v60,v61,v62=v59:match('^%s*([%+%-]?%d*%.?%d+)%s+([%+%-]?%d*%.?%d+)%s+([%+%-]?%d*%.?%d+)%s*$')
+		end
+		if v60 then
+			v47.Text=tostring(v60)
+			v48.Text=tostring(v61)
+			v49.Text=tostring(v62)
+			v54()
+		end
+	end
+	v28('3Input',v38,function()return tostring(v47.Text)..','..tostring(v48.Text)..','..tostring(v49.Text) end,v58)
 	return v44,v47,v48,v49
 end
 
@@ -368,12 +466,20 @@ local function CreateSelect(v61,v62,v63,v64,v65)
 		end
 	end
 	v66.MouseButton1Click:Connect(v70)
+	local function v71(v72)
+		v63=v72
+		if v65 then v65(v63) end
+		v66.Text=v19(v62)..': '..tostring(v63)
+		v23()
+		v21()
+	end
 	v20(v66,function()v66.Text=v19(v62)..': '..tostring(v63)end)
-	v20(v66,function()v66.Text=v19(v62)..': '..tostring(v63)end)
-	return v66,function()return v63 end,function(v71)v63=v71 if v65 then v65(v63)end v66.Text=v19(v62)..': '..tostring(v63) v23() v21() end
+	v28('Select',v62,function()return tostring(v63) end,v71)
+	return v66,function()return v63 end,v71
 end
 
 local function CreateGroup(v62,v63)
+	v27=v63
 	local v64=Instance.new('Frame',v62)
 	v64.Size=UDim2.new(1,0,0,0)
 	v64.AutomaticSize=Enum.AutomaticSize.Y
@@ -555,6 +661,7 @@ v107.PaddingRight=UDim.new(0,12)
 v107.PaddingTop=UDim.new(0,12)
 v107.PaddingBottom=UDim.new(0,12)
 
+local function v500()
 local v108={}
 local v109=300
 local v110=nil
@@ -1717,7 +1824,6 @@ local function v335()
 		v348.Text=tostring(v353)
 	end)
 end
-v335()
 
 local function v336()
 	local v337,v338=CreateGroup(v105,'Script')
@@ -1733,9 +1839,83 @@ local function v336()
 	CreateButton(v340(),'Unload',function()v12()end)
 	CreateSelect(v340(),'Language',v13,{'English','日本語'},function(v341)v13=v341 end)
 end
-v336()
 
+local function v337()
+	local v337a,v338a=CreateGroup(v105,'Config')
+	local v339a=0
+	local function v340a()
+		v339a=v339a+1
+		return v339a%2==1 and v337a or v338a
+	end
+	local v341a,v342a=CreateInput(v340a(),'Name',function(v343a)end)
+	local v344a,v344b={},{}
+	local v345a,v345b='',''
+	local function v346a()
+		for v347a=1,#v344a do v344a[v347a]=nil end
+		for v347a in pairs(v344b) do v344b[v347a]=nil end
+		for v347a in pairs(v24) do
+			local v348a=tostring(v347a)
+			local v349a=v348a..((v25==v348a) and ' (AutoLoad)' or '')
+			v344a[#v344a+1]=v349a
+			v344b[v349a]=v348a
+		end
+	end
+	v346a()
+	local v347a,v348a,v349a=CreateSelect(v340a(),'Config',v345b,v344a,function(v350a)
+		v345b=tostring(v350a or '')
+		v345a=v344b[v345b] or v345b
+	end)
+	local function v350a()
+		v346a()
+		if v345a~='' and (not v24[v345a]) then v345a='' v345b='' pcall(function()v349a('')end) end
+		if v345a~='' then v345b=v345a..((v25==v345a) and ' (AutoLoad)' or '') end
+		pcall(function()v349a(v345b)end)
+		v23()
+	end
+	CreateButton(v340a(),'Create Config',function()
+		local v351a=(v342a and v342a.Text or ''):match('^%s*(.-)%s*$')
+		if v351a=='' then return end
+		if v24[v351a] then return end
+		v24[v351a]=v30()
+		v345a=v351a
+		v345b=v351a..((v25==v351a) and ' (AutoLoad)' or '')
+		pcall(function()v349a(v345b)end)
+		v350a()
+	end)
+	CreateButton(v340a(),'Load Config',function()
+		if v345a=='' then return end
+		v29(v345a)
+		v21()
+	end)
+	CreateButton(v340a(),'OverWrite Config',function()
+		if v345a=='' then return end
+		if not v24[v345a] then return end
+		v24[v345a]=v30()
+		v350a()
+	end)
+	CreateButton(v340a(),'Delete Config',function()
+		if v345a=='' then return end
+		v24[v345a]=nil
+		if v25==v345a then v25=nil end
+		v345a='' v345b=''
+		pcall(function()v349a('')end)
+		v350a()
+	end)
+	CreateButton(v340a(),'Set AutoLoad',function()
+		if v345a=='' then return end
+		if not v24[v345a] then return end
+		v25=v345a
+		v350a()
+	end)
+end
+
+v335()
+v337()
+v336()
+if v25 and v24[v25] then v29(v25) end
 v21()
+end
+v500()
 
 local v221,v222,v223=0,false,false
 local v224,v225=v3:Create(v103,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Position=UDim2.new(.5,0,1,-55)}),v3:Create(v104,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Position=UDim2.new(.5,0,1,260)})
