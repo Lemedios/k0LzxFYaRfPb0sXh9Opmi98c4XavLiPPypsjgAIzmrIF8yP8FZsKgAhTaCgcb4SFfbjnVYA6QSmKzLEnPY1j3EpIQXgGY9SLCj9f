@@ -983,7 +983,11 @@ local function v217(v218)
 	if not v219 then return end
 	local v220=v219[1]
 	if not v220 then return end
-	if not v220.Parent then v219[1]=nil end
+	if not v220.Parent then v219[1]=nil return end
+	local v221=v220.CFrame.p
+	local v222=v219[5]
+	if v222 and v183>0 then v219[6]=(v221-v222)/v183 end
+	v219[5]=v221
 end
 
 local function v250(v224)
@@ -996,10 +1000,14 @@ local function v250(v224)
 	if not v227 then return nil end
 	local v228=v227.CFrame.p
 	local v229=v226.CFrame.p
-	local v232=math.random()
-	local v233=v229+v226.Velocity*(v183*v232)
-	if v172 and v172() and (v233-v228).Magnitude>800 then return nil end
+	local v232=math.random(0,10)/10
 	local v234=v226.Velocity
+	if math.abs(v234.X)+math.abs(v234.Y)+math.abs(v234.Z)<1 then
+		local v235=v225[6]
+		if v235 then v234=v235 end
+	end
+	local v233=v229+v234*v232
+	if v172 and v172() and (v233-v228).Magnitude>800 then return nil end
 	if math.abs(v234.X)+math.abs(v234.Y)+math.abs(v234.Z)>500 then return nil end
 	local v235=math.random()*math.pi*2
 	local v236=math.random()*math.pi*2
