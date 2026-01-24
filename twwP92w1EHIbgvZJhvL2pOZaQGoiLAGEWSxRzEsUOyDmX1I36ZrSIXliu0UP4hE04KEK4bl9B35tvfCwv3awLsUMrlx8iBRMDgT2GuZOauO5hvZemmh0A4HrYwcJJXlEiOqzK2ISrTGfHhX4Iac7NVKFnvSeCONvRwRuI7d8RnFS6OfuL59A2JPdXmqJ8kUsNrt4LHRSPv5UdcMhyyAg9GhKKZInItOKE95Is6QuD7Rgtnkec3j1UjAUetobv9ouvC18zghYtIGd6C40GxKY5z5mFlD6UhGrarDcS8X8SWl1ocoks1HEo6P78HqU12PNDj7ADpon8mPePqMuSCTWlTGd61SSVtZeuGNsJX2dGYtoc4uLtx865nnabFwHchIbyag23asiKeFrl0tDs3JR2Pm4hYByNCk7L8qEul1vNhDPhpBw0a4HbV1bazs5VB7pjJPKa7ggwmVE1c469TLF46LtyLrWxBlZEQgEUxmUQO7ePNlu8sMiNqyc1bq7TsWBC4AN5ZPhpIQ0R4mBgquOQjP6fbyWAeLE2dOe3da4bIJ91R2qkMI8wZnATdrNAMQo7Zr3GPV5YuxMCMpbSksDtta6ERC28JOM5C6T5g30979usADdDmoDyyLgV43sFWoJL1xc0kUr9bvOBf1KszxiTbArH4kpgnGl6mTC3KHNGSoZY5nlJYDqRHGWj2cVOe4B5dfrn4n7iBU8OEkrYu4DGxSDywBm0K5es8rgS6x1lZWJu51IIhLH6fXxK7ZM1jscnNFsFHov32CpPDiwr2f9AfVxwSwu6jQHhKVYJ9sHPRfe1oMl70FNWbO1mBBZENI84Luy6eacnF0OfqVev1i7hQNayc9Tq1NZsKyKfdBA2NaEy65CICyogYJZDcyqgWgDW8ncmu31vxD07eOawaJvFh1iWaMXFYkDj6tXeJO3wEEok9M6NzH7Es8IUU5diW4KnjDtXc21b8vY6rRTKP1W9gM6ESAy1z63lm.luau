@@ -869,6 +869,7 @@ local v167,v168,v169=CreateToggle(v154(),'Fling All',nil,function(v162)
 end,v158)
 
 local v170,v171,v172=CreateToggle(v154(),'Safe Method')
+local v179={}
 v171(true)
 v170.LayoutOrder=2147483646
 local v173,v174,v175=CreateToggle(v154(),'Whitelist Friend',nil,function(v176)
@@ -887,7 +888,6 @@ end)
 v173.LayoutOrder=2147483647
 
 local v177,v178={},{}
-local v179={}
 local v180={}
 local v181,v182={},0
 local v183=0
@@ -1114,6 +1114,7 @@ v5[#v5+1]=v4.Heartbeat:Connect(function(v245)
 	v246.CFrame=v247
 	v246.Velocity=Vector3.new()
 	v246.RotVelocity=Vector3.new(2147483647,2147483647,2147483647)
+	v600=os.clock()
 	v195=true
 end)
 
@@ -1127,6 +1128,17 @@ end)
 
 v5[#v5+1]=v4.RenderStepped:Connect(function()
 	if v6 then return end
+	local v701=v7.Character
+	if v600>0 and os.clock()-v600<.1 and v701 then
+		if (not v700) or (not v700.Parent) then v700=Instance.new('Highlight',v701) end
+		v700.Adornee=v701
+		v700.FillColor=Color3.new(1,0,0)
+		v700.FillTransparency=.5
+		v700.OutlineTransparency=1
+	else
+		if v700 and v700.Parent then pcall(function()v700:Destroy()end) end
+		v700=nil
+	end
 	if v195 and v189==1 then
 		local v246=v184
 		if v246 and v196 and v197 and v198 then v246.CFrame=v196 v246.Velocity=v197 v246.RotVelocity=v198 end
@@ -1457,7 +1469,7 @@ end)
 local v430,v431=CreateGroup(v105,'ESP')
 local v432=0
 local function v433()v432=v432+1 return v432%2==1 and v430 or v431 end
-local v434={}
+local v434,v600,v700={},0,nil
 local v435,v436,v437=CreateToggle(v433(),'UserName')
 local v438,v439,v440=CreateToggle(v433(),'DisplayName')
 local v441,v442,v443=CreateToggle(v433(),'Health Status')
