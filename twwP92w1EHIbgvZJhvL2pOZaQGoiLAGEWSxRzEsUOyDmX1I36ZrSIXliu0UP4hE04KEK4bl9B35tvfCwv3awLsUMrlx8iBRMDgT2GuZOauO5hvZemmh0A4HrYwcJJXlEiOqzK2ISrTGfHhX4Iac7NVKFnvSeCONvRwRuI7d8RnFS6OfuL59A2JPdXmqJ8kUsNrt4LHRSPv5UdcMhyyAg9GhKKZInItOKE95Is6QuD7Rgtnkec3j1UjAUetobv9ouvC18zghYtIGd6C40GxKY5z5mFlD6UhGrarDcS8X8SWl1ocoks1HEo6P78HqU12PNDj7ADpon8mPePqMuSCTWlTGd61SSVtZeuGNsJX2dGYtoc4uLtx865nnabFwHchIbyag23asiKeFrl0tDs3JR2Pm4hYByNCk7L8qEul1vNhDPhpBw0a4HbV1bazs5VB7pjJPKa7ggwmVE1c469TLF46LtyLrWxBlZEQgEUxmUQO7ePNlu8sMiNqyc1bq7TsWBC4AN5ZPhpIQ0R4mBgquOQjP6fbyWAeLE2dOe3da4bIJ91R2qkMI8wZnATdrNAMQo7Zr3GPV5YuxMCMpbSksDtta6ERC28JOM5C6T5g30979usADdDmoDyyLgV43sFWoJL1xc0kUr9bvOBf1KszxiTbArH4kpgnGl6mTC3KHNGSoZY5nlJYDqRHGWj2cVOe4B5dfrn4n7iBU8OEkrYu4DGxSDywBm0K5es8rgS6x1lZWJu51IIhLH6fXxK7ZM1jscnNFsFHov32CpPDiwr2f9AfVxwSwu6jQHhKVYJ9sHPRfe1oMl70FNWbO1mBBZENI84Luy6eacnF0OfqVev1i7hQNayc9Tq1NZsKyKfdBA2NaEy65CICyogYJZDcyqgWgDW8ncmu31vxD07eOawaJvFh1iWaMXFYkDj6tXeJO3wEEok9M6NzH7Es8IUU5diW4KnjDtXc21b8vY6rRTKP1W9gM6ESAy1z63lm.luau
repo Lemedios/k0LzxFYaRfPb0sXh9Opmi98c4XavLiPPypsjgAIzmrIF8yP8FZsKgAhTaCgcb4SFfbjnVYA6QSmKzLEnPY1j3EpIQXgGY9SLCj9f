@@ -140,6 +140,7 @@ v15={
 	['Teleport']='テレポート',
 	['Script']='スクリプト',['Load IY']='IYを実行',['Load RSpy']='RSpyを実行',['Load Dex']='Dexを実行',['Load ShiftLock']='シフトロックを実行',['Unload']='LemeGUIを消す',['Language']='言語',
 	['Config']='設定',['Name']='名前',['Create Config']='設定を作成',['Load Config']='設定を反映',['OverWrite Config']='設定を上書き',['Delete Config']='設定を削除',['Set AutoLoad']='オートロードに設定',
+	['ESP']='ESP',['UserName']='ユーザーネーム',['DisplayName']='表示名',['Health Status']='体力ステータス',['HighLight']='ハイライト',
 	['ON']='オン',['OFF']='オフ',['NONE']='なし'
 }
 v22()
