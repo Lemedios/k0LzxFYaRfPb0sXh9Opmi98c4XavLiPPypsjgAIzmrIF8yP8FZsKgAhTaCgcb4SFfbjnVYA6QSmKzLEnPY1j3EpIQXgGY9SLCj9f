@@ -1453,6 +1453,184 @@ CreateToggle(v304(),'No Fog',nil,function(v332)
 	end
 end)
 
+local v430,v431=CreateGroup(v105,'ESP')
+local v432=0
+local function v433()v432=v432+1 return v432%2==1 and v430 or v431 end
+local v434={}
+local v435,v436,v437=CreateToggle(v433(),'UserName')
+local v438,v439,v440=CreateToggle(v433(),'DisplayName')
+local v441,v442,v443=CreateToggle(v433(),'Health Status')
+local v444,v445,v446=CreateToggle(v433(),'HighLight')
+local function v447(v448)
+	if v448==v7 or v434[v448] then return end
+	local v449={}
+	v434[v448]=v449
+	local function v450(v451)
+		v449[1]=v451
+		v449[2]=nil v449[3]=nil
+		for _,v452 in ipairs(v451:GetChildren()) do
+			if v452.Name=='HumanoidRootPart' then v449[2]=v452 elseif v452:IsA('Humanoid') then v449[3]=v452 end
+		end
+		if v449[4] then v449[4]:Disconnect()v449[4]=nil end
+		if v449[5] then v449[5]:Disconnect()v449[5]=nil end
+		v449[4]=v451.ChildAdded:Connect(function(v453)
+			if v453.Name=='HumanoidRootPart' then v449[2]=v453 elseif v453:IsA('Humanoid') then v449[3]=v453 end
+		end)
+		v449[5]=v451.ChildRemoved:Connect(function(v453)
+			if v453.Name=='HumanoidRootPart' then v449[2]=nil end
+		end)
+	end
+	v449[6]=v448.CharacterAdded:Connect(v450)
+	if v448.Character then v450(v448.Character) end
+end
+for _,v448 in ipairs(v1:GetPlayers()) do v447(v448) end
+v5[#v5+1]=v1.PlayerAdded:Connect(function(v448)v447(v448)end)
+v5[#v5+1]=v1.PlayerRemoving:Connect(function(v448)
+	local v449=v434[v448]
+	if not v449 then return end
+	if v449[6] then v449[6]:Disconnect()end
+	if v449[4] then v449[4]:Disconnect()end
+	if v449[5] then v449[5]:Disconnect()end
+	pcall(function()if v449[7] then v449[7]:Destroy()end end)
+	pcall(function()if v449[11] then v449[11]:Destroy()end end)
+	v434[v448]=nil
+end)
+local function v451(v452)
+	if v452>=1 then return Color3.new(1,1,1) end
+	if v452<=0 then return Color3.new() end
+	if v452>=.8 then
+		local v453=(v452-.8)/.2
+		return Color3.new(0,1,0):Lerp(Color3.new(1,1,1),v453)
+	elseif v452>=.6 then
+		local v453=(v452-.6)/.2
+		return Color3.new(1,1,0):Lerp(Color3.new(0,1,0),v453)
+	elseif v452>=.4 then
+		local v453=(v452-.4)/.2
+		return Color3.new(1,.5,0):Lerp(Color3.new(1,1,0),v453)
+	elseif v452>=.2 then
+		local v453=(v452-.2)/.2
+		return Color3.new(1,0,0):Lerp(Color3.new(1,.5,0),v453)
+	else
+		local v453=v452/.2
+		return Color3.new():Lerp(Color3.new(1,0,0),v453)
+	end
+end
+v5[#v5+1]=v4.RenderStepped:Connect(function()
+	if v6 then return end
+	local v452=v437() or v440() or v443()
+	local v453=v446()
+	for v454,v455 in pairs(v434) do
+		local v456=v454.Parent==v1 and v454 or nil
+		if not v456 then
+			if v455[6] then v455[6]:Disconnect()end
+			if v455[4] then v455[4]:Disconnect()end
+			if v455[5] then v455[5]:Disconnect()end
+			pcall(function()if v455[7] then v455[7]:Destroy()end end)
+			pcall(function()if v455[11] then v455[11]:Destroy()end end)
+			v434[v454]=nil
+		else
+			local v457=v455[1]
+			local v458=v455[2]
+			local v459=v455[3]
+			if v452 and v458 and v458.Parent then
+				local v460=v455[7]
+				if (not v460) or (not v460.Parent) then
+					v460=Instance.new('BillboardGui',v458)
+					v460.Size=UDim2.fromOffset(240,56)
+					v460.StudsOffset=Vector3.new(0,3,0)
+					v460.AlwaysOnTop=true
+					v460.MaxDistance=1/0
+					local v461=Instance.new('TextLabel',v460)
+					v461.Size=UDim2.new(1,-32,0,22)
+					v461.Position=UDim2.new(0,0,0,0)
+					v461.BackgroundTransparency=1
+					v461.Font=Enum.Font.Code
+					v461.TextColor3=Color3.new(1,1,1)
+					v461.TextSize=18
+					v461.TextStrokeColor3=Color3.new()
+					v461.TextStrokeTransparency=0
+					v461.TextXAlignment=Enum.TextXAlignment.Center
+					local v462=Instance.new('TextLabel',v460)
+					v462.Size=UDim2.new(1,-32,0,22)
+					v462.Position=UDim2.new(0,0,0,22)
+					v462.BackgroundTransparency=1
+					v462.Font=Enum.Font.Code
+					v462.TextColor3=Color3.new(1,1,1)
+					v462.TextSize=18
+					v462.TextStrokeColor3=Color3.new()
+					v462.TextStrokeTransparency=0
+					v462.TextXAlignment=Enum.TextXAlignment.Center
+					local v463=Instance.new('Frame',v460)
+					v463.Size=UDim2.fromOffset(26,26)
+					v463.Position=UDim2.new(0,0,.5,0)
+					v463.AnchorPoint=Vector2.new(0,.5)
+					v463.BackgroundColor3=Color3.new(1,1,1)
+					local v464=Instance.new('UICorner',v463)
+					v464.CornerRadius=UDim.new(1,0)
+					v455[7],v455[8],v455[9],v455[10]=v460,v462,v461,v463
+				else
+					v455[7]=v460
+				end
+				v460.Adornee=v458
+				v460.Enabled=true
+				local v465=v455[9]
+				local v466=v455[8]
+				if v465 and v465.Parent then
+					v465.TextStrokeColor3=Color3.new()
+					v465.TextStrokeTransparency=0
+					v465.Visible=v440()
+					v465.Text=v456.DisplayName or v456.Name
+				end
+				if v466 and v466.Parent then
+					v466.TextStrokeColor3=Color3.new()
+					v466.TextStrokeTransparency=0
+					v466.Visible=v437()
+					v466.Text=v456.Name
+				end
+				local v467=v455[10]
+				if v460 and v460.Parent then
+					local v468=0
+					if v465 and v465.Parent and v465.Visible then v468=math.max(v468,v465.TextBounds.X) end
+					if v466 and v466.Parent and v466.Visible then v468=math.max(v468,v466.TextBounds.X) end
+					local v469,v470,v471=4,6,26
+					local v472=math.ceil(v469+v468+v470+v471+v469)
+					if v472<120 then v472=120 end
+					v460.Size=UDim2.fromOffset(v472,56)
+					if v465 and v465.Parent then v465.Size=UDim2.new(0,v468,0,22)v465.Position=UDim2.new(0,v469,0,0)end
+					if v466 and v466.Parent then v466.Size=UDim2.new(0,v468,0,22)v466.Position=UDim2.new(0,v469,0,22)end
+					if v467 and v467.Parent then v467.Position=UDim2.new(0,v469+v468+v470,.5,0)end
+				end
+				if v467 and v467.Parent then
+					v467.Visible=v443()
+					if v443() and v459 and v459.MaxHealth>0 then
+						local v468=v459.Health/v459.MaxHealth
+						v467.BackgroundColor3=v451(v468)
+					else
+						v467.BackgroundColor3=Color3.new()
+					end
+				end
+			else
+				pcall(function()if v455[7] then v455[7]:Destroy()end end)
+				v455[7]=nil v455[8]=nil v455[9]=nil v455[10]=nil
+			end
+			if v453 and v457 and v457.Parent then
+				local v460=v455[11]
+				if (not v460) or (not v460.Parent) then
+					v460=Instance.new('Highlight',v457)
+					v455[11]=v460
+				end
+				v460.Adornee=v457
+				v460.FillColor=Color3.new(1,0,0)
+				v460.FillTransparency=.8
+				v460.OutlineTransparency=1
+			else
+				pcall(function()if v455[11] then v455[11]:Destroy()end end)
+				v455[11]=nil
+			end
+		end
+	end
+end)
+
 local function v334(v335)
 	return tostring(math.floor(v335*100+0.5)/100)
 end
