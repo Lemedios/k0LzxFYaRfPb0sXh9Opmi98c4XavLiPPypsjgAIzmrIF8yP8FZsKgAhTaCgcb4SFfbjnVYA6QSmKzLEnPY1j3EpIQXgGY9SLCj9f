@@ -356,7 +356,8 @@ local function CreateKeybind(v54,v55,v56)
 		v57.Text=v19(v55)..': ...'
 	end)
 	v5[#v5+1]=v2.InputBegan:Connect(function(v61,v62)
-		if v62 or v6 then return end
+	if v6 then return end
+	if v2:GetFocusedTextBox() then return end
 		if v59 and v61.KeyCode~=Enum.KeyCode.Unknown then
 			v59=false
 			v58=v61.KeyCode
@@ -538,7 +539,8 @@ v5[#v5+1]=v7.CharacterAdded:Connect(v75)
 
 local v78,v79,v80,v81,v82,v83=false,false,false,false,false,false
 v5[#v5+1]=v2.InputBegan:Connect(function(v84,v85)
-	if v85 or v6 then return end
+	if v6 then return end
+	if v2:GetFocusedTextBox() then return end
 	local v86=v84.KeyCode
 	if v86==Enum.KeyCode.W then v80=true
 	elseif v86==Enum.KeyCode.A then v81=true
@@ -550,7 +552,8 @@ v5[#v5+1]=v2.InputBegan:Connect(function(v84,v85)
 end)
 
 v5[#v5+1]=v2.InputEnded:Connect(function(v88,v89)
-	if v89 or v6 then return end
+	if v6 then return end
+	if v2:GetFocusedTextBox() then return end
 	local v90=v88.KeyCode
 	if v90==Enum.KeyCode.W then v80=false
 	elseif v90==Enum.KeyCode.A then v81=false
