@@ -1809,6 +1809,7 @@ local function v335()
 		if not v343 or not v343.Parent then return end
 		local v344=v343.CFrame
 		v343.CFrame=CFrame.new(v340,v341,v342)*(v344-v344.p)
+		v343.Velocity=Vector3.new()
 	end)
 	local v345,v346,v347,v348=Create3Input(v339(),'Pos',function(v349,v350,v351)v340,v341,v342=v349,v350,v351 end,'0','0','0')
 	CreateButton(v339(),'Set Pos',function()
