@@ -133,7 +133,7 @@ v15={
 	['Fling']='吹き飛ばす',['Touch Fling']='触ったら吹き飛ばす',['Fling All']='全員吹き飛ばす',['Safe Method']='安全ロック',['Whitelist Friend']='フレンドは対象外',['Target']='ターゲット',
 	['Anti']='耐性',['Anti Void']='奈落耐性',['Anti AFK']='放置耐性',['Anti Fling']='吹き飛ばし耐性',
 	['Humanoid']='キャラクター',['Reset']='リセット',['Loop Reset']='ループリセット',['Quick Reset']='クイックリセット',['NoClip']='すり抜け',['InfJump']='無限ジャンプ',['Anchor']='固定',
-	['Other']='その他',['Rejoin']='入り直す',['Chat']='チャット',['Instant Prompt']='即時プロンプト',['Fire All Touch']='すべてのタッチを触る',['No Fog']='霧を消す',
+	['Other']='その他',['Rejoin']='入り直す',['Chat']='チャット',['Instant Prompt']='即時プロンプト',['Fire All Touch']='すべてのタッチを触る',['No Fog']='霧を消す',['Status']='ステータス',
 	['WalkSpeed']='歩行速度',['Value']='数値',['Set']='設定',['Loop Set']='ループ設定',['Current']='現在値',['TP Walk']='TP歩行',
 	['JumpPower']='ジャンプ力',['Gravity']='重力',['FOV']='視野',['MaxZoom']='最大ズーム',['MinZoom']='最小ズーム',['No MaxZoom']='最大ズームを消す',['No MinZoom']='最小ズームを消す',
 	['Desync']='同期ズレ',['Desync Pos']='座標で同期ズレ',['Pos']='座標',['Set Pos']='座標を設定',['Desync Dir']='向きで同期ズレ',['Dir']='向き',['Desync Dif']='差分で同期ズレ',['Dif']='差分',
@@ -869,7 +869,7 @@ local v167,v168,v169=CreateToggle(v154(),'Fling All',nil,function(v162)
 end,v158)
 
 local v170,v171,v172=CreateToggle(v154(),'Safe Method')
-local v179={}
+local v179
 v171(true)
 v170.LayoutOrder=2147483646
 local v173,v174,v175=CreateToggle(v154(),'Whitelist Friend',nil,function(v176)
@@ -888,6 +888,7 @@ end)
 v173.LayoutOrder=2147483647
 
 local v177,v178={},{}
+v179={}
 local v180={}
 local v181,v182={},0
 local v183=0
@@ -903,6 +904,7 @@ local v191=0
 local v192,v193,v194=nil,nil,nil
 local v195=false
 local v196,v197,v198=nil,nil,nil
+local v600,v700=0,nil
 
 local function v199(v200)
 	if not v200 then return nil end
@@ -1464,6 +1466,208 @@ CreateToggle(v304(),'No Fog',nil,function(v332)
 		end)
 		v5[#v5+1]=v331
 	end
+end)
+
+local v4310,v4311=nil,nil
+CreateToggle(v304(),'Status',nil,function(v4312)
+	if v4311 then pcall(function()v4311:Destroy()end)v4311=nil end
+	if v4310 then for v4313=1,#v4310 do pcall(function()v4310[v4313]:Disconnect()end) end v4310=nil end
+	if not v4312 then return end
+	local v4314=Instance.new('ScreenGui')
+	local v4315
+	local v4316,v4317=pcall(function()return gethui()end)
+	if v4316 and v4317 then v4315=v4317 else
+		local v4318,v4319=pcall(function()return get_hidden_gui()end)
+		if v4318 and v4319 then v4315=v4319 else v4315=game:service'CoreGui' end
+	end
+	v4314.Parent=v4315
+	v4314.DisplayOrder=2147483647
+	v4314.IgnoreGuiInset=true
+	local v4310f=Instance.new('Frame')
+	v4310f.Parent=v4314
+	v4310f.AnchorPoint=Vector2.new(0,0)
+	v4310f.Position=UDim2.new(0,1,0,0)
+	v4310f.Size=UDim2.new(0,150,0,200)
+	v4310f.Position=UDim2.new(0,1,0,workspace.CurrentCamera.ViewportSize.Y-v4310f.Size.Y.Offset-1)
+	v4310f.BackgroundColor3=Color3.new(.15,.15,.15)
+	v4310f.BorderSizePixel=1
+	v4310f.BorderColor3=Color3.new(1,1,1)
+	v4310f.Active=true
+	local v4311c=Instance.new('UICorner')
+	v4311c.Parent=v4310f
+	v4311c.CornerRadius=UDim.new(0,10)
+	local v4312s=Instance.new('UIStroke')
+	v4312s.Parent=v4310f
+	v4312s.Thickness=1
+	v4312s.Color=Color3.new(1,1,1)
+	local v4313w,v4314w,v4315w=70,20,15
+	local v4316w={'Pos','Ori','Vel','RVel','WS','JP','JH','HP','Rig'}
+	local v4317w={}
+	local v4318w,v4319w=nil,{}
+	local v4320w=math.floor((v4313w-20)*.6+.5)
+	local v4321w=10+v4320w+10
+	for v4322w,v4323w in ipairs(v4316w) do
+		local v4324w=Instance.new('TextButton')
+		v4324w.Parent=v4310f
+		v4324w.BackgroundColor3=Color3.new(.2,.2,.2)
+		v4324w.BorderSizePixel=0
+		v4324w.AutoButtonColor=false
+		v4324w.ZIndex=10
+		v4324w.Text=''
+		v4324w.Position=UDim2.new(0,10,0,12+(v4322w-1)*v4314w)
+		v4324w.Size=UDim2.new(0,v4320w+2,0,v4315w+2)
+		local v4325w=Instance.new('TextLabel')
+		v4325w.Parent=v4324w
+		v4325w.BackgroundTransparency=1
+		v4325w.Size=UDim2.new(1,0,1,0)
+		v4325w.Position=UDim2.new(0,0,0,-2)
+		v4325w.Font=Enum.Font.Code
+		v4325w.TextColor3=Color3.new(1,1,1)
+		v4325w.TextSize=14
+		v4325w.ZIndex=11
+		v4325w.Text='Copy'
+		local v4326w=Instance.new('TextLabel')
+		v4326w.Parent=v4310f
+		v4326w.BackgroundTransparency=1
+		v4326w.Position=UDim2.new(0,v4321w,0,12+(v4322w-1)*v4314w)
+		v4326w.Size=UDim2.new(1,-v4321w-10,0,v4315w)
+		v4326w.Font=Enum.Font.Code
+		v4326w.TextColor3=Color3.new(1,1,1)
+		v4326w.TextSize=15
+		v4326w.TextXAlignment=Enum.TextXAlignment.Left
+		v4326w.TextYAlignment=Enum.TextYAlignment.Center
+		v4326w.Text=''
+		v4317w[v4322w]=v4326w
+		v4319w[v4322w]=v4324w
+		v4324w.MouseButton1Click:Connect(function()
+			local v4327w=v4318w
+			if not v4327w then return end
+			local v4328w=v4327w[v4322w]
+			if not v4328w then return end
+			local v4329w=pcall(function()setclipboard(v4328w)end)
+			if v4329w then v4324w.BackgroundColor3=Color3.new(.2,.8,.35) else v4324w.BackgroundColor3=Color3.new(.85,.25,.25) end
+			task.delay(1,function()if v4324w then v4324w.BackgroundColor3=Color3.new(.2,.2,.2) end end)
+		end)
+	end
+	local v4330w=game:service'RunService'
+	local v4331w=game:service'TextService'
+	local v4332w,v4333w,v4334w,v4335w,v4336w,v4337w=nil,nil,nil,nil,nil,nil
+	local v4338w
+	v4337w=function(v4339w)return math.floor(v4339w*100+.5)/100 end
+	local v4340w=function(v4341w)
+		local v4342w=string.format('%.2f',v4337w(v4341w))
+		v4342w=v4342w:gsub('%.?0+$','')
+		if v4342w=='' or v4342w=='-' then v4342w='0' end
+		return v4342w
+	end
+	local function v4341w(v4342w)
+		v4332w=nil
+		v4333w=nil
+		for _,v4343w in ipairs(v4342w:GetChildren()) do
+			if v4343w.Name=='HumanoidRootPart' then v4332w=v4343w elseif v4343w.ClassName=='Humanoid' then v4333w=v4343w end
+		end
+		if v4335w then v4335w:Disconnect() end
+		v4335w=v4342w.ChildAdded:Connect(function(v4344w)
+			if v4344w.Name=='HumanoidRootPart' then v4332w=v4344w elseif v4344w.ClassName=='Humanoid' then v4333w=v4344w end
+			if v4338w then v4338w() end
+		end)
+		if v4338w then v4338w() end
+	end
+	v4338w=function()
+		local v4342w,v4343w=v4332w,v4333w
+		if not v4342w or not v4343w then return end
+		local v4344w=v4342w.Position
+		local v4345w=v4342w.Orientation
+		local v4346w=v4342w.Velocity
+		local v4347w=v4342w.RotVelocity
+		local v4348w=v4343w.RigType==Enum.HumanoidRigType.R6 and 'R6' or 'R15'
+		local v4349w={
+			'Pos: '..v4340w(v4344w.X)..','..v4340w(v4344w.Y)..','..v4340w(v4344w.Z),
+			'Ori: '..v4340w(v4345w.X)..','..v4340w(v4345w.Y)..','..v4340w(v4345w.Z),
+			'Vel: '..v4340w(v4346w.X)..','..v4340w(v4346w.Y)..','..v4340w(v4346w.Z),
+			'RVel: '..v4340w(v4347w.X)..','..v4340w(v4347w.Y)..','..v4340w(v4347w.Z),
+			'WS: '..v4340w(v4343w.WalkSpeed),
+			'JP: '..v4340w(v4343w.JumpPower),
+			'JH: '..v4340w(v4343w.JumpHeight),
+			'HP: '..v4340w(v4343w.Health)..'/'..v4340w(v4343w.MaxHealth),
+			'Rig: '..v4348w
+		}
+		v4318w={
+			v4340w(v4344w.X)..','..v4340w(v4344w.Y)..','..v4340w(v4344w.Z),
+			v4340w(v4345w.X)..','..v4340w(v4345w.Y)..','..v4340w(v4345w.Z),
+			v4340w(v4346w.X)..','..v4340w(v4346w.Y)..','..v4340w(v4346w.Z),
+			v4340w(v4347w.X)..','..v4340w(v4347w.Y)..','..v4340w(v4347w.Z),
+			v4340w(v4343w.WalkSpeed),
+			v4340w(v4343w.JumpPower),
+			v4340w(v4343w.JumpHeight),
+			v4340w(v4343w.Health),
+			v4348w
+		}
+		local v4350w=0
+		for v4351w,v4352w in ipairs(v4349w) do
+			local v4353w=v4317w[v4351w]
+			if v4353w then v4353w.Text=v4352w end
+			local v4354w=v4331w:GetTextSize(v4352w,15,Enum.Font.Code,Vector2.new(10000,10000))
+			if v4354w.X>v4350w then v4350w=v4354w.X end
+		end
+		v4310f.Size=UDim2.new(0,math.ceil(v4350w)+v4321w+10,0,200)
+	end
+	local v4355w=v1.LocalPlayer
+	if v4355w.Character then v4341w(v4355w.Character) end
+	v4334w=v4355w.CharacterAdded:Connect(v4341w)
+	v4338w()
+	local v4356w=0
+	v4336w=v4330w.RenderStepped:Connect(function(v4357w)
+		v4356w=v4356w+v4357w
+		if v4356w<.1 then return end
+		v4356w=0
+		v4338w()
+	end)
+	local v4358w,v4359w,v4360w,v4361w=false,nil,nil,nil
+	local v4362w,v4363w,v4364w,v4365w
+	local v4366w=Vector2.new(v4310f.Position.X.Offset,v4310f.Position.Y.Offset)
+	local v4367w=v4366w
+	local v4368w=10
+	local v4369w
+	v4369w=v4330w.RenderStepped:Connect(function(v4370w)
+		local v4371w=1-math.exp(-v4368w*v4370w)
+		v4367w=v4367w+(v4366w-v4367w)*v4371w
+		v4310f.Position=UDim2.new(0,v4367w.X,0,v4367w.Y)
+	end)
+	v4362w=v4310f.InputBegan:Connect(function(v4370w)
+		if v4370w.UserInputType==Enum.UserInputType.MouseButton1 or v4370w.UserInputType==Enum.UserInputType.Touch then
+			v4358w=true
+			v4359w=v4370w.Position
+			v4360w=Vector2.new(v4310f.Position.X.Offset,v4310f.Position.Y.Offset)
+			v4366w=v4360w
+			v4367w=v4360w
+			v4370w.Changed:Connect(function()if v4370w.UserInputState==Enum.UserInputState.End then v4358w=false end end)
+		end
+	end)
+	v4363w=v4310f.InputChanged:Connect(function(v4370w)
+		if v4370w.UserInputType==Enum.UserInputType.MouseMovement or v4370w.UserInputType==Enum.UserInputType.Touch then v4361w=v4370w end
+	end)
+	v4364w=v2.InputChanged:Connect(function(v4370w)
+		if not v4358w then return end
+		if v4361w and v4370w==v4361w then
+			local v4371w=v4370w.Position-v4359w
+			local v4372w=workspace.CurrentCamera.ViewportSize
+			local v4373w=v4310f.AbsoluteSize
+			local v4374w=v4360w.X+v4371w.X
+			local v4375w=v4360w.Y+v4371w.Y
+			local v4376w=1
+			local v4377w=v4372w.X-v4373w.X-v4376w
+			if v4377w<v4376w then v4377w=v4376w end
+			if v4374w<v4376w then v4374w=v4376w elseif v4374w>v4377w then v4374w=v4377w end
+			local v4378w=v4376w
+			local v4379w=v4372w.Y-v4373w.Y-v4376w
+			if v4379w<v4378w then v4379w=v4378w end
+			if v4375w<v4378w then v4375w=v4378w elseif v4375w>v4379w then v4375w=v4379w end
+			v4366w=Vector2.new(v4374w,v4375w)
+		end
+	end)
+	v4310={v4362w,v4363w,v4364w,v4369w,v4334w,v4335w,v4336w}
+	v4311=v4314
 end)
 
 local v430,v431=CreateGroup(v105,'ESP')
