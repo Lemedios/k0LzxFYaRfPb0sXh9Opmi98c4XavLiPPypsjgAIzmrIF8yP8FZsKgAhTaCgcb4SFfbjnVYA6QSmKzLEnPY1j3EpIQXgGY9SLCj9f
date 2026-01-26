@@ -1503,8 +1503,8 @@ CreateToggle(v304(),'Status',nil,function(v4312)
 	v4312s.Parent=v4310f
 	v4312s.Thickness=1
 	v4312s.Color=Color3.new(1,1,1)
-	local v4313w,v4314w,v4315w=70,20,15
-	local v4316w={'Pos','Ori','Vel','RVel','WS','JP','JH','HP','Rig'}
+	local v4313w,v4314w,v4315w=70,18,15
+	local v4316w={'Pos','Ori','Vel','RVel','WS','JP','JH','HP','Rig','FPS','Ping'}
 	local v4317w={}
 	local v4318w,v4319w=nil,{}
 	local v4320w=math.floor((v4313w-20)*.6+.5)
@@ -1517,7 +1517,7 @@ CreateToggle(v304(),'Status',nil,function(v4312)
 		v4324w.AutoButtonColor=false
 		v4324w.ZIndex=10
 		v4324w.Text=''
-		v4324w.Position=UDim2.new(0,10,0,12+(v4322w-1)*v4314w)
+		v4324w.Position=UDim2.new(0,10,0,2+(v4322w-1)*v4314w)
 		v4324w.Size=UDim2.new(0,v4320w+2,0,v4315w+2)
 		local v4325w=Instance.new('TextLabel')
 		v4325w.Parent=v4324w
@@ -1532,7 +1532,7 @@ CreateToggle(v304(),'Status',nil,function(v4312)
 		local v4326w=Instance.new('TextLabel')
 		v4326w.Parent=v4310f
 		v4326w.BackgroundTransparency=1
-		v4326w.Position=UDim2.new(0,v4321w,0,12+(v4322w-1)*v4314w)
+		v4326w.Position=UDim2.new(0,v4321w,0,2+(v4322w-1)*v4314w)
 		v4326w.Size=UDim2.new(1,-v4321w-10,0,v4315w)
 		v4326w.Font=Enum.Font.Code
 		v4326w.TextColor3=Color3.new(1,1,1)
@@ -1556,6 +1556,15 @@ CreateToggle(v304(),'Status',nil,function(v4312)
 	local v4331w=game:service'TextService'
 	local v4332w,v4333w,v4334w,v4335w,v4336w,v4337w=nil,nil,nil,nil,nil,nil
 	local v4338w
+	local v4380w,v4381w,v4382w=nil,0,0
+	pcall(function()
+		local v4383w=game:service'Stats'
+		local v4384w=nil
+		for _,v4385w in ipairs(v4383w:GetChildren()) do if v4385w.Name=='Network' then v4384w=v4385w break end end
+		local v4386w=nil
+		if v4384w then for _,v4385w in ipairs(v4384w:GetChildren()) do if v4385w.Name=='ServerStatsItem' then v4386w=v4385w break end end end
+		if v4386w then for _,v4385w in ipairs(v4386w:GetChildren()) do if v4385w.Name=='Data Ping' or v4385w.Name=='Ping' then v4380w=v4385w break end end end
+	end)
 	v4337w=function(v4339w)return math.floor(v4339w*100+.5)/100 end
 	local v4340w=function(v4341w)
 		local v4342w=string.format('%.2f',v4337w(v4341w))
@@ -1593,7 +1602,9 @@ CreateToggle(v304(),'Status',nil,function(v4312)
 			'JP: '..v4340w(v4343w.JumpPower),
 			'JH: '..v4340w(v4343w.JumpHeight),
 			'HP: '..v4340w(v4343w.Health)..'/'..v4340w(v4343w.MaxHealth),
-			'Rig: '..v4348w
+			'Rig: '..v4348w,
+			'FPS: '..tostring(math.floor(v4381w+.5)),
+			'Ping: '..tostring(math.floor(v4382w+.5))..'ms'
 		}
 		v4318w={
 			v4340w(v4344w.X)..','..v4340w(v4344w.Y)..','..v4340w(v4344w.Z),
@@ -1604,7 +1615,9 @@ CreateToggle(v304(),'Status',nil,function(v4312)
 			v4340w(v4343w.JumpPower),
 			v4340w(v4343w.JumpHeight),
 			v4340w(v4343w.Health),
-			v4348w
+			v4348w,
+			tostring(math.floor(v4381w+.5)),
+			tostring(math.floor(v4382w+.5))
 		}
 		local v4350w=0
 		for v4351w,v4352w in ipairs(v4349w) do
@@ -1621,6 +1634,15 @@ CreateToggle(v304(),'Status',nil,function(v4312)
 	v4338w()
 	local v4356w=0
 	v4336w=v4330w.RenderStepped:Connect(function(v4357w)
+		if v4357w>0 then v4381w=1/v4357w end
+		local v4383w=v4380w
+		if v4383w then
+			local v4384w,v4385w=pcall(function()return v4383w:GetValueString()end)
+			if v4384w and type(v4385w)=='string' then
+				local v4386w=tonumber(v4385w:match('([%d%.]+)'))
+				if v4386w then v4382w=v4386w end
+			end
+		end
 		v4356w=v4356w+v4357w
 		if v4356w<.1 then return end
 		v4356w=0
