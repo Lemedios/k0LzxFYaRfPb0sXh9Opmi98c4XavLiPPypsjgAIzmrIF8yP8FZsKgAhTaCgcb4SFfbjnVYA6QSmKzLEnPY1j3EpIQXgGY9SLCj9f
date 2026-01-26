@@ -1899,27 +1899,58 @@ local v460,v461,v462=CreateToggle(v433(),'Mini ESP',nil,function(v463)
 	v5[#v5+1]=v461
 end)
 
-local v476,v477,v478=CreateToggle(v433(),'HighLight')
-local v479={}
-v5[#v5+1]=v4.RenderStepped:Connect(function()
-	if v6 then return end
-	for _,v480 in ipairs(v1:GetPlayers()) do
-		if v480~=v7 then
-			local v481=v480.Character
-			local v482=v479[v480]
-			if v478() and v481 then
-				if (not v482) or (not v482.Parent) then v482=Instance.new('Highlight',v481)v479[v480]=v482 end
-				v482.Adornee=v481
-				v482.FillColor=Color3.new(1,0,0)
-				v482.FillTransparency=.8
-				v482.OutlineTransparency=1
-			else
-				if v482 and v482.Parent then pcall(function()v482:Destroy()end) end
-				v479[v480]=nil
+local v476,v477,v478=CreateToggle(v433(),'HighLight',nil,function(v479a)
+	if v480 then v480:Disconnect()v480=nil end
+	if v479 then
+		for v481,v482 in pairs(v479) do
+			if v482 then
+				if v482[2] then pcall(function()v482[2]:Disconnect()end) end
+				if v482[1] then pcall(function()v482[1]:Destroy()end) end
 			end
+			v479[v481]=nil
 		end
 	end
+	v479=nil
+	if not v479a then return end
+	v479={}
+	local function v481(v482)
+		local v483={}
+		v479[v482]=v483
+		v483[2]=v482.CharacterAdded:Connect(function()v483[1]=nil end)
+	end
+	for _,v482 in ipairs(v1:GetPlayers()) do if v482~=v7 then v481(v482) end end
+	v5[#v5+1]=v1.PlayerAdded:Connect(function(v482) if v482~=v7 and v479 then v481(v482) end end)
+	v5[#v5+1]=v1.PlayerRemoving:Connect(function(v482)
+		local v483=v479 and v479[v482]
+		if v483 then
+			if v483[2] then pcall(function()v483[2]:Disconnect()end) end
+			if v483[1] then pcall(function()v483[1]:Destroy()end) end
+			v479[v482]=nil
+		end
+	end)
+	v480=v4.RenderStepped:Connect(function()
+		if v6 or not v479 then return end
+		for v482,v483 in pairs(v479) do
+			local v484=v482.Character
+			if not v484 then
+				if v483[1] then v483[1]:Destroy() v483[1]=nil end
+			else
+				local v485=v483[1]
+				if (not v485) or (not v485.Parent) or v485.Adornee~=v484 then
+					if v485 then v485:Destroy() end
+					v485=Instance.new('Highlight',v484)
+					v483[1]=v485
+				end
+				v485.Adornee=v484
+				v485.FillColor=Color3.new(1,0,0)
+				v485.FillTransparency=.8
+				v485.OutlineTransparency=1
+			end
+		end
+	end)
+	v5[#v5+1]=v480
 end)
+local v479,v480=nil,nil
 
 local function v334(v335)
 	return tostring(math.floor(v335*100+0.5)/100)
