@@ -2444,7 +2444,7 @@ end
 v500()
 
 local v221,v222,v223=0,false,false
-local v224,v225=v3:Create(v103,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Position=UDim2.new(.5,0,1,-55)}),v3:Create(v104,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Position=UDim2.new(.5,0,1,260)})
+local v224,v225=v3:Create(v103,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Position=UDim2.new(.5,0,1,-55)}),v3:Create(v104,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Position=UDim2.new(.5,0,1,261)})
 v223=true
 v224:Play()v225:Play()v224.Completed:Wait()v223=false
 
@@ -2461,7 +2461,7 @@ v5[#v5+1]=v4.RenderStepped:Connect(function(v226)
 	local v231=1-math.exp(-v226*25)
 	local v232=v222 and -315 or -55
 	v103.Position=v103.Position:Lerp(UDim2.new(.5,v221,1,v232),v231)
-	v104.Position=v104.Position:Lerp(UDim2.new(.5,v221,1,v222 and 0 or 260),v231)
+	v104.Position=v104.Position:Lerp(UDim2.new(.5,v221,1,v222 and 1 or 261),v231)
 end)
 
 local v233,v234,v235,v236
@@ -2502,7 +2502,7 @@ v5[#v5+1]=v2.InputEnded:Connect(function(v244)
 		if v10 then pcall(function()v10:Cancel()end) end
 		local v245=v221
 		local v246=v3:Create(v103,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Position=UDim2.new(.5,v245,1,v222 and -315 or -55)})
-		local v247=v3:Create(v104,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Position=UDim2.new(.5,v245,1,v222 and 0 or 260)})
+		local v247=v3:Create(v104,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Position=UDim2.new(.5,v245,1,v222 and 1 or 261)})
 		v10=v246
 		v246.Completed:Connect(function()v223=false end)
 		v246:Play()v247:Play()
