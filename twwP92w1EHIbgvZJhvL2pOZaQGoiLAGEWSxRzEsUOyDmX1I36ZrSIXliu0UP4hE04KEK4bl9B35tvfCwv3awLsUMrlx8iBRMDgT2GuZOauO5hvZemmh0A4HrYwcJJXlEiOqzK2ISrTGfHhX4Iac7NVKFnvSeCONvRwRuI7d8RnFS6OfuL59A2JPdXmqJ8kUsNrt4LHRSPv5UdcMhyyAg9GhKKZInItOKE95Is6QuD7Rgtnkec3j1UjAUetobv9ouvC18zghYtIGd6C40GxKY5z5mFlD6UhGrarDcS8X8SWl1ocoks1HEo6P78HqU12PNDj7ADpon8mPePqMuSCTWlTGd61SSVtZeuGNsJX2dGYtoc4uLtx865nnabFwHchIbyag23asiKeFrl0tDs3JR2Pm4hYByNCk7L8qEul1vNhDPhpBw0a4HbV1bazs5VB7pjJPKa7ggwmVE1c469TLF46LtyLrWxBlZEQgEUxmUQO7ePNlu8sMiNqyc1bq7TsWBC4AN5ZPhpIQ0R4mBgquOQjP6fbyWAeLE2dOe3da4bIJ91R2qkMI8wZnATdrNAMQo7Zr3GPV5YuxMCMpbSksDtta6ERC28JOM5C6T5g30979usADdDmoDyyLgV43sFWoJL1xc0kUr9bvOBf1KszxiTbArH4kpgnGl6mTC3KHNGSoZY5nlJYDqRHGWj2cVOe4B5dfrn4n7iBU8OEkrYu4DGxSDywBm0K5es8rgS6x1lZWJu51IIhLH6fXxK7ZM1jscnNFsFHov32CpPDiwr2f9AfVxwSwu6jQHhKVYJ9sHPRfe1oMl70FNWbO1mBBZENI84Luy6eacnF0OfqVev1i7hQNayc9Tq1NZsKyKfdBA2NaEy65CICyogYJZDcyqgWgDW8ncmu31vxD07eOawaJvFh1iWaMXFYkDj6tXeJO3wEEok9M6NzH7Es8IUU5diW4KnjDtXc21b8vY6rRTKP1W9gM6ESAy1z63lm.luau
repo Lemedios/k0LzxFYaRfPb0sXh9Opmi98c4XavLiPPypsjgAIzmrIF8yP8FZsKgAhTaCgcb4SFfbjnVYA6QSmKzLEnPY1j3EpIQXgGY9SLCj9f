@@ -2002,7 +2002,10 @@ local v476,v477,v478=CreateToggle(v433(),'HighLight',nil,function(v479a)
 	local function v481(v482)
 		local v483={}
 		v479[v482]=v483
-		v483[2]=v482.CharacterAdded:Connect(function()v483[1]=nil end)
+		v483[2]=v482.CharacterAdded:Connect(function()
+			if v483[1] then pcall(function()v483[1]:Destroy()end) end
+			v483[1]=nil
+		end)
 	end
 	for _,v482 in ipairs(v1:GetPlayers()) do if v482~=v7 then v481(v482) end end
 	v5[#v5+1]=v1.PlayerAdded:Connect(function(v482) if v482~=v7 and v479 then v481(v482) end end)
@@ -2023,8 +2026,9 @@ local v476,v477,v478=CreateToggle(v433(),'HighLight',nil,function(v479a)
 			else
 				local v485=v483[1]
 				if (not v485) or (not v485.Parent) or v485.Adornee~=v484 then
-					if v485 then v485:Destroy() end
-					v485=Instance.new('Highlight',v484)
+					if v485 then pcall(function()v485:Destroy()end) end
+					v485=Instance.new('Highlight')
+					v485.Parent=workspace
 					v483[1]=v485
 				end
 				v485.Adornee=v484
