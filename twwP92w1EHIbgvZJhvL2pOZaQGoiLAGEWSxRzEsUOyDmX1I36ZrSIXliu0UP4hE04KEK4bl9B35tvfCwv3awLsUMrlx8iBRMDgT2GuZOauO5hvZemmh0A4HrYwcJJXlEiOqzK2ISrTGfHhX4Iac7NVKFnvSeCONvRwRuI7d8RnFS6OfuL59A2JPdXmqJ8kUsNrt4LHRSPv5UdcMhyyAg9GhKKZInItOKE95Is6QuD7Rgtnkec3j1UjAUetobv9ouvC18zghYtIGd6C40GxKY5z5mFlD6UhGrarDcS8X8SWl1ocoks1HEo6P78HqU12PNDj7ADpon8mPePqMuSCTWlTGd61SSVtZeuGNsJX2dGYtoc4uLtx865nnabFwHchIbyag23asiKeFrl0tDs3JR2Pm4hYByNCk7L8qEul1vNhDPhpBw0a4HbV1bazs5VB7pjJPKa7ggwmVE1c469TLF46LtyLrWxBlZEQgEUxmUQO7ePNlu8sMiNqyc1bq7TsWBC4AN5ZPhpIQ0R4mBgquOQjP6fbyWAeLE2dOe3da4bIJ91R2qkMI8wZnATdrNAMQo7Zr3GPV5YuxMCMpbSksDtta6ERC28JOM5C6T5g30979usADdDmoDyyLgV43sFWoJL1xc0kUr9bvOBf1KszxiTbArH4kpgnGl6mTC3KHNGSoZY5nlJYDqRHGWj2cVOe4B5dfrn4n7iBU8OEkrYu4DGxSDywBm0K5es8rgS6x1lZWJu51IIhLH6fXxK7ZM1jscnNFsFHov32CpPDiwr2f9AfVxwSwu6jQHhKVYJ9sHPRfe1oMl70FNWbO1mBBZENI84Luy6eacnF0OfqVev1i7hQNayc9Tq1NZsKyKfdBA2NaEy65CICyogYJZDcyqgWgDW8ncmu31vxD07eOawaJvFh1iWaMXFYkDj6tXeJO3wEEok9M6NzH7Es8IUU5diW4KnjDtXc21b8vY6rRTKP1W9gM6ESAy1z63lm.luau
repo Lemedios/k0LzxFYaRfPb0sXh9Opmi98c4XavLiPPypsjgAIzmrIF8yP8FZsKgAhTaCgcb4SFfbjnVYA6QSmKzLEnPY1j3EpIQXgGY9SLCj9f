@@ -9,6 +9,27 @@ local v1,v2,v3,v4,v5,v6=game.Players,game:service'UserInputService',game:service
 local v7=v1.LocalPlayer
 local v8=(function()local v9 pcall(function()v9=gethui()end)if not v9 then pcall(function()v9=get_hidden_gui()end)end if not v9 then v9=game:service'CoreGui' end return v9 end)()
 local v10,v11
+local v73,v74=nil,nil
+local function v702(v75)
+	if not v75 then return nil end
+	local v76,v77,v78=nil,nil,nil
+	for _,v79 in ipairs(v75:GetChildren()) do
+		local v80=v79.Name
+		if v80=='HumanoidRootPart' then v76=v79
+		elseif v80=='Torso' then v77=v79
+		elseif v80=='Head' then v78=v79 end
+	end
+	return v76 or v77 or v78
+end
+local function v703()
+	local v75=workspace.CurrentCamera
+	if not v75 then return nil end
+	local v76=v75.CameraSubject
+	if not v76 then return nil end
+	if v76:IsA('BasePart') then return v76 end
+	if v76:IsA('Humanoid') then return v702(v76.Parent) end
+	return nil
+end
 local function v12()
 	if v6 then return end
 	v6=true
@@ -200,6 +221,11 @@ local function CreateToggle(v25,v26,v27,v28,v29)
 		v30.Text=v19(v26)..(v31 and ' ['..v19('ON')..']' or ' ['..v19('OFF')..']')
 		if v28 then v28(v31) end
 		if v32 then v32:Disconnect()v32=nil end
+		if v31 and (not v74) then
+	local v37=v7.Character
+	if v37 then v74=v702(v37) end
+	if not v74 then v74=v703() end
+end
 		if v31 and v27 then v32=v4.Heartbeat:Connect(v27) end
 	end
 	v30.MouseButton1Click:Connect(function()v33()end)
@@ -528,14 +554,20 @@ local function CreateGroup(v62,v63)
 	return v69,v71
 end
 
-local v73,v74=nil,nil
 local function v75(v76)
 	v73,v74=nil,nil
 	for _,v77 in ipairs(v76:GetChildren()) do
-		if v77:IsA('Humanoid') then v73=v77 elseif v77.Name=='HumanoidRootPart' then v74=v77 end
+		if v77:IsA('Humanoid') then v73=v77 end
 	end
+	v74=v702(v76)
 	v76.ChildAdded:Connect(function(v78)
-		if v78:IsA('Humanoid') then v73=v78 elseif v78.Name=='HumanoidRootPart' then v74=v78 end
+		if v78:IsA('Humanoid') then v73=v78 end
+		local v79=v78.Name
+		if v79=='HumanoidRootPart' or v79=='Torso' or v79=='Head' then v74=v702(v76) end
+	end)
+	v76.ChildRemoved:Connect(function(v78)
+		local v79=v78.Name
+		if v79=='HumanoidRootPart' or v79=='Torso' or v79=='Head' then v74=v702(v76) end
 	end)
 end
 if v7.Character then v75(v7.Character) end
@@ -761,6 +793,19 @@ end,function(v131)
 			v130.MaxTorque=1/0
 			v130.CFrame=v74.CFrame
 		end
+		v179a=v4.Heartbeat:Connect(function(v177)
+			v179b=v179b+v177
+			if v179b<2 then return end
+			v179b=0
+			for _,v178 in ipairs(v1:GetPlayers()) do
+				if v178~=v7 then
+					local v180
+					pcall(function()v180=v7:IsFriendsWith(v178.UserId)end)
+					v179[v178]=v180 or false
+				end
+			end
+		end)
+		v5[#v5+1]=v179a
 	else
 		pcall(function()if v113 then v113:Destroy()end end)
 		pcall(function()if v130 then v130:Destroy()end end)
@@ -873,10 +918,13 @@ end,v158)
 
 local v170,v171,v172=CreateToggle(v154(),'Safe Method')
 local v179
+local v179a,v179b=nil,0
 v171(true)
 v170.LayoutOrder=2147483646
 local v173,v174,v175=CreateToggle(v154(),'Whitelist Friend',nil,function(v176)
 	if v176 then
+		if v179a then v179a:Disconnect()v179a=nil end
+		v179b=0
 		for _,v177 in ipairs(v1:GetPlayers()) do
 			if v177~=v7 then
 				local v178
@@ -885,6 +933,7 @@ local v173,v174,v175=CreateToggle(v154(),'Whitelist Friend',nil,function(v176)
 			end
 		end
 	else
+		if v179a then v179a:Disconnect()v179a=nil end
 		for v177 in pairs(v179) do v179[v177]=nil end
 	end
 end)
@@ -910,11 +959,7 @@ local v196,v197,v198=nil,nil,nil
 local v600,v700=0,nil
 
 local function v199(v200)
-	if not v200 then return nil end
-	for _,v201 in ipairs(v200:GetChildren()) do
-		if v201.Name=='HumanoidRootPart' then return v201 end
-	end
-	return nil
+	return v702(v200)
 end
 
 local function v202(v203)
@@ -922,7 +967,8 @@ local function v202(v203)
 	v184=v199(v203)
 	if v186 then v186:Disconnect()v186=nil end
 	v186=v203.ChildAdded:Connect(function(v204)
-		if v204.Name=='HumanoidRootPart' then v184=v204 end
+		local v205=v204.Name
+		if v205=='HumanoidRootPart' or v205=='Torso' or v205=='Head' then v184=v199(v203) end
 	end)
 end
 
@@ -938,11 +984,13 @@ local function v205(v206)
 		v207[1]=v199(v208)
 		if v207[3] then v207[3]:Disconnect() end
 		v207[3]=v208.ChildAdded:Connect(function(v209)
-			if v209.Name=='HumanoidRootPart' then v207[1]=v209 end
+			local v210=v209.Name
+		if v210=='HumanoidRootPart' or v210=='Torso' or v210=='Head' then v207[1]=v199(v208) end
 		end)
 		if v207[4] then v207[4]:Disconnect() end
 		v207[4]=v208.ChildRemoved:Connect(function(v209)
-			if v209.Name=='HumanoidRootPart' then v207[1]=nil end
+			local v210=v209.Name
+		if v210=='HumanoidRootPart' or v210=='Torso' or v210=='Head' then v207[1]=v199(v208) end
 		end)
 	end
 	if v207[2] then v207[2]:Disconnect() end
@@ -950,11 +998,13 @@ local function v205(v206)
 		v207[1]=v199(v210)
 		if v207[3] then v207[3]:Disconnect() end
 		v207[3]=v210.ChildAdded:Connect(function(v211)
-			if v211.Name=='HumanoidRootPart' then v207[1]=v211 end
+			local v212=v211.Name
+		if v212=='HumanoidRootPart' or v212=='Torso' or v212=='Head' then v207[1]=v199(v210) end
 		end)
 		if v207[4] then v207[4]:Disconnect() end
 		v207[4]=v210.ChildRemoved:Connect(function(v211)
-			if v211.Name=='HumanoidRootPart' then v207[1]=nil end
+			local v212=v211.Name
+		if v212=='HumanoidRootPart' or v212=='Torso' or v212=='Head' then v207[1]=v199(v210) end
 		end)
 	end)
 	if v175 and v175() then
@@ -1192,10 +1242,7 @@ end)
 
 local v262,v263,v264={}, {}, {}
 local function v265(v266)
-	for _,v267 in ipairs(v266:GetChildren()) do
-		if v267.Name=='HumanoidRootPart' then return v267 end
-	end
-	return nil
+	return v702(v266)
 end
 local function v268(v269)
 	if v269==v7 or v262[v269] then return end
@@ -1206,10 +1253,12 @@ local function v268(v269)
 	if v271 then
 		v264[v269]=v265(v271)
 		v270[1]=v271.ChildAdded:Connect(function(v272)
-			if v272.Name=='HumanoidRootPart' then v264[v269]=v272 end
+			local v273=v272.Name
+			if v273=='HumanoidRootPart' or v273=='Torso' or v273=='Head' then v264[v269]=v265(v271) end
 		end)
 		v270[2]=v271.ChildRemoved:Connect(function(v272)
-			if v272.Name=='HumanoidRootPart' then v264[v269]=nil end
+			local v273=v272.Name
+			if v273=='HumanoidRootPart' or v273=='Torso' or v273=='Head' then v264[v269]=v265(v271) end
 		end)
 		v5[#v5+1]=v270[1]v5[#v5+1]=v270[2]
 	end
@@ -1218,10 +1267,12 @@ local function v268(v269)
 		if v270[1] then v270[1]:Disconnect()v270[1]=nil end
 		if v270[2] then v270[2]:Disconnect()v270[2]=nil end
 		v270[1]=v272.ChildAdded:Connect(function(v273)
-			if v273.Name=='HumanoidRootPart' then v264[v269]=v273 end
+			local v274=v273.Name
+			if v274=='HumanoidRootPart' or v274=='Torso' or v274=='Head' then v264[v269]=v265(v272) end
 		end)
 		v270[2]=v272.ChildRemoved:Connect(function(v273)
-			if v273.Name=='HumanoidRootPart' then v264[v269]=nil end
+			local v274=v273.Name
+			if v274=='HumanoidRootPart' or v274=='Torso' or v274=='Head' then v264[v269]=v265(v272) end
 		end)
 		v5[#v5+1]=v270[1]v5[#v5+1]=v270[2]
 	end)
@@ -1576,11 +1627,14 @@ CreateToggle(v304(),'Status',nil,function(v4312)
 		v4332w=nil
 		v4333w=nil
 		for _,v4343w in ipairs(v4342w:GetChildren()) do
-			if v4343w.Name=='HumanoidRootPart' then v4332w=v4343w elseif v4343w.ClassName=='Humanoid' then v4333w=v4343w end
+			if v4343w.ClassName=='Humanoid' then v4333w=v4343w break end
 		end
+		v4332w=v702(v4342w)
 		if v4335w then v4335w:Disconnect() end
 		v4335w=v4342w.ChildAdded:Connect(function(v4344w)
-			if v4344w.Name=='HumanoidRootPart' then v4332w=v4344w elseif v4344w.ClassName=='Humanoid' then v4333w=v4344w end
+			if v4344w.ClassName=='Humanoid' then v4333w=v4344w end
+			local v4345w=v4344w.Name
+			if v4345w=='HumanoidRootPart' or v4345w=='Torso' or v4345w=='Head' then v4332w=v702(v4342w) end
 			if v4338w then v4338w() end
 		end)
 		if v4338w then v4338w() end
@@ -1741,7 +1795,12 @@ local v437,v438,v439=CreateToggle(v433(),'ESP',nil,function(v440)
 				local v445=v443[2]
 				if not v445 or not v445.Parent then
 					v445=nil
-					for _,v446 in ipairs(v444:GetChildren()) do if v446.Name=='HumanoidRootPart' then v445=v446 break end end
+					for _,v446 in ipairs(v444:GetChildren()) do
+					local v447=v446.Name
+					if v447=='HumanoidRootPart' then v445=v446 break
+					elseif (not v445) and v447=='Torso' then v445=v446
+					elseif (not v445) and v447=='Head' then v445=v446 end
+				end
 					v443[2]=v445
 				end
 				local v447=v443[6]
@@ -1864,7 +1923,12 @@ local v460,v461,v462=CreateToggle(v433(),'Mini ESP',nil,function(v463)
 				local v468=v466[2]
 				if not v468 or not v468.Parent then
 					v468=nil
-					for _,v469 in ipairs(v467:GetChildren()) do if v469.Name=='HumanoidRootPart' then v468=v469 break end end
+					for _,v469 in ipairs(v467:GetChildren()) do
+					local v470=v469.Name
+					if v470=='HumanoidRootPart' then v468=v469 break
+					elseif (not v468) and v470=='Torso' then v468=v469
+					elseif (not v468) and v470=='Head' then v468=v469 end
+				end
 					v466[2]=v468
 				end
 				local v470,v471,v472=v466[1],v466[3],v466[5]
