@@ -154,7 +154,7 @@ end
 v15={
 	['Fly']='飛行',['Hover']='ホバー',['Sit Fly']='座って飛ぶ',['Speed']='速度',['Quick Fly']='クイック飛行',['Trigger']='トリガー',
 	['Fling']='吹き飛ばす',['Touch Fling']='触ったら吹き飛ばす',['Fling All']='全員吹き飛ばす',['Safe Method']='安全ロック',['Whitelist Friend']='フレンドは対象外',['Target']='ターゲット',
-	['Anti']='耐性',['Anti Void']='奈落耐性',['Anti AFK']='放置耐性',['Anti Fling']='吹き飛ばし耐性',
+	['Anti']='耐性',['Anti Void']='奈落耐性',['Anti AFK']='放置耐性',['Anti Fling v2']='吹っ飛び耐性v2',['Anti Fling v1']='吹っ飛び耐性v1',
 	['Humanoid']='キャラクター',['Reset']='リセット',['Loop Reset']='ループリセット',['Quick Reset']='クイックリセット',['NoClip']='すり抜け',['InfJump']='無限ジャンプ',['Anchor']='固定',
 	['Other']='その他',['Rejoin']='入り直す',['Chat']='チャット',['Instant Prompt']='即時プロンプト',['Fire All Touch']='すべてのタッチを触る',['No Fog']='霧を消す',['Status']='ステータス',
 	['WalkSpeed']='歩行速度',['Value']='数値',['Set']='設定',['Loop Set']='ループ設定',['Current']='現在値',['TP Walk']='TP歩行',
@@ -1293,7 +1293,7 @@ v5[#v5+1]=v1.PlayerRemoving:Connect(function(v266)
 end)
 
 local v269,v270=nil,nil
-local v271,v272,v273=CreateToggle(v251(),'Anti Fling',nil,function(v274)
+local v271,v272,v273=CreateToggle(v251(),'Anti Fling v2',nil,function(v274)
 	if v269 then v269:Disconnect()v269=nil end
 	if v270 then v270:Disconnect()v270=nil end
 	if v274 then
@@ -1306,6 +1306,182 @@ local v271,v272,v273=CreateToggle(v251(),'Anti Fling',nil,function(v274)
 		v270=v4.RenderStepped:Connect(v275)
 		v5[#v5+1]=v269 v5[#v5+1]=v270
 	end
+end)
+
+local v2800,v2801,v2802,v2803,v2804,v2805,v2806,v2807,v2808,v2809={},nil,nil,nil,nil,{},nil,nil,nil,nil
+local function v2810(v2811)
+	local v2812,v2813=v2811:GetDescendants(),{}
+	for v2814=1,#v2812 do
+		local v2815=v2812[v2814]
+		if v2815:IsA('BasePart') then v2813[#v2813+1]=v2815 end
+	end
+	return v2813
+end
+local function v2816()
+	local v2817=v2805[#v2805]
+	if v2817 then v2805[#v2805]=nil return v2817 end
+	return Instance.new('NoCollisionConstraint')
+end
+local function v2818(v2819)
+	v2819.Part0=nil
+	v2819.Part1=nil
+	v2819.Parent=nil
+	v2805[#v2805+1]=v2819
+end
+local function v2820(v2821)
+	local v2822=v2800[v2821]
+	if not v2822 then return end
+	local v2823=v2822[4]
+	if v2823 then
+		for v2824=1,#v2823 do
+			local v2825=v2823[v2824]
+			if v2825 then pcall(function()v2825:Disconnect()end) end
+		end
+	end
+	local v2826=v2822[1]
+	for v2827=1,#v2826 do
+		local v2828=v2826[v2827]
+		if v2828 then v2818(v2828) end
+	end
+	v2800[v2821]=nil
+end
+local function v2829(v2830,v2831,v2832)
+	local v2833=v2800[v2832]
+	if not v2833 then return end
+	local v2834=v2833[6]
+	if v2834[v2831] then return end
+	v2834[v2831]=true
+	local v2835=v2833[3]
+	v2835[#v2835+1]=v2831
+	local v2836=v2801
+	if not v2836 then return end
+	for v2837=1,#v2836 do
+		local v2838=v2836[v2837]
+		if v2838 and v2838.Parent and v2831 and v2831.Parent then
+			local v2839=v2816()
+			v2839.Part0=v2838
+			v2839.Part1=v2831
+			v2839.Parent=v2804
+			local v2840=v2833[1]
+			v2840[#v2840+1]=v2839
+			local v2841=v2833[2]
+			v2841[#v2841+1]=v2837
+			local v2842=v2833[5]
+			v2842[#v2842+1]=v2831
+		end
+	end
+end
+local function v2843()
+	local v2844=v1:GetPlayers()
+	for v2845=1,#v2844 do
+		local v2846=v2844[v2845]
+		if v2846~=v7 then
+			local v2847=v2800[v2846]
+			if v2847 then
+				local v2848=v2847[3]
+				for v2849=1,#v2848 do
+					v2829(v2846,v2848[v2849],v2846)
+				end
+			end
+		end
+	end
+end
+local function v2850(v2851)
+	if v2803 then pcall(function()v2803:Disconnect()end) end
+	v2802=v2851
+	v2801=v2810(v2851)
+	v2803=v2851.DescendantAdded:Connect(function(v2852)
+		if not v2852:IsA('BasePart') then return end
+		local v2853=v2801
+		v2853[#v2853+1]=v2852
+		for v2854,v2855 in pairs(v2800) do
+			local v2856=v2855[3]
+			for v2857=1,#v2856 do
+				local v2858=v2856[v2857]
+				if v2852.Parent and v2858 and v2858.Parent then
+					local v2859=v2816()
+					v2859.Part0=v2852
+					v2859.Part1=v2858
+					v2859.Parent=v2804
+					local v2860=v2855[1]
+					v2860[#v2860+1]=v2859
+					local v2861=v2855[2]
+					v2861[#v2861+1]=#v2853
+					local v2862=v2855[5]
+					v2862[#v2862+1]=v2858
+				end
+			end
+		end
+	end)
+	for v2863,v2864 in pairs(v2800) do
+		local v2865,v2866,v2867=v2864[1],v2864[2],v2864[5]
+		local v2868=#v2865
+		for v2869=v2868,1,-1 do
+			local v2870,v2871,v2872=v2865[v2869],v2866[v2869],v2867[v2869]
+			local v2873=v2801[v2871]
+			if v2870 and v2873 and v2873.Parent and v2872 and v2872.Parent then
+				v2870.Part0=v2873
+				v2870.Part1=v2872
+			else
+				if v2870 then v2818(v2870) end
+				v2865[v2869]=v2865[#v2865] v2865[#v2865]=nil
+				v2866[v2869]=v2866[#v2866] v2866[#v2866]=nil
+				v2867[v2869]=v2867[#v2867] v2867[#v2867]=nil
+			end
+		end
+	end
+	v2843()
+end
+local function v2874(v2875)
+	if v2875==v7 then
+		if v2809 then v2809:Disconnect()v2809=nil end
+		v2809=v7.CharacterAdded:Connect(function(v2876)v2850(v2876)end)
+		if v7.Character then v2850(v7.Character) end
+		return
+	end
+	local function v2876()
+		task.defer(function()
+			local v2877=v2875.Character
+			if not v2877 then return end
+			v2820(v2875)
+			local v2878={{},{},{},{},{},{} }
+			v2800[v2875]=v2878
+			local v2879=v2878[4]
+			v2879[#v2879+1]=v2877.DescendantAdded:Connect(function(v2880)
+				if not v2880:IsA('BasePart') then return end
+				v2829(v2875,v2880,v2875)
+			end)
+			for v2881=1,2 do task.wait() end
+			local v2882=v2810(v2877)
+			for v2883=1,#v2882 do v2829(v2875,v2882[v2883],v2875) end
+		end)
+	end
+	if v2806 then v2806:Disconnect()v2806=nil end
+	v2806=v2875.CharacterAdded:Connect(v2876)
+	if v2875.Character then v2876() end
+end
+local function v2884(v2885)
+	v2820(v2885)
+end
+
+local v2886,v2887,v2888=CreateToggle(v251(),'Anti Fling v1',nil,function(v2889)
+	if v2807 then v2807:Disconnect()v2807=nil end
+	if v2808 then v2808:Disconnect()v2808=nil end
+	if v2809 then v2809:Disconnect()v2809=nil end
+	if v2803 then pcall(function()v2803:Disconnect()end)v2803=nil end
+	if v2806 then v2806:Disconnect()v2806=nil end
+	if not v2889 then
+		for v2890,v2891 in pairs(v2800) do v2820(v2890) end
+		for v2890 in pairs(v2800) do v2800[v2890]=nil end
+		v2801=nil v2802=nil
+		return
+	end
+	if not v2804 then v2804=Instance.new('Folder') v2804.Parent=workspace end
+	v2807=v1.PlayerAdded:Connect(v2874)
+	v2808=v1.PlayerRemoving:Connect(v2884)
+	local v2890=v1:GetPlayers()
+	for v2891=1,#v2890 do v2874(v2890[v2891]) end
+	v5[#v5+1]=v2807 v5[#v5+1]=v2808
 end)
 
 local v276,v277=CreateGroup(v105,'Humanoid')
