@@ -846,7 +846,8 @@ local function v154()
 	return v153%2==1 and v151 or v152
 end
 
-local v155,v156=CreateInput(v154(),'Target',function(v157)end)
+local v154a=nil
+local v155,v156=CreateInput(v154(),'Target',function(v157) if v154a then v154a(v157) end end)
 local v157=CreateDisplay(v154(),'Target: NONE')
 
 local v176=nil
@@ -1098,11 +1099,18 @@ end
 
 local function v244(v245)
 	local v246=string.lower(v245 or '')
+	v262=v245 or ''
+	if v246=='' then v176=nil return end
+	for v247,v248 in pairs(v177) do
+		if v248 and string.lower(v248)==v246 then v176=v247 return end
+	end
+	for v247,v248 in pairs(v178) do
+		if v248 and string.lower(v248)==v246 then v176=v247 return end
+	end
 	local v247={}
 	for v248,v249 in pairs(v177) do
 		if v249 and string.find(string.lower(v249),v246,1,true) then v247[#v247+1]=v248 end
 	end
-	v262=v245 or ''
 	if #v247==1 then v176=v247[1] return end
 	if #v247==0 then
 		for v248,v249 in pairs(v178) do
@@ -1114,7 +1122,10 @@ local function v244(v245)
 	end
 end
 
+v154a=v244
 v156:GetPropertyChangedSignal('Text'):Connect(function()v244(v156.Text)end)
+v156.FocusLost:Connect(function()v244(v156.Text)end)
+task.defer(function()v244(v156.Text)end)
 
 for _,v245 in ipairs(v1:GetPlayers()) do
 	v177[v245]=v245.Name
