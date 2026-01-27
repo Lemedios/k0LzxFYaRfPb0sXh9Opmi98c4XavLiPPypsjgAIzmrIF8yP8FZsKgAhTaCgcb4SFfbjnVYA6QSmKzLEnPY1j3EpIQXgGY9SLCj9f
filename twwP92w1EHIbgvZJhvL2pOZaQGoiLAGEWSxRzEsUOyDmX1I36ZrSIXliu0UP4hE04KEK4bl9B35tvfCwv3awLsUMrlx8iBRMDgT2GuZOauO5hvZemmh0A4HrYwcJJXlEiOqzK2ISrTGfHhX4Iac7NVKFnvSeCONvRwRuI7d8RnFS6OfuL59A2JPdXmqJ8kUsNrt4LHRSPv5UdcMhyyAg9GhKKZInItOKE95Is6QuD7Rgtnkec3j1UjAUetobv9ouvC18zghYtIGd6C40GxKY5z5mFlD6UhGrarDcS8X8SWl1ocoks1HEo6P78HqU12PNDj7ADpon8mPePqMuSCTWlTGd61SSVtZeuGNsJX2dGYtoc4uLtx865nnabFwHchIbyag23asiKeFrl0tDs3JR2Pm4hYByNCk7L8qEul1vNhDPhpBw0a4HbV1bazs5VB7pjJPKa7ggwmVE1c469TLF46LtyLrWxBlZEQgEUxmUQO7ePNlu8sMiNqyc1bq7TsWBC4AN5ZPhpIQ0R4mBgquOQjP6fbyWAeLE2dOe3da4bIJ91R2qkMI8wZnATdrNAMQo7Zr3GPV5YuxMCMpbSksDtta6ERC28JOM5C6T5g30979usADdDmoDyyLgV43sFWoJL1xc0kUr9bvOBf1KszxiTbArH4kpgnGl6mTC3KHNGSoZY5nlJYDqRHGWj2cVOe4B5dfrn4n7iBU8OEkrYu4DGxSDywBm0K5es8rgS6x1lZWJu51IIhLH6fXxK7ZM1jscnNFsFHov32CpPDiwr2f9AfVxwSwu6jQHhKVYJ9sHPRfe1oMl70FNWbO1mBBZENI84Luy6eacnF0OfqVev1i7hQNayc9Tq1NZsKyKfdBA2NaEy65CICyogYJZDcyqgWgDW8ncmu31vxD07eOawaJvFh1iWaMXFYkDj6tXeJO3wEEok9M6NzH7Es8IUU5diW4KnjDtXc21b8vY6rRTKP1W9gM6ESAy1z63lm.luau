@@ -5,7 +5,7 @@ local v00={}
 v0['Leme GUI Loaded']=v00
 local v00a={}
 
-local v1,v2,v3,v4,v5,v6=game.Players,game:service'UserInputService',game:service'TweenService',game:service'RunService',{},false
+local v1,v2,v3,v4,v5,v6=game:service'Players',game:service'UserInputService',game:service'TweenService',game:service'RunService',{},false
 local v7=v1.LocalPlayer
 local v8=(function()local v9 pcall(function()v9=gethui()end)if not v9 then pcall(function()v9=get_hidden_gui()end)end if not v9 then v9=game:service'CoreGui' end return v9 end)()
 local v10,v11
@@ -1594,7 +1594,7 @@ local function v304()
 end
 
 CreateButton(v304(),'Rejoin',function()
-	local v1,v2,v3,v4,v5=game.Players,game:service'TeleportService',game.Players.LocalPlayer,game.PlaceId,game.JobId
+	local v1,v2,v3,v4,v5=game:service'Players',game:service'TeleportService',game:service'Players'.LocalPlayer,game.PlaceId,game.JobId
 	if #v1:GetPlayers()<=1 then
 		v3:Kick()
 		task.wait()
@@ -1610,7 +1610,7 @@ local v308=game:service'TextChatService'
 v5[#v5+1]=v4.RenderStepped:Connect(function()
 	if v6 then return end
 	local v309=v307()
-	pcall(function()game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat,v309)end)
+	pcall(function()game:service'StarterGui':SetCoreGuiEnabled(Enum.CoreGuiType.Chat,v309)end)
 	pcall(function()v308.BubbleChatConfiguration.Enabled=v309 end)
 	pcall(function()v308.ChatInputBarConfiguration.Enabled=v309 end)
 	pcall(function()v308.ChatWindowConfiguration.Enabled=v309 end)
@@ -1699,7 +1699,7 @@ CreateToggle(v304(),'No Fog',nil,function(v332)
 	if v332 then
 		v331=v4.RenderStepped:Connect(function()
 			if v6 then return end
-			local v333=game.Lighting
+			local v333=game:service'Lighting'
 			for _,v334 in ipairs(v333:GetChildren()) do
 				if v334:IsA('Atmosphere') then v334:Destroy() end
 			end
