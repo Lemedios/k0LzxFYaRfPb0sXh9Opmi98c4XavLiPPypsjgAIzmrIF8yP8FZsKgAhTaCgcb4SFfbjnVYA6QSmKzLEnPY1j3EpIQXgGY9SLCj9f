@@ -734,7 +734,7 @@ local v117,v118,v119=CreateToggle(v116(),'Fly',function(v120)
 	if v126.Magnitude>.001 then v126=v126.Unit end
 	v123=v123+v126*v109*v120
 	v110=CFrame.fromMatrix(v123,v124.RightVector,v124.UpVector)
-	v121.Velocity=Vector3.new()
+	v121.Velocity=Vector3.new(0,1)
 	v121.RotVelocity=Vector3.new()
 	v121.CFrame=v110
 end,function(v120)
@@ -1178,7 +1178,7 @@ v5[#v5+1]=v4.Heartbeat:Connect(function(v245)
 	v197=v246.Velocity
 	v198=v246.RotVelocity
 	v246.CFrame=v247
-	v246.Velocity=Vector3.new()
+	v246.Velocity=Vector3.new(0,1)
 	v246.RotVelocity=Vector3.new(2147483647,2147483647,2147483647)
 	v600=os.clock()
 	v195=true
@@ -1570,7 +1570,7 @@ CreateToggle(v279(),'Anchor',nil,function(v298)
 	if v296 then v296:Disconnect()v296=nil end
 	if v297 then v297:Disconnect()v297=nil end
 	if not v298 then
-		if v74 and v74.Parent then v74.Velocity=Vector3.new()end
+		if v74 and v74.Parent then v74.Velocity=Vector3.new(0,1)end
 		v295=nil
 		return
 	end
@@ -1579,7 +1579,7 @@ CreateToggle(v279(),'Anchor',nil,function(v298)
 		if v6 then return end
 		if not v295 then if v74 and v74.Parent then v295=v74.CFrame end end
 		local v300=v74
-		if v300 and v300.Parent and v295 then v300.CFrame=v295 v300.Velocity=Vector3.new()end
+		if v300 and v300.Parent and v295 then v300.CFrame=v295 v300.Velocity=Vector3.new(0,1)end
 	end
 	v296=v4.Heartbeat:Connect(v299)
 	v297=v4.RenderStepped:Connect(v299)
@@ -1673,7 +1673,7 @@ CreateButton(v304(),'Fire All Touch',function()
 			if not v327 or not v327.Parent then break end
 			local v328,v329,v330=v327.CFrame,v327.Velocity,v327.RotVelocity
 			v327.CFrame=v320
-			v327.Velocity=Vector3.new()
+			v327.Velocity=Vector3.new(0,1)
 			v327.RotVelocity=Vector3.new()
 			v4.RenderStepped:Wait()
 			v327=v74
@@ -2510,7 +2510,7 @@ local function v334()
 				v358.CFrame=v359
 			else
 				v358.CFrame=v359
-				if v344~=4 then v358.Velocity=Vector3.new()v358.RotVelocity=Vector3.new() end
+				if v344~=4 then v358.Velocity=Vector3.new(0,1)v358.RotVelocity=Vector3.new() end
 			end
 			if v356 then v356.CFrame=v359 v356.Velocity=Vector3.new()v356.RotVelocity=Vector3.new() end
 			v342=true
@@ -2589,7 +2589,7 @@ local function v335()
 		if not v343 or not v343.Parent then return end
 		local v344=v343.CFrame
 		v343.CFrame=CFrame.new(v340,v341,v342)*(v344-v344.p)
-		v343.Velocity=Vector3.new()
+		v343.Velocity=Vector3.new(0,1)
 	end)
 	local v345,v346,v347,v348=Create3Input(v339(),'Pos',function(v349,v350,v351)v340,v341,v342=v349,v350,v351 end,'0','0','0')
 	CreateButton(v339(),'Set Pos',function()
