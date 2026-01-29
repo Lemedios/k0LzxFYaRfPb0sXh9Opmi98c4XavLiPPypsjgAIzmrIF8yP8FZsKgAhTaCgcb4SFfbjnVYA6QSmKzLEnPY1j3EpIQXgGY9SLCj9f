@@ -1319,7 +1319,7 @@ local v271,v272,v273=CreateToggle(v251(),'Anti Fling v2',nil,function(v274)
 	end
 end)
 
-local v2800,v2801,v2802,v2803,v2804,v2805,v2806,v2807,v2808,v2809={},nil,nil,nil,nil,{},nil,nil,nil,nil
+local v2800,v2801,v2802,v2803,v2804,v2805,v2806,v2807,v2808,v2809,v2811={},nil,nil,nil,nil,{},nil,nil,nil,nil,{}
 local function v2810(v2811)
 	local v2812,v2813=v2811:GetDescendants(),{}
 	for v2814=1,#v2812 do
@@ -1467,11 +1467,18 @@ local function v2874(v2875)
 			for v2883=1,#v2882 do v2829(v2875,v2882[v2883],v2875) end
 		end)
 	end
-	if v2806 then v2806:Disconnect()v2806=nil end
-	v2806=v2875.CharacterAdded:Connect(v2876)
+	local v2876a=v2811[v2875]
+	if not v2876a then
+		v2876a=v2875.CharacterAdded:Connect(v2876)
+		v2811[v2875]=v2876a
+		v5[#v5+1]=v2876a
+	end
 	if v2875.Character then v2876() end
 end
 local function v2884(v2885)
+	local v2886a=v2811[v2885]
+	if v2886a then pcall(function()v2886a:Disconnect()end) end
+	v2811[v2885]=nil
 	v2820(v2885)
 end
 
@@ -1480,7 +1487,11 @@ local v2886,v2887,v2888=CreateToggle(v251(),'Anti Fling v1',nil,function(v2889)
 	if v2808 then v2808:Disconnect()v2808=nil end
 	if v2809 then v2809:Disconnect()v2809=nil end
 	if v2803 then pcall(function()v2803:Disconnect()end)v2803=nil end
-	if v2806 then v2806:Disconnect()v2806=nil end
+	for v2892 in pairs(v2811) do
+		local v2893=v2811[v2892]
+		if v2893 then pcall(function()v2893:Disconnect()end) end
+		v2811[v2892]=nil
+	end
 	if not v2889 then
 		for v2890,v2891 in pairs(v2800) do v2820(v2890) end
 		for v2890 in pairs(v2800) do v2800[v2890]=nil end
