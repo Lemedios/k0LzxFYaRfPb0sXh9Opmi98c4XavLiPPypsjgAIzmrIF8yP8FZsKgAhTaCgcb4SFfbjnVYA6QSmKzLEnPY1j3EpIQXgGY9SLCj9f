@@ -609,7 +609,10 @@ v91.Size=UDim2.new(1,0,1,0)
 v91.BackgroundColor3=Color3.new()
 v91.BackgroundTransparency=1
 v91.Active=false
-local v92=v3:Create(v91,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{BackgroundTransparency=.7})
+local v91a=Instance.new('UIGradient',v91)
+v91a.Rotation=90
+v91a.Transparency=NumberSequence.new({NumberSequenceKeypoint.new(0,0),NumberSequenceKeypoint.new(.5,.35),NumberSequenceKeypoint.new(1,0)})
+local v92=v3:Create(v91,TweenInfo.new(.55,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{BackgroundTransparency=.55})
 v92:Play()
 v92.Completed:Wait()
 
@@ -618,8 +621,34 @@ v93.Size=UDim2.fromOffset(60,60)
 v93.Position=UDim2.new(.5,0,0,-40)
 v93.AnchorPoint=Vector2.new(.5,.5)
 v93.BackgroundColor3=Color3.new(.15,.15,.15)
+v93.BackgroundTransparency=1
 v93.Active=false
 CreateCorner(v93,1000)
+local v95=CreateStroke(v93)
+v95.Transparency=1
+
+local v93a=Instance.new('Frame',v93)
+v93a.Size=UDim2.new(1,18,1,18)
+v93a.Position=UDim2.new(.5,0,.5,0)
+v93a.AnchorPoint=Vector2.new(.5,.5)
+v93a.BackgroundTransparency=1
+v93a.Rotation=0
+CreateCorner(v93a,1000)
+local v93b=CreateStroke(v93a)
+v93b.Thickness=2
+v93b.Transparency=1
+
+local v93c=Instance.new('Frame',v93)
+v93c.Size=UDim2.new(1,34,1,34)
+v93c.Position=UDim2.new(.5,0,.5,0)
+v93c.AnchorPoint=Vector2.new(.5,.5)
+v93c.BackgroundTransparency=1
+v93c.Rotation=0
+CreateCorner(v93c,1000)
+local v93d=CreateStroke(v93c)
+v93d.Thickness=1
+v93d.Transparency=1
+
 local v94=Instance.new('TextLabel',v93)
 v94.Size=UDim2.new(1,0,1,0)
 v94.BackgroundTransparency=1
@@ -628,33 +657,71 @@ v94.TextColor3=Color3.new(1,1,1)
 v94.TextSize=22
 v94.Text='2.1'
 v94.TextTransparency=1
-local v95=CreateStroke(v93)
-local v96,v96a=v3:Create(v93,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Position=UDim2.new(.5,0,.43,0)}),v3:Create(v94,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{TextTransparency=0})
-v96:Play()v96a:Play()
-v96.Completed:Wait()
 
 local v97=Instance.new('TextLabel',v10)
 v97.Size=UDim2.fromOffset(360,60)
-v97.Position=UDim2.new(.5,0,1,60)
+v97.Position=UDim2.new(.5,0,.51,0)
 v97.AnchorPoint=Vector2.new(.5,.5)
 v97.BackgroundTransparency=1
 v97.Font=Enum.Font.Code
 v97.TextColor3=Color3.new(1,1,1)
 v97.TextSize=32
 v97.Text='Leme GUI'
+v97.TextTransparency=1
 v97.Active=false
-local v98=v3:Create(v97,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Position=UDim2.new(.5,0,.51,0)})
-v98:Play()
-v98.Completed:Wait()
 
-task.wait(1)
+local v97a=Instance.new('Frame',v10)
+v97a.Size=UDim2.fromOffset(240,2)
+v97a.Position=UDim2.new(.5,0,.56,0)
+v97a.AnchorPoint=Vector2.new(.5,.5)
+v97a.BackgroundColor3=Color3.new(1,1,1)
+v97a.BackgroundTransparency=.9
+v97a.BorderSizePixel=0
+v97a.Active=false
+local v97b=Instance.new('Frame',v97a)
+v97b.Size=UDim2.new(0,0,1,0)
+v97b.BackgroundColor3=Color3.new(1,1,1)
+v97b.BorderSizePixel=0
+local v97c=Instance.new('UICorner',v97a)
+v97c.CornerRadius=UDim.new(1,0)
+local v97d=Instance.new('UICorner',v97b)
+v97d.CornerRadius=UDim.new(1,0)
 
-local v99,v100,v101,v102=v3:Create(v93,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{BackgroundTransparency=1}),v3:Create(v95,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Transparency=1}),v3:Create(v97,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{TextTransparency=1}),v3:Create(v94,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{TextTransparency=1})
-v99:Play()v100:Play()v101:Play()v102:Play()v99.Completed:Wait()
+local v96,v96a=v3:Create(v93,TweenInfo.new(.7,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Position=UDim2.new(.5,0,.43,0),BackgroundTransparency=0}),v3:Create(v94,TweenInfo.new(.55,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{TextTransparency=0})
+local v96b=v3:Create(v95,TweenInfo.new(.55,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Transparency=0})
+local v96c=v3:Create(v93b,TweenInfo.new(.55,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Transparency=1})
+local v96d=v3:Create(v93d,TweenInfo.new(.55,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Transparency=1})
+local v98=v3:Create(v97,TweenInfo.new(.7,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{TextTransparency=0})
+local v98a=v3:Create(v97b,TweenInfo.new(1.05,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Size=UDim2.new(1,0,1,0)})
+
+v96:Play()v96a:Play()v96b:Play()v96c:Play()v96d:Play()
+v96.Completed:Wait()
+v98:Play()v98a:Play()
+
+local v99a=true
+local v99b=0
+local v99c=v4.RenderStepped:Connect(function(v99d)
+	if v6 then v99a=false return end
+	if not v99a then return end
+	v99b=v99b+v99d
+	v93a.Rotation=v93a.Rotation+v99d*210
+	v93c.Rotation=v93c.Rotation-v99d*140
+	if v99b>1.2 then v99a=false end
+end)
+while v99a and not v6 do v4.RenderStepped:Wait() end
+pcall(function()v99c:Disconnect()end)
+
+task.wait(.15)
+
+local v99,v100,v101,v102,v102a,v102b=v3:Create(v93,TweenInfo.new(.55,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{BackgroundTransparency=1}),v3:Create(v95,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Transparency=1}),v3:Create(v97,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{TextTransparency=1}),v3:Create(v94,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{TextTransparency=1}),v3:Create(v93b,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Transparency=1}),v3:Create(v93d,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Transparency=1})
+local v102c=v3:Create(v97a,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{BackgroundTransparency=1})
+local v102d=v3:Create(v97b,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{BackgroundTransparency=1})
+v99:Play()v100:Play()v101:Play()v102:Play()v102a:Play()v102b:Play()v102c:Play()v102d:Play()v99.Completed:Wait()
 pcall(function()v93:Destroy()end)
 pcall(function()v97:Destroy()end)
+pcall(function()v97a:Destroy()end)
 
-local v102=v3:Create(v91,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{BackgroundTransparency=1})
+local v102=v3:Create(v91,TweenInfo.new(.55,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{BackgroundTransparency=1})
 v102:Play()
 v102.Completed:Wait()
 pcall(function()v10:Destroy()end)
