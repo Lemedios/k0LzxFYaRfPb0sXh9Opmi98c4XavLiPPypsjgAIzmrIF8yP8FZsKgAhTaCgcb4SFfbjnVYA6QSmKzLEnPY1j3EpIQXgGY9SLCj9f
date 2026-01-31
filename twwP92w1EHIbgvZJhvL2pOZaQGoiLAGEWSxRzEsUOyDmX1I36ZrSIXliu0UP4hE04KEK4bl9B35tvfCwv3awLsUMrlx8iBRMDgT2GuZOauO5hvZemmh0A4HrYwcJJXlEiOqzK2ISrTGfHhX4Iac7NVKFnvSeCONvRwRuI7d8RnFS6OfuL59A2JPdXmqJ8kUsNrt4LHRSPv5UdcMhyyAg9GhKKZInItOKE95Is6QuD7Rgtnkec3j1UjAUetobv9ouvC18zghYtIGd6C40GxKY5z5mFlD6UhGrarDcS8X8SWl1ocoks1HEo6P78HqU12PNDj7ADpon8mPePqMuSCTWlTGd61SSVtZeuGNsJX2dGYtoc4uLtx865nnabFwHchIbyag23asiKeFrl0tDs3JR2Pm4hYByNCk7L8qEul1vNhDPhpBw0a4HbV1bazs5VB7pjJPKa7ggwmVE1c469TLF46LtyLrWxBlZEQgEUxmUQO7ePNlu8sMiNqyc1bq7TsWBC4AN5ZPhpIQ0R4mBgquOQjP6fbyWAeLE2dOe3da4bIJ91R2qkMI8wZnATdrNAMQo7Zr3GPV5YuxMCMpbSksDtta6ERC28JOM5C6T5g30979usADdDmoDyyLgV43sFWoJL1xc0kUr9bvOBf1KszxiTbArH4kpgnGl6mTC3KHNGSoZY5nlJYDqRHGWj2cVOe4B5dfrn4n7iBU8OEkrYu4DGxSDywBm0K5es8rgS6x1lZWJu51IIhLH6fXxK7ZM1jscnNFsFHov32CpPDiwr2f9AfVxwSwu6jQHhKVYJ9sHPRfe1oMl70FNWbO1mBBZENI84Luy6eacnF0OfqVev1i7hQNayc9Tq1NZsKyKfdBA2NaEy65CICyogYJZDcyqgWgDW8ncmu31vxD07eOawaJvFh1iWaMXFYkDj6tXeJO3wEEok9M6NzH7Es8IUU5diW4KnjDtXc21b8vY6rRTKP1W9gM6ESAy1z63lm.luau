@@ -775,6 +775,7 @@ local v110=nil
 local v111,v112=CreateGroup(v105,'Fly')
 local v113=nil
 local v114=nil
+local v130=nil
 local v115=0
 local function v116()
 	v115=v115+1
@@ -860,19 +861,7 @@ end,function(v131)
 			v130.MaxTorque=1/0
 			v130.CFrame=v74.CFrame
 		end
-		v179a=v4.Heartbeat:Connect(function(v177)
-			v179b=v179b+v177
-			if v179b<2 then return end
-			v179b=0
-			for _,v178 in ipairs(v1:GetPlayers()) do
-				if v178~=v7 then
-					local v180
-					pcall(function()v180=v7:IsFriendsWith(v178.UserId)end)
-					v179[v178]=v180 or false
-				end
-			end
-		end)
-		v5[#v5+1]=v179a
+		
 	else
 		pcall(function()if v113 then v113:Destroy()end end)
 		pcall(function()if v130 then v130:Destroy()end end)
@@ -1111,10 +1100,7 @@ local function v217(v218)
 	local v220=v219[1]
 	if not v220 then return end
 	if not v220.Parent then v219[1]=nil return end
-	local v221=v220.CFrame.p
-	local v222=v219[5]
-	if v222 and v183>0 then v219[6]=(v221-v222)/v183 end
-	v219[5]=v221
+	v219[5]=v220.CFrame.p
 end
 
 local function v250(v224)
@@ -1129,10 +1115,6 @@ local function v250(v224)
 	local v229=v226.CFrame.p
 	local v232=math.random(0,10)/10
 	local v234=v226.Velocity
-	if math.abs(v234.X)+math.abs(v234.Y)+math.abs(v234.Z)<1 then
-		local v235=v225[6]
-		if v235 then v234=v235 end
-	end
 	local v233=v229+v234*v232
 	if v172 and v172() and (v233-v228).Magnitude>800 then return nil end
 	if math.abs(v234.X)+math.abs(v234.Y)+math.abs(v234.Z)>500 then return nil end
