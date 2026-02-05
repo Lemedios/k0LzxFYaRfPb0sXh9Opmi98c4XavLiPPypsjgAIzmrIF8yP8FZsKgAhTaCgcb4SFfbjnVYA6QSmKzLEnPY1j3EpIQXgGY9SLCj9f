@@ -776,6 +776,7 @@ local v111,v112=CreateGroup(v105,'Fly')
 local v113=nil
 local v114=nil
 local v130=nil
+local v131a=nil
 local v115=0
 local function v116()
 	v115=v115+1
@@ -840,22 +841,25 @@ local v128,v129,v132=CreateToggle(v116(),'Hover',function(v131)
 	end
 	local v143=(v79 and 1 or 0)-(v78 and 1 or 0)
 	if v141.Magnitude>.001 then v141=v141.Unit end
-	v114=v114+(v141*v109+Vector3.new(0,v143*v109,0))*v131
-	v113.Position=v114
-	v130.CFrame=CFrame.new(v114,v114+v136)
+	local v144=v114
+	if not v144 then v144=v74.CFrame.p v114=v144 end
+	v144=v144+(v141*v109+Vector3.new(0,v143*v109,0))*v131
+	v114=v144
+	v113.Position=v144
+	v130.CFrame=CFrame.new(v144,v144+v136)
 end,function(v131)
 	if v131 then
 		if v74 then
 			v114=v74.CFrame.p
-			local v132=Instance.new('Attachment',v74)
+			v131a=Instance.new('Attachment',v74)
 			v113=Instance.new('AlignPosition',v74)
-			v113.Attachment0=v132
+			v113.Attachment0=v131a
 			v113.Mode=Enum.PositionAlignmentMode.OneAttachment
 			v113.Responsiveness=1/0
 			v113.MaxForce=1/0
 			v113.Position=v114
 			v130=Instance.new('AlignOrientation',v74)
-			v130.Attachment0=v132
+			v130.Attachment0=v131a
 			v130.Mode=Enum.OrientationAlignmentMode.OneAttachment
 			v130.Responsiveness=1/0
 			v130.MaxTorque=1/0
@@ -865,7 +869,8 @@ end,function(v131)
 	else
 		pcall(function()if v113 then v113:Destroy()end end)
 		pcall(function()if v130 then v130:Destroy()end end)
-		pcall(function()if v74 then for _,v132 in ipairs(v74:GetChildren()) do if v132:IsA('Attachment') then v132:Destroy()break end end end end)
+		pcall(function()if v131a then v131a:Destroy()end end)
+		v131a=nil
 		v113=nil v114=nil v130=nil
 	end
 end,v108)
@@ -1107,13 +1112,17 @@ local function v250(v224)
 	local v225=v180[v224]
 	if not v225 then return nil end
 	local v226=v225[1]
-	if not v226 then return nil end
-	if not v226.Parent then v225[1]=nil return nil end
+	if (not v226) or (not v226.Parent) then
+		local v226a=v224.Character
+		if v226a then v226=v199(v226a) v225[1]=v226 end
+	end
+	if not v226 or not v226.Parent then v225[1]=nil return nil end
 	local v227=v184
 	if not v227 then return nil end
 	local v228=v227.CFrame.p
 	local v229=v226.CFrame.p
-	local v232=math.random(0,10)/10
+	local v232=v183 or 0
+	if v232>.15 then v232=.15 end
 	local v234=v226.Velocity
 	local v233=v229+v234*v232
 	if v172 and v172() and (v233-v228).Magnitude>800 then return nil end
@@ -1233,13 +1242,7 @@ v5[#v5+1]=v4.Heartbeat:Connect(function(v245)
 	v195=true
 end)
 
-v4:BindToRenderStep('v3',Enum.RenderPriority.Camera.Value-1,function()
-	if not v195 or v189~=2 then return end
-	local v245=v184
-	if not v245 then v195=false return end
-	if v196 and v197 and v198 then v245.CFrame=v196 v245.Velocity=v197 v245.RotVelocity=v198 end
-	v195=false
-end)
+v4:BindToRenderStep('v3',Enum.RenderPriority.Camera.Value-1,function()end)
 
 v5[#v5+1]=v4.RenderStepped:Connect(function()
 	if v6 then return end
@@ -1254,7 +1257,7 @@ v5[#v5+1]=v4.RenderStepped:Connect(function()
 		if v700 and v700.Parent then pcall(function()v700:Destroy()end) end
 		v700=nil
 	end
-	if v195 and v189==1 then
+	if v195 and (v189==1 or v189==2) then
 		local v246=v184
 		if v246 and v196 and v197 and v198 then v246.CFrame=v196 v246.Velocity=v197 v246.RotVelocity=v198 end
 		v195=false
