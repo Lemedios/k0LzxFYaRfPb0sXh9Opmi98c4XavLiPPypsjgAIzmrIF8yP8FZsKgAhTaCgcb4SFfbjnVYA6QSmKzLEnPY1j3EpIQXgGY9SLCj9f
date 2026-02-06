@@ -775,8 +775,8 @@ local v110=nil
 local v111,v112=CreateGroup(v105,'Fly')
 local v113=nil
 local v114=nil
+local v127a=nil
 local v130=nil
-local v131a=nil
 local v115=0
 local function v116()
 	v115=v115+1
@@ -816,62 +816,64 @@ end,v108)
 
 local v128,v129,v132=CreateToggle(v116(),'Hover',function(v131)
 	if v6 then return end
-	if not v74 or not v74.Parent then return end
-	if not v113 or not v113.Parent then return end
-	local v133=workspace.CurrentCamera
-	if not v133 then return end
-	if not v114 then v114=v74.CFrame.p end
-	local v134=v133.CFrame
-	local v135=v134.LookVector
-	local v136=Vector3.new(v135.X,0,v135.Z)
-	if v136.Magnitude<.001 then
-		local v137=v74.CFrame.LookVector
-		v136=Vector3.new(v137.X,0,v137.Z)
+	local v132a=v74
+	if not v132a or not v132a.Parent then return end
+	local v133a=v113
+	local v134a=v130
+	if not v133a or not v133a.Parent or not v134a or not v134a.Parent then return end
+	local v135a=workspace.CurrentCamera
+	if not v135a then return end
+	if not v114 then v114=v132a.CFrame.p end
+	local v136a=v135a.CFrame
+	local v137a=v136a.LookVector
+	local v138a=Vector3.new(v137a.X,0,v137a.Z)
+	if v138a.Magnitude<.001 then
+		local v139a=v132a.CFrame.LookVector
+		v138a=Vector3.new(v139a.X,0,v139a.Z)
 	end
-	v136=v136.Unit
-	local v138=v134.RightVector
-	local v139=Vector3.new(v138.X,0,v138.Z)
-	if v139.Magnitude<.001 then v139=v136:Cross(Vector3.new(0,1,0)) end
-	v139=v139.Unit
-	local v140=v73 and v73.MoveDirection or Vector3.new()
-	local v141=Vector3.new()
-	if v140.Magnitude>.001 then
-		local v142=v134:VectorToObjectSpace(v140)
-		v141=v141+v136*(-v142.Z)+v139*(v142.X)
+	v138a=v138a.Unit
+	local v140a=v136a.RightVector
+	local v141a=Vector3.new(v140a.X,0,v140a.Z)
+	if v141a.Magnitude<.001 then v141a=v138a:Cross(Vector3.new(0,1,0)) end
+	v141a=v141a.Unit
+	local v142a=v73 and v73.MoveDirection or Vector3.new()
+	local v143a=Vector3.new()
+	if v142a.Magnitude>.001 then
+		local v144a=v136a:VectorToObjectSpace(v142a)
+		v143a=v143a+v138a*(-v144a.Z)+v141a*(v144a.X)
 	end
-	local v143=(v79 and 1 or 0)-(v78 and 1 or 0)
-	if v141.Magnitude>.001 then v141=v141.Unit end
-	local v144=v114
-	if not v144 then v144=v74.CFrame.p v114=v144 end
-	v144=v144+(v141*v109+Vector3.new(0,v143*v109,0))*v131
-	v114=v144
-	v113.Position=v144
-	v130.CFrame=CFrame.new(v144,v144+v136)
+	local v145a=(v79 and 1 or 0)-(v78 and 1 or 0)
+	if v143a.Magnitude>.001 then v143a=v143a.Unit end
+	v114=v114+(v143a*v109+Vector3.new(0,v145a*v109,0))*v131
+	v133a.Position=v114
+	v134a.CFrame=CFrame.new(v114,v114+v138a)
 end,function(v131)
 	if v131 then
-		if v74 then
-			v114=v74.CFrame.p
-			v131a=Instance.new('Attachment',v74)
-			v113=Instance.new('AlignPosition',v74)
-			v113.Attachment0=v131a
+		local v132a=v74
+		if v132a and v132a.Parent then
+			v114=v132a.CFrame.p
+			if v127a then pcall(function()v127a:Destroy()end) v127a=nil end
+			v127a=Instance.new('Attachment',v132a)
+			if v113 then pcall(function()v113:Destroy()end) end
+			if v130 then pcall(function()v130:Destroy()end) end
+			v113=Instance.new('AlignPosition',v132a)
+			v113.Attachment0=v127a
 			v113.Mode=Enum.PositionAlignmentMode.OneAttachment
 			v113.Responsiveness=1/0
 			v113.MaxForce=1/0
 			v113.Position=v114
-			v130=Instance.new('AlignOrientation',v74)
-			v130.Attachment0=v131a
+			v130=Instance.new('AlignOrientation',v132a)
+			v130.Attachment0=v127a
 			v130.Mode=Enum.OrientationAlignmentMode.OneAttachment
 			v130.Responsiveness=1/0
 			v130.MaxTorque=1/0
-			v130.CFrame=v74.CFrame
+			v130.CFrame=v132a.CFrame
 		end
-		
 	else
 		pcall(function()if v113 then v113:Destroy()end end)
 		pcall(function()if v130 then v130:Destroy()end end)
-		pcall(function()if v131a then v131a:Destroy()end end)
-		v131a=nil
-		v113=nil v114=nil v130=nil
+		pcall(function()if v127a then v127a:Destroy()end end)
+		v113=nil v114=nil v130=nil v127a=nil
 	end
 end,v108)
 
@@ -1105,25 +1107,28 @@ local function v217(v218)
 	local v220=v219[1]
 	if not v220 then return end
 	if not v220.Parent then v219[1]=nil return end
-	v219[5]=v220.CFrame.p
+	local v221=v220.CFrame.p
+	local v222=v219[5]
+	if v222 and v183>0 then v219[6]=(v221-v222)/v183 end
+	v219[5]=v221
 end
 
 local function v250(v224)
 	local v225=v180[v224]
 	if not v225 then return nil end
 	local v226=v225[1]
-	if (not v226) or (not v226.Parent) then
-		local v226a=v224.Character
-		if v226a then v226=v199(v226a) v225[1]=v226 end
-	end
-	if not v226 or not v226.Parent then v225[1]=nil return nil end
+	if not v226 then return nil end
+	if not v226.Parent then v225[1]=nil return nil end
 	local v227=v184
 	if not v227 then return nil end
 	local v228=v227.CFrame.p
 	local v229=v226.CFrame.p
-	local v232=v183 or 0
-	if v232>.15 then v232=.15 end
+	local v232=math.random(0,10)/10
 	local v234=v226.Velocity
+	if math.abs(v234.X)+math.abs(v234.Y)+math.abs(v234.Z)<1 then
+		local v235=v225[6]
+		if v235 then v234=v235 end
+	end
 	local v233=v229+v234*v232
 	if v172 and v172() and (v233-v228).Magnitude>800 then return nil end
 	if math.abs(v234.X)+math.abs(v234.Y)+math.abs(v234.Z)>500 then return nil end
@@ -1242,7 +1247,13 @@ v5[#v5+1]=v4.Heartbeat:Connect(function(v245)
 	v195=true
 end)
 
-v4:BindToRenderStep('v3',Enum.RenderPriority.Camera.Value-1,function()end)
+v4:BindToRenderStep('v3',Enum.RenderPriority.Camera.Value-1,function()
+	if not v195 or v189~=2 then return end
+	local v245=v184
+	if not v245 then v195=false return end
+	if v196 and v197 and v198 then v245.CFrame=v196 v245.Velocity=v197 v245.RotVelocity=v198 end
+	v195=false
+end)
 
 v5[#v5+1]=v4.RenderStepped:Connect(function()
 	if v6 then return end
@@ -1257,7 +1268,7 @@ v5[#v5+1]=v4.RenderStepped:Connect(function()
 		if v700 and v700.Parent then pcall(function()v700:Destroy()end) end
 		v700=nil
 	end
-	if v195 and (v189==1 or v189==2) then
+	if v195 and v189==1 then
 		local v246=v184
 		if v246 and v196 and v197 and v198 then v246.CFrame=v196 v246.Velocity=v197 v246.RotVelocity=v198 end
 		v195=false
