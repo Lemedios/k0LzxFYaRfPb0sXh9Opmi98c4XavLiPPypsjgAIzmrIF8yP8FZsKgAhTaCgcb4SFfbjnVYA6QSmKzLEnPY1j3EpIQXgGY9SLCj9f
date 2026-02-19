@@ -163,7 +163,7 @@ v15={
 	['Teleport']='テレポート',
 	['Script']='スクリプト',['Load IY']='IYを実行',['Load RSpy']='RSpyを実行',['Load Dex']='Dexを実行',['Load ShiftLock']='シフトロックを実行',['Unload']='LemeGUIを消す',['Language']='言語',
 	['Config']='設定',['Name']='名前',['Create Config']='設定を作成',['Load Config']='設定を反映',['OverWrite Config']='設定を上書き',['Delete Config']='設定を削除',['Set AutoLoad']='オートロードに設定',
-	['ESP']='ESP',['Mini ESP']='ミニESP',['HighLight']='ハイライト',
+	['ESP']='ESP',['Mini ESP']='ミニESP',['HighLight']='ハイライト',['Spectate']='観戦',['Shader']='シェーダー',['Mini Shader']='ミニシェーダー',
 	['ON']='オン',['OFF']='オフ',['NONE']='なし'
 }
 v22()
@@ -1275,7 +1275,135 @@ v5[#v5+1]=v4.RenderStepped:Connect(function()
 	end
 	local v245=v176
 	if v245 and v245.Parent~=v1 then v176=nil v245=nil end
-	if v245 then v157.Text=v19('Target')..': '..(v245.DisplayName or v245.Name) else v157.Text=v19('Target')..': NONE' end
+	if v245 then
+		local v246a=v245.DisplayName or v245.Name
+		v157.Text=v19('Target')..': '..v246a
+	else
+		v157.Text=v19('Target')..': NONE'
+	end
+end)
+
+local v2650,v2651=CreateGroup(v105,'Spectate')
+local v2652=0
+local function v2653()v2652=v2652+1 return v2652%2==1 and v2650 or v2651 end
+
+local v2655,v2656=CreateInput(v2653(),'Target',function(v2657) if v2682a then v2682a(v2657) end end)
+local v2690a=CreateDisplay(v2653(),'Target: NONE')
+local v2680a,v2681a=nil,''
+local function v2682a(v2683a)
+	local v2684a=string.lower(v2683a or '')
+	v2681a=v2683a or ''
+	if v2684a=='' then
+		v2680a=nil
+		if v2690a then v2690a.Text=v19('Target')..': NONE' end
+		return
+	end
+	for v2685a,v2686a in pairs(v177) do
+		if v2686a and string.lower(v2686a)==v2684a then
+			v2680a=v2685a
+			if v2690a then v2690a.Text=v19('Target')..': '..(v2685a.DisplayName or v2685a.Name) end
+			return
+		end
+	end
+	for v2685a,v2686a in pairs(v178) do
+		if v2686a and string.lower(v2686a)==v2684a then
+			v2680a=v2685a
+			if v2690a then v2690a.Text=v19('Target')..': '..(v2685a.DisplayName or v2685a.Name) end
+			return
+		end
+	end
+	local v2685a={}
+	for v2686a,v2687a in pairs(v177) do
+		if v2687a and string.find(string.lower(v2687a),v2684a,1,true) then
+			v2685a[#v2685a+1]=v2686a
+		end
+	end
+	if #v2685a==1 then
+		v2680a=v2685a[1]
+		if v2690a then v2690a.Text=v19('Target')..': '..(v2680a.DisplayName or v2680a.Name) end
+		return
+	end
+	if #v2685a==0 then
+		for v2686a,v2687a in pairs(v178) do
+			if v2687a and string.find(string.lower(v2687a),v2684a,1,true) then
+				v2685a[#v2685a+1]=v2686a
+			end
+		end
+		if #v2685a==1 then
+			v2680a=v2685a[1]
+			if v2690a then v2690a.Text=v19('Target')..': '..(v2680a.DisplayName or v2680a.Name) end
+		else
+			v2680a=nil
+			if v2690a then v2690a.Text=v19('Target')..': NONE' end
+		end
+	else
+		v2680a=nil
+		if v2690a then v2690a.Text=v19('Target')..': NONE' end
+	end
+end
+v2682a(v2656.Text)
+v2656:GetPropertyChangedSignal('Text'):Connect(function()v2682a(v2656.Text)end)
+v2656.FocusLost:Connect(function()v2682a(v2656.Text)end)
+
+local v2659,v2660=nil,false
+local v2661,v2662,v2663=CreateToggle(v2653(),'Spectate',nil,function(v2664)
+	if v2660 then v4:UnbindFromRenderStep('v8') v2660=false end
+	local v2665=workspace.CurrentCamera
+	if not v2664 then
+		if v2665 and v2659 then v2665.CameraSubject=v2659 end
+		v2659=nil
+		return
+	end
+	if v2665 then v2659=v2665.CameraSubject end
+	v2660=true
+	v4:BindToRenderStep('v8',Enum.RenderPriority.Camera.Value+1,function()
+		if v6 then return end
+		local v2666=workspace.CurrentCamera
+		if not v2666 then return end
+		local v2667=v2680a
+		if not v2667 or v2667.Parent~=v1 then if v2659 and v2666.CameraSubject~=v2659 then v2666.CameraSubject=v2659 end return end
+		local v2668=v2667.Character
+		if not v2668 then if v2659 and v2666.CameraSubject~=v2659 then v2666.CameraSubject=v2659 end return end
+		local v2669=nil
+		for _,v2670 in ipairs(v2668:GetChildren()) do if v2670:IsA('Humanoid') then v2669=v2670 break end end
+		if not v2669 or v2669.Health<=0 then if v2659 and v2666.CameraSubject~=v2659 then v2666.CameraSubject=v2659 end return end
+		v2666.CameraSubject=v2669
+	end)
+end)
+
+local v2671,v2672=CreateGroup(v105,'Shader')
+local v2673=0
+local function v2674()v2673=v2673+1 return v2673%2==1 and v2671 or v2672 end
+
+local v2675,v2676=nil,nil
+local v2677,v2678,v2679=CreateToggle(v2674(),'Mini Shader',nil,function(v2680)
+	if v2676 then v2676:Disconnect()v2676=nil end
+	local v2681=game:service'Lighting'
+	if not v2680 then
+		if v2675 then
+			pcall(function()v2681.Brightness=v2675[1]end)
+			pcall(function()v2681.ShadowSoftness=v2675[2]end)
+			pcall(function()v2681.EnvironmentDiffuseScale=v2675[3]end)
+			pcall(function()v2681.EnvironmentSpecularScale=v2675[4]end)
+			pcall(function()v2681.Ambient=v2675[5]end)
+			pcall(function()v2681.OutdoorAmbient=v2675[6]end)
+			pcall(function()v2681.GlobalShadows=v2675[7]end)
+		end
+		v2675=nil
+		return
+	end
+	v2675={v2681.Brightness,v2681.ShadowSoftness,v2681.EnvironmentDiffuseScale,v2681.EnvironmentSpecularScale,v2681.Ambient,v2681.OutdoorAmbient,v2681.GlobalShadows}
+	v2676=v4.RenderStepped:Connect(function()
+		if v6 then return end
+		pcall(function()v2681.Brightness=4 end)
+		pcall(function()v2681.ShadowSoftness=0 end)
+		pcall(function()v2681.EnvironmentDiffuseScale=.202 end)
+		pcall(function()v2681.EnvironmentSpecularScale=.202 end)
+		pcall(function()v2681.Ambient=Color3.fromRGB(64,72,79) end)
+		pcall(function()v2681.OutdoorAmbient=Color3.fromRGB(64,72,79) end)
+		pcall(function()v2681.GlobalShadows=true end)
+	end)
+	v5[#v5+1]=v2676
 end)
 
 local v248,v249=CreateGroup(v105,'Anti')
