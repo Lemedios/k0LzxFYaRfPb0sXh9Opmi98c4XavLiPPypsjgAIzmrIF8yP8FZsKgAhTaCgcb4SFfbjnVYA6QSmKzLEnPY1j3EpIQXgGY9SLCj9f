@@ -1506,7 +1506,8 @@ local v271,v272,v273=CreateToggle(v251(),'Anti Fling v2',nil,function(v274)
 		end
 		v269=v4.Heartbeat:Connect(v275)
 		v270=v4.RenderStepped:Connect(v275)
-		v5[#v5+1]=v269 v5[#v5+1]=v270
+		v5[#v5+1]=v269
+	v5[#v5+1]=v270
 	end
 end)
 
@@ -1694,7 +1695,8 @@ local v2886,v2887,v2888=CreateToggle(v251(),'Anti Fling v1',nil,function(v2889)
 	v2808=v1.PlayerRemoving:Connect(v2884)
 	local v2890=v1:GetPlayers()
 	for v2891=1,#v2890 do v2874(v2890[v2891]) end
-	v5[#v5+1]=v2807 v5[#v5+1]=v2808
+	v5[#v5+1]=v2807
+	v5[#v5+1]=v2808
 end)
 
 local v276,v277=CreateGroup(v105,'Humanoid')
@@ -1785,7 +1787,8 @@ CreateToggle(v279(),'Anchor',nil,function(v298)
 	end
 	v296=v4.Heartbeat:Connect(v299)
 	v297=v4.RenderStepped:Connect(v299)
-	v5[#v5+1]=v296 v5[#v5+1]=v297
+	v5[#v5+1]=v296
+	v5[#v5+1]=v297
 end)
 
 local v301,v302=CreateGroup(v105,'Other')
@@ -1843,7 +1846,8 @@ local v315,v316,v317=CreateToggle(v304(),'Instant Prompt',nil,function(v318)
 		if v6 then return end
 		for v320 in pairs(v310) do if v320 and v320.Parent then v320.HoldDuration=0 else v310[v320]=nil end end
 	end)
-	v5[#v5+1]=v312 v5[#v5+1]=v313 v5[#v5+1]=v314
+	v5[#v5+1]=v312
+	v5[#v5+1]=v313 v5[#v5+1]=v314
 end)
 
 local v318=false
@@ -2655,6 +2659,12 @@ local function v334()
 	local v350,v351,v352=0,0,0
 	local v372,v373,v374=0,0,0
 	local v356,v357=nil,nil
+	local v378a,v379a,v380a=0,0,0
+	local v381a,v382a,v383a=0,0,0
+	local v384a,v385a,v386a,v387a=nil,nil,nil,nil
+	local v388a,v389a,v390a,v391a=nil,nil,nil,nil
+	local v392a=false
+	local v393a=false
 	local function v353()
 		local v358=v344
 		if v340 then v340:Disconnect()v340=nil end
@@ -2774,6 +2784,70 @@ local function v334()
 		if v367 then v353()v354(4) else v353() end
 	end,v339)
 	Create3Input(v338(),'Dif',function(v367,v368,v369)v372,v373,v374=v367,v368,v369 end,'0','0','0')
+
+	local v394a,v395a,v396a=CreateToggle(v338(),'Desync Vel',nil,function(v397a)
+		if v384a then v384a:Disconnect()v384a=nil end
+		if v385a then v385a:Disconnect()v385a=nil end
+		v392a=false
+		local v398a=v74
+		if not v397a then
+			if v398a and v398a.Parent and v386a then v398a.Velocity=v386a end
+			v386a=nil v387a=nil
+			return
+		end
+		v353()
+		v392a=true
+		v384a=v4.Heartbeat:Connect(function()
+			if v6 then return end
+			local v398a=v74
+			if not v398a or not v398a.Parent then v392a=false return end
+			v386a=v398a.Velocity
+			v398a.Velocity=Vector3.new(v378a,v379a,v380a)
+			v393a=true
+		end)
+		v385a=v4.RenderStepped:Connect(function()
+			if not v392a or not v393a then return end
+			v393a=false
+			local v398a=v74
+			if not v398a or not v398a.Parent then v392a=false return end
+			if v386a then v398a.Velocity=v386a end
+		end)
+		v5[#v5+1]=v384a
+	v5[#v5+1]=v385a
+	end,v339)
+	Create3Input(v338(),'Vel',function(v397a,v398a,v399a)v378a,v379a,v380a=v397a,v398a,v399a end,'0','0','0')
+
+	local v397b,v398b,v399b=CreateToggle(v338(),'Desync RVel',nil,function(v400b)
+		if v388a then v388a:Disconnect()v388a=nil end
+		if v389a then v389a:Disconnect()v389a=nil end
+		v393a=false
+		local v401b=v74
+		if not v400b then
+			if v401b and v401b.Parent and v391a then v401b.RotVelocity=v391a end
+			v391a=nil v390a=nil
+			return
+		end
+		v353()
+		v393a=true
+		v388a=v4.Heartbeat:Connect(function()
+			if v6 then return end
+			local v401b=v74
+			if not v401b or not v401b.Parent then v393a=false return end
+			v391a=v401b.RotVelocity
+			v401b.RotVelocity=Vector3.new(v381a,v382a,v383a)
+			v392a=true
+		end)
+		v389a=v4.RenderStepped:Connect(function()
+			if not v393a or not v392a then return end
+			v392a=false
+			local v401b=v74
+			if not v401b or not v401b.Parent then v393a=false return end
+			if v391a then v401b.RotVelocity=v391a end
+		end)
+		v5[#v5+1]=v388a
+	v5[#v5+1]=v389a
+	end,v339)
+	Create3Input(v338(),'RVel',function(v400b,v401b,v402b)v381a,v382a,v383a=v400b,v401b,v402b end,'0','0','0')
 end
 v334()
 
