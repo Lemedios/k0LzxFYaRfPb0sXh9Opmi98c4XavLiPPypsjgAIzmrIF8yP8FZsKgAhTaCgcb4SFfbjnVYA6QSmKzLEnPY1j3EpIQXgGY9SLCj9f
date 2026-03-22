@@ -1881,14 +1881,30 @@ local function v304()
 end
 
 CreateButton(v304(),'Rejoin',function()
-	local v1,v2,v3,v4,v5=game:service'Players',game:service'TeleportService',game:service'Players'.LocalPlayer,game.PlaceId,game.JobId
-	if #v1:GetPlayers()<=1 then
-		v3:Kick()
-		task.wait()
-		v2:Teleport(v4,v3)
-	else
-		v2:TeleportToPlaceInstance(v4,v5,v3)
-	end
+	local v1,v2,v3,v4,v5,v6=game:service'TeleportService',game:service'Players'.LocalPlayer,Instance.new('ScreenGui'),Instance.new('Frame'),Instance.new('TextLabel'),Enum.Font.Code
+	v3.DisplayOrder=2147483647
+	v3.IgnoreGuiInset=true
+	v3.ResetOnSpawn=false
+	v4.Size=UDim2.fromScale(1,1)
+	v4.BackgroundColor3=Color3.new()
+	v4.BorderSizePixel=0
+	v4.Parent=v3
+	v5.Size=UDim2.fromOffset(220,22)
+	v5.Position=UDim2.fromScale(.5,.5)
+	v5.AnchorPoint=Vector2.new(.5,.5)
+	v5.BackgroundTransparency=1
+	v5.Text='Loading...'
+	v5.TextColor3=Color3.new(1,1,1)
+	v5.Font=v6
+	v5.TextSize=22
+	v5.Parent=v4
+	v1.TeleportInitFailed:Connect(function(v7)
+		if v7==v2 then
+			v1:SetTeleportGui(nil)
+		end
+	end)
+	v1:SetTeleportGui(v3)
+	v1:Teleport(game.PlaceId,v2)
 end)
 
 local v305,v306,v307=CreateToggle(v304(),'Chat')
