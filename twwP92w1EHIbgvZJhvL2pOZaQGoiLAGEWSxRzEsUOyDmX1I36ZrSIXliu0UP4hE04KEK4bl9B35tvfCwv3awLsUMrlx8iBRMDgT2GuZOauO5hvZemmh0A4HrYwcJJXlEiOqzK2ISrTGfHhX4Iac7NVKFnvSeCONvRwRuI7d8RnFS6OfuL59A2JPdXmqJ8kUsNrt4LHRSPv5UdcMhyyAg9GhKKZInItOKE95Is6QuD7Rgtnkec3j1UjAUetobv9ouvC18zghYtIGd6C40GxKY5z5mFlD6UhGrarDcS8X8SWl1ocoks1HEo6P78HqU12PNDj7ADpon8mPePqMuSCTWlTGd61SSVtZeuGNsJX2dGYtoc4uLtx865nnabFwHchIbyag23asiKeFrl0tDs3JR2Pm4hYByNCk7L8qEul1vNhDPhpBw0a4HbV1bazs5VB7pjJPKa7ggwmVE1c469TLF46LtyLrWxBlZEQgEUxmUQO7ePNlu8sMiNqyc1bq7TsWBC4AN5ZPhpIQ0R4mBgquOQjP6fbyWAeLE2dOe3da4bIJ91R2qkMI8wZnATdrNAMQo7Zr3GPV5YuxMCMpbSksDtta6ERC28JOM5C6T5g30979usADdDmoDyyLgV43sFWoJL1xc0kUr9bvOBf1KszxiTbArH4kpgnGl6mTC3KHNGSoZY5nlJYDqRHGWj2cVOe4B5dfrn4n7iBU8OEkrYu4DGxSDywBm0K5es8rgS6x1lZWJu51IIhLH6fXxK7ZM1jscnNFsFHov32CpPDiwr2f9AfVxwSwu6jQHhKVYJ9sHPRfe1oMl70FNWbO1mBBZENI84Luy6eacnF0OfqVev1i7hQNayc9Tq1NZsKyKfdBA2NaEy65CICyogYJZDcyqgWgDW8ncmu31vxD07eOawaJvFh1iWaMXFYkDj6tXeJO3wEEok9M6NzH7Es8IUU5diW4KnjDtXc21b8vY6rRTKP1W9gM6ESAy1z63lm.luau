@@ -2522,6 +2522,9 @@ local v476,v477,v478=CreateToggle(v433(),'HighLight',nil,function(v479a)
 					v485=Instance.new('Highlight')
 					v485.Parent=workspace
 					v483[1]=v485
+					for _,v486 in ipairs(v484:GetDescendants()) do
+						if v486:IsA('BasePart') and v486.Transparency==1 then v486.Transparency=.99 end
+					end
 				end
 				v485.Adornee=v484
 				v485.FillColor=Color3.new(1,0,0)
