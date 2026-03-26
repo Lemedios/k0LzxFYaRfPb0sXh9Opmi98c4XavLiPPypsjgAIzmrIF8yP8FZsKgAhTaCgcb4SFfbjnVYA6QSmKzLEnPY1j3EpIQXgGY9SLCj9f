@@ -164,7 +164,7 @@ v15={
 	['Other']='その他',['Rejoin']='入り直す',['Chat']='チャット',['Instant Prompt']='即時プロンプト',['Fire All Touch']='すべてのタッチを触る',['No Fog']='霧を消す',['Status']='ステータス',
 	['WalkSpeed']='歩行速度',['Value']='数値',['Set']='設定',['Loop Set']='ループ設定',['Current']='現在値',['TP Walk']='TP歩行',
 	['JumpPower']='ジャンプ力',['Gravity']='重力',['FOV']='視野',['MaxZoom']='最大ズーム',['MinZoom']='最小ズーム',['No MaxZoom']='最大ズームを消す',['No MinZoom']='最小ズームを消す',
-	['Desync']='同期ズレ',['Desync Pos']='座標で同期ズレ',['Pos']='座標',['Set Pos']='座標を設定',['Desync Dir']='向きで同期ズレ',['Dir']='向き',['Desync Dif']='差分で同期ズレ',['Dif']='差分',['Desync Vel']='速度を同期ズレ',['Vel']='速度',['Desync RVel']='角速度を同期ズレ',['RVel']='角速度',
+	['Desync']='同期ズレ',['Desync Pos']='座標で同期ズレ',['Pos']='座標',['Set Pos']='座標を設定',['Desync Rot']='回転を同期ズレ',['Rot']='回転',['Desync Dif']='差分で同期ズレ',['Dif']='差分',['Desync Vel']='速度を同期ズレ',['Vel']='速度',['Desync RVel']='角速度を同期ズレ',['RVel']='角速度',
 	['Teleport']='テレポート',
 	['Script']='スクリプト',['Load IY']='IYを実行',['Load RSpy']='RSpyを実行',['Load Dex']='Dexを実行',['Load ShiftLock']='シフトロックを実行',['Unload']='LemeGUIを消す',['Language']='言語',
 	['Config']='設定',['Name']='名前',['Create Config']='設定を作成',['Load Config']='設定を反映',['OverWrite Config']='設定を上書き',['Delete Config']='設定を削除',['Set AutoLoad']='オートロードに設定',
@@ -2483,6 +2483,7 @@ local v476,v477,v478=CreateToggle(v433(),'HighLight',nil,function(v479a)
 		for v481,v482 in pairs(v479) do
 			if v482 then
 				if v482[2] then pcall(function()v482[2]:Disconnect()end) end
+				if v482[3] then for v483,v484 in pairs(v482[3]) do if v483 and v483.Parent then v483.Transparency=v484 end end v482[3]=nil end
 				if v482[1] then pcall(function()v482[1]:Destroy()end) end
 			end
 			v479[v481]=nil
@@ -2495,6 +2496,10 @@ local v476,v477,v478=CreateToggle(v433(),'HighLight',nil,function(v479a)
 		local v483={}
 		v479[v482]=v483
 		v483[2]=v482.CharacterAdded:Connect(function()
+			if v483[3] then
+				for v484,v485 in pairs(v483[3]) do if v484 and v484.Parent then v484.Transparency=v485 end end
+				v483[3]=nil
+			end
 			if v483[1] then pcall(function()v483[1]:Destroy()end) end
 			v483[1]=nil
 		end)
@@ -2505,6 +2510,7 @@ local v476,v477,v478=CreateToggle(v433(),'HighLight',nil,function(v479a)
 		local v483=v479 and v479[v482]
 		if v483 then
 			if v483[2] then pcall(function()v483[2]:Disconnect()end) end
+			if v483[3] then for v484,v485 in pairs(v483[3]) do if v484 and v484.Parent then v484.Transparency=v485 end end v483[3]=nil end
 			if v483[1] then pcall(function()v483[1]:Destroy()end) end
 			v479[v482]=nil
 		end
@@ -2514,6 +2520,7 @@ local v476,v477,v478=CreateToggle(v433(),'HighLight',nil,function(v479a)
 		for v482,v483 in pairs(v479) do
 			local v484=v482.Character
 			if not v484 then
+				if v483[3] then for v484,v485 in pairs(v483[3]) do if v484 and v484.Parent then v484.Transparency=v485 end end v483[3]=nil end
 				if v483[1] then v483[1]:Destroy() v483[1]=nil end
 			else
 				local v485=v483[1]
@@ -2522,8 +2529,9 @@ local v476,v477,v478=CreateToggle(v433(),'HighLight',nil,function(v479a)
 					v485=Instance.new('Highlight')
 					v485.Parent=workspace
 					v483[1]=v485
+					v483[3]={}
 					for _,v486 in ipairs(v484:GetDescendants()) do
-						if v486:IsA('BasePart') and v486.Transparency==1 then v486.Transparency=.99 end
+						if v486:IsA('BasePart') and v486.Transparency==1 then v483[3][v486]=1 v486.Transparency=.99 end
 					end
 				end
 				v485.Adornee=v484
@@ -2877,10 +2885,10 @@ local function v334()
 		v366.Text=tostring(v371)
 	end)
 
-	CreateToggle(v338(),'Desync Dir',nil,function(v367)
+	CreateToggle(v338(),'Desync Rot',nil,function(v367)
 		if v367 then v353()v354(3) else v353() end
 	end,v339)
-	Create3Input(v338(),'Dir',function(v367,v368,v369)v350,v351,v352=v367,v368,v369 end,'0','0','0')
+	Create3Input(v338(),'Rot',function(v367,v368,v369)v350,v351,v352=v367,v368,v369 end,'0','0','0')
 
 	local v375,v376,v377=CreateToggle(v338(),'Desync Dif',nil,function(v367)
 		if v367 then v353()v354(4) else v353() end
