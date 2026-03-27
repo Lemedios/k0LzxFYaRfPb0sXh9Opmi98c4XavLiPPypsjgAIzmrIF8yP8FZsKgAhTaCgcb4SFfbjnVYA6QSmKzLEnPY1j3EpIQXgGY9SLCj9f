@@ -171,7 +171,19 @@ v15={
 	['ESP']='ESP',['Mini ESP']='ミニESP',['HighLight']='ハイライト',['Spectate']='観戦',['Shader']='シェーダー',['Mini Shader']='ミニシェーダー',
 	['ON']='オン',['OFF']='オフ',['NONE']='なし'
 }
-v22()
+local v710,v711,v712,v713,v714,v715,v716=false,0,0,nil,'',nil,0
+v713=function(v717,v718)
+	if v717>v712 then v712=v717 end
+	if v718~=nil then v714=tostring(v718) end
+	if v715 then v715.Text=v714 end
+end
+local function v717(v718)
+	if not v715 then return end
+	v716=v716+.0025
+	if v716>.965 then v716=.965 end
+	v713(v716,v718)
+	task.wait(.01)
+end
 
 local v17={}
 local function v18(v19)
@@ -182,6 +194,7 @@ local function v18(v19)
 end
 
 local function CreateButton(v21,v22,v23)
+	v717('Creating Group.'..tostring(v27)..'.Button.'..tostring(v22)..'...')
 	local v24=Instance.new('TextButton',v21)
 	v24.LayoutOrder=v18(v21)
 	v24.Size=UDim2.new(1,0,0,26)
@@ -199,6 +212,8 @@ local function CreateButton(v21,v22,v23)
 end
 
 local function CreateToggle(v25,v26,v27,v28,v29)
+	v717('Creating Group.'..tostring(v27==nil and v27 or v27)..'')
+	v717('Creating Group.'..tostring(v27)..'.Toggle.'..tostring(v26)..'...')
 	local v30=Instance.new('TextButton',v25)
 	v30.LayoutOrder=v18(v25)
 	v30.Size=UDim2.new(1,0,0,26)
@@ -243,6 +258,7 @@ v00a[#v00a+1]=v33
 end
 
 local function CreateInput(v37,v38,v39,v40,v41)
+	v717('Creating Group.'..tostring(v27)..'.Input.'..tostring(v38)..'...')
 	local v42=Instance.new('Frame',v37)
 	v42.LayoutOrder=v18(v37)
 	v42.Size=UDim2.new(1,0,0,26)
@@ -301,6 +317,7 @@ local function CreateInput(v37,v38,v39,v40,v41)
 end
 
 local function Create3Input(v37,v38,v39,v41,v42,v43)
+	v717('Creating Group.'..tostring(v27)..'.3Input.'..tostring(v38)..'...')
 	local v44=Instance.new('Frame',v37)
 	v44.LayoutOrder=v18(v37)
 	v44.Size=UDim2.new(1,0,0,26)
@@ -367,6 +384,8 @@ local function Create3Input(v37,v38,v39,v41,v42,v43)
 end
 
 local function CreateDisplay(v51,v52)
+	local v52a=tostring(v52):match('^([^:]+)') or tostring(v52)
+	v717('Creating Group.'..tostring(v27)..'.Display.'..v52a..'...')
 	local v53=Instance.new('TextLabel',v51)
 	v53.LayoutOrder=v18(v51)
 	v53.Size=UDim2.new(1,0,0,26)
@@ -380,6 +399,7 @@ local function CreateDisplay(v51,v52)
 end
 
 local function CreateKeybind(v54,v55,v56)
+	v717('Creating Group.'..tostring(v27)..'.Keybind.'..tostring(v55)..'...')
 	local v57=CreateButton(v54,v55..': '..v19('NONE'))
 	local v58=Enum.KeyCode.Unknown
 	local v59=false
@@ -409,6 +429,7 @@ local function CreateKeybind(v54,v55,v56)
 end
 
 local function CreateSelect(v61,v62,v63,v64,v65)
+	v717('Creating Group.'..tostring(v27)..'.Select.'..tostring(v62)..'...')
 	local v66,v67=CreateButton(v61,v62..': '..tostring(v63)),false
 	local v68
 	local function v69()
@@ -515,6 +536,7 @@ local function CreateSelect(v61,v62,v63,v64,v65)
 end
 
 local function CreateGroup(v62,v63)
+	v717('Creating Group.'..tostring(v63)..'...')
 	v27=v63
 	local v64=Instance.new('Frame',v62)
 	v64.Size=UDim2.new(1,0,0,0)
@@ -705,6 +727,18 @@ v97.Active=false
 local v97a=Instance.new('Frame',v10)
 v97a.Size=UDim2.fromOffset(240,2)
 v97a.Position=UDim2.new(.5,0,.56,0)
+local v97e=Instance.new('TextLabel',v10)
+v97e.Size=UDim2.fromOffset(420,18)
+v97e.Position=UDim2.new(.5,50,.56,14)
+v97e.AnchorPoint=Vector2.new(.5,0)
+v97e.BackgroundTransparency=1
+v97e.Font=Enum.Font.Code
+v97e.TextColor3=Color3.new(1,1,1)
+v97e.TextSize=14
+v97e.TextXAlignment=Enum.TextXAlignment.Left
+v97e.Text=''
+v97e.TextTransparency=.15
+v715=v97e
 v97a.AnchorPoint=Vector2.new(.5,.5)
 v97a.BackgroundColor3=Color3.new(1,1,1)
 v97a.BackgroundTransparency=.9
@@ -724,11 +758,17 @@ local v96b=v3:Create(v95,TweenInfo.new(.55,Enum.EasingStyle.Quint,Enum.EasingDir
 local v96c=v3:Create(v93b,TweenInfo.new(.55,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Transparency=1})
 local v96d=v3:Create(v93d,TweenInfo.new(.55,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Transparency=1})
 local v98=v3:Create(v97,TweenInfo.new(.7,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{TextTransparency=0})
-local v98a=v3:Create(v97b,TweenInfo.new(1.05,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Size=UDim2.new(1,0,1,0)})
 
 v96:Play()v96a:Play()v96b:Play()v96c:Play()v96d:Play()
 v96.Completed:Wait()
-v98:Play()v98a:Play()
+v98:Play()
+
+v710=false
+v711=0
+v712=0
+v716=.22
+
+local v500
 
 local v99a=true
 local v99b=0
@@ -738,27 +778,15 @@ local v99c=v4.RenderStepped:Connect(function(v99d)
 	v99b=v99b+v99d
 	v93a.Rotation=v93a.Rotation+v99d*210
 	v93c.Rotation=v93c.Rotation-v99d*140
-	if v99b>1.2 then v99a=false end
+	local v99e=1-math.exp(-v99d*8)
+	v711=v711+(v712-v711)*v99e
+	if v711>1 then v711=1 elseif v711<0 then v711=0 end
+	v97b.Size=UDim2.new(v711,0,1,0)
+	if v715 then v715.Text=v714 end
+	if v710 and math.abs(1-v711)<.001 then v711=1 v97b.Size=UDim2.new(1,0,1,0) v99a=false end
 end)
-while v99a and not v6 do v4.RenderStepped:Wait() end
-pcall(function()v99c:Disconnect()end)
 
-task.wait(.15)
 
-local v99,v100,v101,v102,v102a,v102b=v3:Create(v93,TweenInfo.new(.55,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{BackgroundTransparency=1}),v3:Create(v95,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Transparency=1}),v3:Create(v97,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{TextTransparency=1}),v3:Create(v94,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{TextTransparency=1}),v3:Create(v93b,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Transparency=1}),v3:Create(v93d,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Transparency=1})
-local v102c=v3:Create(v97a,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{BackgroundTransparency=1})
-local v102d=v3:Create(v97b,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{BackgroundTransparency=1})
-v99:Play()v100:Play()v101:Play()v102:Play()v102a:Play()v102b:Play()v102c:Play()v102d:Play()v99.Completed:Wait()
-pcall(function()v93:Destroy()end)
-pcall(function()v97:Destroy()end)
-pcall(function()v97a:Destroy()end)
-
-local v102=v3:Create(v91,TweenInfo.new(.55,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{BackgroundTransparency=1})
-v102:Play()
-v102.Completed:Wait()
-pcall(function()v10:Destroy()end)
-v10=nil
-if v6 then return end
 
 v11=Instance.new('ScreenGui',v8)
 v11.ResetOnSpawn=false
@@ -799,7 +827,8 @@ v107.PaddingRight=UDim.new(0,12)
 v107.PaddingTop=UDim.new(0,12)
 v107.PaddingBottom=UDim.new(0,12)
 
-local function v500()
+function v500()
+if v713 then v713(.3,'Creating Group.Fly...') end
 local v108={}
 local v109=300
 local v110=nil
@@ -937,6 +966,7 @@ if v2.KeyboardEnabled and v2.MouseEnabled and not v2.TouchEnabled then
 	end)
 end
 
+if v713 then v713(.38,'Creating Group.Fling...') end
 local v151,v152=CreateGroup(v105,'Fling')
 local v153=0
 local function v154()
@@ -1318,6 +1348,7 @@ v5[#v5+1]=v4.RenderStepped:Connect(function()
 	end
 end)
 
+if v713 then v713(.46,'Creating Group.Spectate...') end
 local v2650,v2651=CreateGroup(v105,'Spectate')
 local v2652=0
 local function v2653()v2652=v2652+1 return v2652%2==1 and v2650 or v2651 end
@@ -1406,6 +1437,7 @@ local v2661,v2662,v2663=CreateToggle(v2653(),'Spectate',nil,function(v2664)
 	end)
 end)
 
+if v713 then v713(.5,'Creating Group.Shader...') end
 local v2671,v2672=CreateGroup(v105,'Shader')
 local v2673=0
 local function v2674()v2673=v2673+1 return v2673%2==1 and v2671 or v2672 end
@@ -1481,6 +1513,7 @@ local v2677,v2678,v2679=CreateToggle(v2674(),'Mini Shader',nil,function(v2680)
 	v5[#v5+1]=v2676
 end)
 
+if v713 then v713(.54,'Creating Group.Anti...') end
 local v248,v249=CreateGroup(v105,'Anti')
 local v250=0
 local function v251()
@@ -1774,6 +1807,7 @@ local v2886,v2887,v2888=CreateToggle(v251(),'Anti Fling v1',nil,function(v2889)
 	v5[#v5+1]=v2808
 end)
 
+if v713 then v713(.58,'Creating Group.Humanoid...') end
 local v276,v277=CreateGroup(v105,'Humanoid')
 local v278=0
 local function v279()
@@ -1873,6 +1907,7 @@ CreateToggle(v279(),'Anchor',nil,function(v298)
 	v5[#v5+1]=v296
 end)
 
+if v713 then v713(.62,'Creating Group.Other...') end
 local v301,v302=CreateGroup(v105,'Other')
 local v303=0
 local function v304()
@@ -1997,6 +2032,7 @@ CreateButton(v304(),'Fire All Touch',function()
 end)
 
 local function v333()
+if v713 then v713(.58) end
 local v331=nil
 CreateToggle(v304(),'No Fog',nil,function(v332)
 	if v331 then v331:Disconnect()v331=nil end
@@ -2756,6 +2792,7 @@ end
 v333()
 
 local function v334()
+if v713 then v713(.72,'Creating Group.Desync...') end
 	local v335,v336=CreateGroup(v105,'Desync')
 	local v337=0
 	local function v338()
@@ -2962,6 +2999,7 @@ end
 v334()
 
 local function v335()
+if v713 then v713(.82,'Creating Group.Teleport...') end
 	local v336,v337=CreateGroup(v105,'Teleport')
 	local v338=0
 	local function v339()
@@ -2998,6 +3036,7 @@ local function v335()
 end
 
 local function v336()
+if v713 then v713(.88,'Creating Group.Script...') end
 	local v337,v338=CreateGroup(v105,'Script')
 	local v339=0
 	local function v340()
@@ -3013,6 +3052,7 @@ local function v336()
 end
 
 local function v337()
+if v713 then v713(.9,'Creating Group.Config...') end
 	local v337a,v338a=CreateGroup(v105,'Config')
 	local v339a=0
 	local function v340a()
@@ -3084,10 +3124,46 @@ end
 v335()
 v337()
 v336()
+if v713 then v713(.96) end
 if v25 and v24[v25] then v29(v25) end
 v21()
+if v713 then v713(.99) end
 end
-v500()
+
+task.spawn(function()
+	if v6 then return end
+	v713(.04,'Booting Leme GUI v2.1...')
+	v713(.08,'Reading Leme GUI v2.1 Config.txt...')
+	v22()
+	v713(.22,'Creating Main GUI...')
+	v500()
+	v713(.94,'Applying AutoLoad Config...')
+	v713(.97,'Finalizing UI...')
+	v713(1,'Load Complete')
+	v710=true
+end)
+
+while v99a and not v6 do v4.RenderStepped:Wait() end
+pcall(function()v99c:Disconnect()end)
+
+local v99,v100,v101,v102,v102a,v102b=v3:Create(v93,TweenInfo.new(.55,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{BackgroundTransparency=1}),v3:Create(v95,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Transparency=1}),v3:Create(v97,TweenInfo.new(.55,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{TextTransparency=1}),v3:Create(v94,TweenInfo.new(.55,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{TextTransparency=1}),v3:Create(v93b,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Transparency=1}),v3:Create(v93d,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Transparency=1})
+local v102c=v3:Create(v97a,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{BackgroundTransparency=1})
+local v102d=v3:Create(v97b,TweenInfo.new(.45,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{BackgroundTransparency=1})
+local v102e=v3:Create(v97e,TweenInfo.new(.55,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{TextTransparency=1})
+v99:Play()v100:Play()v101:Play()v102:Play()v102a:Play()v102b:Play()v102c:Play()v102d:Play()v102e:Play()v101.Completed:Wait()
+pcall(function()v93:Destroy()end)
+pcall(function()v97:Destroy()end)
+pcall(function()v97a:Destroy()end)
+pcall(function()v97e:Destroy()end)
+
+local v102=v3:Create(v91,TweenInfo.new(.55,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{BackgroundTransparency=1})
+v102:Play()
+v102.Completed:Wait()
+pcall(function()v10:Destroy()end)
+v10=nil
+if v6 then return end
+
+task.wait(.15)
 
 local v221,v222,v223=0,false,false
 local v224,v225=v3:Create(v103,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Position=UDim2.new(.5,0,1,-55)}),v3:Create(v104,TweenInfo.new(.5,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{Position=UDim2.new(.5,0,1,259)})
