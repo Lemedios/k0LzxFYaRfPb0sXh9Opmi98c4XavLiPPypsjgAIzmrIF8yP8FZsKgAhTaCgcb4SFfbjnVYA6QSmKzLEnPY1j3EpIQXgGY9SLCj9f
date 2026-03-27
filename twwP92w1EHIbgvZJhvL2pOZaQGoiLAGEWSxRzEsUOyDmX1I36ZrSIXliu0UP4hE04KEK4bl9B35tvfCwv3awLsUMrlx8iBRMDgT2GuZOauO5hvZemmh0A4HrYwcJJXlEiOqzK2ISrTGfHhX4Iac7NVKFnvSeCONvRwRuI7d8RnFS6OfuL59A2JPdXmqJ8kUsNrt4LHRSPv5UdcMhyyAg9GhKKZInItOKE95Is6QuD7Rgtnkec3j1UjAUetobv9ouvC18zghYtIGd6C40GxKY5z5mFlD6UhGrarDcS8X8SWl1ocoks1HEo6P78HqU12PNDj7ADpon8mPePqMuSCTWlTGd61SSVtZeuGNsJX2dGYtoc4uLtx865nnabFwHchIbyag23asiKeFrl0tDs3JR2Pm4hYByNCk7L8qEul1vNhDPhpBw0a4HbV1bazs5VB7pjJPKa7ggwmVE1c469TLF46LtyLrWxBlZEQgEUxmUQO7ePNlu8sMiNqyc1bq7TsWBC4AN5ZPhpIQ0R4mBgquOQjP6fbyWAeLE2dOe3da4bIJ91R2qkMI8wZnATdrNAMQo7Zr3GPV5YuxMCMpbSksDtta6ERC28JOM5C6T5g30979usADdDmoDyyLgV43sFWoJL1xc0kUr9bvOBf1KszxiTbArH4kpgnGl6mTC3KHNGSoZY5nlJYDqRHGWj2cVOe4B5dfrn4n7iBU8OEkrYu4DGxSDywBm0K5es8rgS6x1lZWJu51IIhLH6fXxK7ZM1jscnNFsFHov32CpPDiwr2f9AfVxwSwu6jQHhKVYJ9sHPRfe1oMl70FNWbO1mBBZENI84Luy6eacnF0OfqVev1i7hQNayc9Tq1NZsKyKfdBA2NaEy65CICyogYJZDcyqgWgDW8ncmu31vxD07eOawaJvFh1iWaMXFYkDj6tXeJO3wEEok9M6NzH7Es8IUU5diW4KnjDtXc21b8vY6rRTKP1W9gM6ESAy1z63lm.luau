@@ -175,7 +175,16 @@ local v710,v711,v712,v713,v714,v715,v716=false,0,0,nil,'',nil,0
 v713=function(v717,v718)
 	if v717>v712 then v712=v717 end
 	if v718~=nil then v714=tostring(v718) end
-	if v715 then v715.Text=v714 end
+	if v715 then
+		v715.Text=v714
+		if v714=='Load Complete' then
+			v715.TextXAlignment=Enum.TextXAlignment.Center
+			v715.Position=UDim2.new(.5,0,.56,14)
+		else
+			v715.TextXAlignment=Enum.TextXAlignment.Left
+			v715.Position=UDim2.new(.5,50,.56,14)
+		end
+	end
 end
 local function v717(v718)
 	if not v715 then return end
