@@ -171,27 +171,11 @@ v15={
 	['ESP']='ESP',['Mini ESP']='ミニESP',['HighLight']='ハイライト',['Spectate']='観戦',['Shader']='シェーダー',['Mini Shader']='ミニシェーダー',
 	['ON']='オン',['OFF']='オフ',['NONE']='なし'
 }
-local v710,v711,v712,v713,v714,v715,v716=false,0,0,nil,'',nil,0
-v713=function(v717,v718)
-	if v717>v712 then v712=v717 end
-	if v718~=nil then v714=tostring(v718) end
-	if v715 then
-		v715.Text=v714
-		if v714=='Load Complete' then
-			v715.TextXAlignment=Enum.TextXAlignment.Center
-			v715.Position=UDim2.new(.5,0,.56,14)
-		else
-			v715.TextXAlignment=Enum.TextXAlignment.Left
-			v715.Position=UDim2.new(.5,50,.56,14)
-		end
-	end
-end
-local function v717(v718)
-	if not v715 then return end
-	v716=v716+.0025
-	if v716>.965 then v716=.965 end
-	v713(v716,v718)
-	task.wait(.01)
+local v710,v711,v712,v713,v714,v715=false,0,0,nil,'',nil
+v713=function(v716,v717)
+	if v716>v712 then v712=v716 end
+	if v717~=nil then v714=tostring(v717) end
+	if v715 then v715.Text=v714 end
 end
 
 local v17={}
@@ -203,7 +187,6 @@ local function v18(v19)
 end
 
 local function CreateButton(v21,v22,v23)
-	v717('Creating Group.'..tostring(v27)..'.Button.'..tostring(v22)..'...')
 	local v24=Instance.new('TextButton',v21)
 	v24.LayoutOrder=v18(v21)
 	v24.Size=UDim2.new(1,0,0,26)
@@ -221,8 +204,6 @@ local function CreateButton(v21,v22,v23)
 end
 
 local function CreateToggle(v25,v26,v27,v28,v29)
-	v717('Creating Group.'..tostring(v27==nil and v27 or v27)..'')
-	v717('Creating Group.'..tostring(v27)..'.Toggle.'..tostring(v26)..'...')
 	local v30=Instance.new('TextButton',v25)
 	v30.LayoutOrder=v18(v25)
 	v30.Size=UDim2.new(1,0,0,26)
@@ -267,7 +248,6 @@ v00a[#v00a+1]=v33
 end
 
 local function CreateInput(v37,v38,v39,v40,v41)
-	v717('Creating Group.'..tostring(v27)..'.Input.'..tostring(v38)..'...')
 	local v42=Instance.new('Frame',v37)
 	v42.LayoutOrder=v18(v37)
 	v42.Size=UDim2.new(1,0,0,26)
@@ -326,7 +306,6 @@ local function CreateInput(v37,v38,v39,v40,v41)
 end
 
 local function Create3Input(v37,v38,v39,v41,v42,v43)
-	v717('Creating Group.'..tostring(v27)..'.3Input.'..tostring(v38)..'...')
 	local v44=Instance.new('Frame',v37)
 	v44.LayoutOrder=v18(v37)
 	v44.Size=UDim2.new(1,0,0,26)
@@ -393,8 +372,6 @@ local function Create3Input(v37,v38,v39,v41,v42,v43)
 end
 
 local function CreateDisplay(v51,v52)
-	local v52a=tostring(v52):match('^([^:]+)') or tostring(v52)
-	v717('Creating Group.'..tostring(v27)..'.Display.'..v52a..'...')
 	local v53=Instance.new('TextLabel',v51)
 	v53.LayoutOrder=v18(v51)
 	v53.Size=UDim2.new(1,0,0,26)
@@ -408,7 +385,6 @@ local function CreateDisplay(v51,v52)
 end
 
 local function CreateKeybind(v54,v55,v56)
-	v717('Creating Group.'..tostring(v27)..'.Keybind.'..tostring(v55)..'...')
 	local v57=CreateButton(v54,v55..': '..v19('NONE'))
 	local v58=Enum.KeyCode.Unknown
 	local v59=false
@@ -438,7 +414,6 @@ local function CreateKeybind(v54,v55,v56)
 end
 
 local function CreateSelect(v61,v62,v63,v64,v65)
-	v717('Creating Group.'..tostring(v27)..'.Select.'..tostring(v62)..'...')
 	local v66,v67=CreateButton(v61,v62..': '..tostring(v63)),false
 	local v68
 	local function v69()
@@ -545,7 +520,6 @@ local function CreateSelect(v61,v62,v63,v64,v65)
 end
 
 local function CreateGroup(v62,v63)
-	v717('Creating Group.'..tostring(v63)..'...')
 	v27=v63
 	local v64=Instance.new('Frame',v62)
 	v64.Size=UDim2.new(1,0,0,0)
@@ -738,13 +712,13 @@ v97a.Size=UDim2.fromOffset(240,2)
 v97a.Position=UDim2.new(.5,0,.56,0)
 local v97e=Instance.new('TextLabel',v10)
 v97e.Size=UDim2.fromOffset(420,18)
-v97e.Position=UDim2.new(.5,50,.56,14)
+v97e.Position=UDim2.new(.5,0,.56,14)
 v97e.AnchorPoint=Vector2.new(.5,0)
 v97e.BackgroundTransparency=1
 v97e.Font=Enum.Font.Code
 v97e.TextColor3=Color3.new(1,1,1)
 v97e.TextSize=14
-v97e.TextXAlignment=Enum.TextXAlignment.Left
+v97e.TextXAlignment=Enum.TextXAlignment.Center
 v97e.Text=''
 v97e.TextTransparency=.15
 v715=v97e
@@ -775,7 +749,6 @@ v98:Play()
 v710=false
 v711=0
 v712=0
-v716=.22
 
 local v500
 
